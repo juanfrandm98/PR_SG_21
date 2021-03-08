@@ -1,12 +1,32 @@
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
-//       Ejercicio 1. Hola mundo Three.js                                     //
+//       Ejercicio 2. Geometría básica 3D                                     //
 //                                                                            //
-// Este ejercicio muestra una aplicación mínima usando THREE.JS para la       //
-// programación gráfica y la biblioteca DAT.GUI.JS para la interfaz gŕafica   //
-// de usuario (GUI).                                                          //
-// Es el único ejercicio en el que se proporciona el código fuente. El alumno //
-// debe estudiar la aplicación y comprender su diseño.                        //
+// Mediante este ejercicio, el alumno debe familiarizarse con las diferentes  //
+// figuras 3D que proporciona la biblioteca THREE.JS y conocer sus            //
+// principales parámetros.                                                    //
+// El vídeo geometría-básica.mp4 muestra diversos ejemplos de varias figuras  //
+// donde se muestran los efectos de dar diferentes valores a sus parámetros.  //
+//                                                                            //
+// No es necesario que el ejercicio sea como lo que se muestra en el vídeo.   //
+// No es necesario que se puedan modificar las figuras interactivamente.      //
+// Basta con que se muestren diferentes figuras con diferentes colores en sus //
+// parámetros.                                                                //
+//                                                                            //
+// A tener en cuenta:                                                         //
+// - Modificar una geometría ya creada implica volver a crearla. Debe         //
+//   evitarse, en la medida de lo posible, crear nuevas geometrías para cada  //
+//   frame ya que se dejarían muchos objetos huérfanos y debería actuar el    //
+//   recolector de basura con mucha frecuencia.                               //
+// - El material usado en el vídeo es MeshNormalMaterial, que asigna colores  //
+//   a los polígonos según el vector normal de sus caras o vértices. El       //
+//   sombreado plano o suave se consigue asignándole true o false,            //
+//   respectivamente, al atributo flatShading del material. Tras modificar    //
+//   dicho atributo, hay que asignar true al atributo needsUpdate del         //
+//   material para que el cambio sea tenido en cuenta en el siguiente frame.  //
+// - El movimiento continuo se consigue incrementando un poco la rotación de  //
+//   cada figura en cada frame. Por ejemplo:                                  //
+//       this.caja.rotation.y += 0.01;                                        //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -46,19 +66,22 @@ class MyScene extends THREE.Scene {
     // Tendremos una cámara con un control de movimiento con el ratón
     this.createCamera();
 
-    // Un suelo
-    this.createGround();
-
-    // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
-    this.axis = new THREE.AxesHelper(5);
-    this.add( axis );
-
     // A partir de aquí, creamos los modelos necesarios para el ejercicio. Cada
     // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
     // referencia a la gui y el texto bajo el que se agruparán los controles de
     // la interfaz que añada el modelo
-    this.model = new MyBox( this.gui, 'Controles de la Caja' );
-    this.add( this.model );
+    this.caja = new MyBox( this.gui, 'Controles de la Caja' );
+    this.add( this.caja );
+    var axisCaja = new THREE.AxesHelper(5);
+    this.add( axisCaja );
+
+    this.cajaa = new MyBox( this.gui, 'Controles de la Cajaa' );
+    this.add( this.cajaa );
+    this.cajaa.position.x += 10;
+    var axisOtro = new THREE.AxesHelper(5);
+    axisOtro.position.x += 10;
+    this.add( axisOtro );
+
   }
 
   createCamera() {
@@ -87,28 +110,6 @@ class MyScene extends THREE.Scene {
     this.cameraControl.target = look;
   }
 
-  createGround() {
-    // El suelo es un Mesh, necesita una geometría y un material.
-
-    // La geometría es una caja con muy poca altura
-    var geometryGround = new THREE.BoxGeometry( 50, 0.2, 50 );
-
-    // El material se hará con una textura de madera
-    var texture = new THREE.TextureLoader().load( '../imgs/wood.jpg' );
-    var materialGround = new THREE.MeshPhongMaterial( {map: texture} );
-
-    // Ya se puede constuir el Mesh
-    var ground = new THREE.Mesh( geometryGround, materialGround );
-
-    // Todas las figuras se crean centradas en el origen.
-    // El suelo lo bajamos la mitad de su altura para que el origen del mundo se
-    // quede en su lado superior
-    ground.position.y = -0.1;
-
-    // Que no se nos olvide añadirlo a la escena, que en este caso es this
-    this.add( ground );
-  }
-
   createGUI() {
     // Se crea la interfaz gráfica de usuario
     var gui = new GUI();
@@ -119,17 +120,13 @@ class MyScene extends THREE.Scene {
     this.guiControls = new function() {
       // En el contexto de una función, this alude a la función
       this.lightIntensity = 0.5;
-      this.axisOnOff = true;
     }
 
     // Se va a crear una sección para los controles de esta clase
-    var folder = gui.addFolder( 'Luz y Ejes' );
+    var folder = gui.addFolder( 'Luz' );
 
     // Se le añade un control para la intensidad de la luz
     folder.add( this.guiControls, 'lightIntensity', 0, 1, 0.1 ).name( 'Intensidad de la luz : ' );
-
-    // Y otro para mostrar u ocultar los ejes
-    folder.add( this.guiControls, 'axisOnOff' ).name( 'Mostrar ejes : ' );
 
     return gui;
   }
@@ -198,20 +195,26 @@ class MyScene extends THREE.Scene {
     this.renderer.setSize( window.innerWidth, window.innerHeight );
   }
 
+  autoRotate( objeto ) {
+    objeto.rotation.x += 0.1;
+  }
+
   // Se actualizan los elementos de la escena para cada frame
   update() {
     // Se actualiza la intensidad de la luz con lo que haya indicado el usuario
     // en la GUI
     this.spotLight.intensity = this.guiControls.lightIntensity;
 
-    // Se muestran o no los ejes de la cámara según su controlador
-    this.axis.visible = this.guiControls.axisOnOff;
-
     // Se actualiza la posición de la cámara según su controlador
     this.cameraControl.update();
 
     // Se actualizan el resto de los modelos
-    this.model.update();
+    this.caja.update();
+
+    // Rotaciones automáticas
+    this.caja.rotation.x += 0.01;
+    this.caja.rotation.y += 0.01;
+    this.caja.rotation.z += 0.01;
 
     // Le decimos al renderizador 'visualiza la escena que te indico usando la
     // cámara que te estoy pasando'
