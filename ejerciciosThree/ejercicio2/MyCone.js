@@ -1,6 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 
-class MyBox extends THREE.Object3D {
+class MyCone extends THREE.Object3D {
 
     constructor(gui, titleGui) {
         super();
@@ -12,29 +12,29 @@ class MyBox extends THREE.Object3D {
 
         // Un Mesh se compone de geometría y material. En este caso, como material
         // se crea uno a partir de un color
-        var boxGeom = new THREE.BoxGeometry(1, 1, 1);
-        var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
+        var coneGeom = new THREE.ConeGeometry(1.0, 2.0, 8);
+        var coneMat = new THREE.MeshNormalMaterial({flatShading: true});
 
         // Ya podemos construir el Mesh
-        var box = new THREE.Mesh(boxGeom, boxMat);
+        this.cone = new THREE.Mesh(coneGeom, coneMat);
 
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(box);
+        this.add(this.cone);
     }
 
     createGUI(gui, titleGui) {
         // Controles para el tamaño, la orientación y la posición de la caja
         this.guiControls = new function () {
-            this.sizeX = 1.0;
-            this.sizeY = 1.0;
-            this.sizeZ = 1.0;
+            this.radius = 1.0;
+            this.height = 2.0;
+            this.resolution = 8;
 
             // Un botón para dejarlo todo en su posición inicial. Cuando se pulse, se
             // ejecutará esta función
             this.reset = function () {
-                this.sizeX = 1.0;
-                this.sizeY = 1.0;
-                this.sizeZ = 1.0;
+                this.radius = 1.0;
+                this.height = 2.0;
+                this.resolution = 8;
             }
         }
 
@@ -45,17 +45,18 @@ class MyBox extends THREE.Object3D {
         // Las tres cifras indican un valor mínimo, un máximo y el incremento.
         // El método listen() permite que si se cambia el valor de la variable en
         // código, el deslizador de la interfaz se actualice.
-        folder.add(this.guiControls, 'sizeX', 0.1, 5.0, 0.1).name("Tamaño X : ").listen();
-        folder.add(this.guiControls, 'sizeY', 0.1, 5.0, 0.1).name("Tamaño Y : ").listen();
-        folder.add(this.guiControls, 'sizeZ', 0.1, 5.0, 0.1).name("Tamaño Z : ").listen();
+        folder.add(this.guiControls, 'radius', 0.1, 5.0, 0.1).name("Radio : ").listen();
+        folder.add(this.guiControls, 'height', 0.1, 5.0, 0.1).name("Altura : ").listen();
+        folder.add(this.guiControls, 'resolution', 3, 20, 1).name("Resolución : ").listen();
 
         folder.add(this.guiControls, 'reset').name('[ Reset ]');
     }
 
     update() {
-        this.scale.set(this.guiControls.sizeX, this.guiControls.sizeY, this.guiControls.sizeZ);
+        //this.scale.set(this.guiControls.radius, this.guiControls.height, this.guiControls.radius);
+        this.cone.geometry = new THREE.ConeGeometry(this.guiControls.radius, this.guiControls.height, this.guiControls.resolution);
     }
 
 }
 
-export {MyBox};
+export {MyCone};

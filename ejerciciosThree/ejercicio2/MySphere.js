@@ -1,6 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 
-class MyBox extends THREE.Object3D {
+class MySphere extends THREE.Object3D {
 
     constructor(gui, titleGui) {
         super();
@@ -12,29 +12,29 @@ class MyBox extends THREE.Object3D {
 
         // Un Mesh se compone de geometría y material. En este caso, como material
         // se crea uno a partir de un color
-        var boxGeom = new THREE.BoxGeometry(1, 1, 1);
-        var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
+        var sphGeom = new THREE.SphereGeometry(1, 8, 8);
+        var sphMat = new THREE.MeshNormalMaterial({flatShading: true});
 
         // Ya podemos construir el Mesh
-        var box = new THREE.Mesh(boxGeom, boxMat);
+        this.sphere = new THREE.Mesh(sphGeom, sphMat);
 
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(box);
+        this.add(this.sphere);
     }
 
     createGUI(gui, titleGui) {
         // Controles para el tamaño, la orientación y la posición de la caja
         this.guiControls = new function () {
-            this.sizeX = 1.0;
-            this.sizeY = 1.0;
-            this.sizeZ = 1.0;
+            this.radius = 1.0;
+            this.horizontalResolution = 8;
+            this.verticalResolution = 8;
 
             // Un botón para dejarlo todo en su posición inicial. Cuando se pulse, se
             // ejecutará esta función
             this.reset = function () {
-                this.sizeX = 1.0;
-                this.sizeY = 1.0;
-                this.sizeZ = 1.0;
+                this.radius = 1.0;
+                this.horizontalResolution = 8;
+                this.verticalResolution = 8;
             }
         }
 
@@ -45,17 +45,17 @@ class MyBox extends THREE.Object3D {
         // Las tres cifras indican un valor mínimo, un máximo y el incremento.
         // El método listen() permite que si se cambia el valor de la variable en
         // código, el deslizador de la interfaz se actualice.
-        folder.add(this.guiControls, 'sizeX', 0.1, 5.0, 0.1).name("Tamaño X : ").listen();
-        folder.add(this.guiControls, 'sizeY', 0.1, 5.0, 0.1).name("Tamaño Y : ").listen();
-        folder.add(this.guiControls, 'sizeZ', 0.1, 5.0, 0.1).name("Tamaño Z : ").listen();
+        folder.add(this.guiControls, 'radius', 0.1, 5.0, 0.1).name("Radio : ").listen();
+        folder.add(this.guiControls, 'horizontalResolution', 3, 20, 1).name("ResoluciónH : ").listen();
+        folder.add(this.guiControls, 'verticalResolution', 3, 20, 1).name("ResoluciónV : ").listen();
 
         folder.add(this.guiControls, 'reset').name('[ Reset ]');
     }
 
     update() {
-        this.scale.set(this.guiControls.sizeX, this.guiControls.sizeY, this.guiControls.sizeZ);
+        this.sphere.geometry = new THREE.SphereGeometry(this.guiControls.radius, this.guiControls.horizontalResolution, this.guiControls.verticalResolution);
     }
 
 }
 
-export {MyBox};
+export {MySphere};

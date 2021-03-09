@@ -1,6 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 
-class MyBox extends THREE.Object3D {
+class MyTorus extends THREE.Object3D {
 
     constructor(gui, titleGui) {
         super();
@@ -12,29 +12,31 @@ class MyBox extends THREE.Object3D {
 
         // Un Mesh se compone de geometría y material. En este caso, como material
         // se crea uno a partir de un color
-        var boxGeom = new THREE.BoxGeometry(1, 1, 1);
-        var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
+        var torGeom = new THREE.TorusGeometry(3, 1, 8, 8);
+        var torMat = new THREE.MeshNormalMaterial({flatShading: true});
 
         // Ya podemos construir el Mesh
-        var box = new THREE.Mesh(boxGeom, boxMat);
+        this.torus = new THREE.Mesh(torGeom, torMat);
 
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(box);
+        this.add(this.torus);
     }
 
     createGUI(gui, titleGui) {
         // Controles para el tamaño, la orientación y la posición de la caja
         this.guiControls = new function () {
-            this.sizeX = 1.0;
-            this.sizeY = 1.0;
-            this.sizeZ = 1.0;
+            this.torusRadius = 3.0;
+            this.tubeRadius = 1.0;
+            this.torusResolution = 8;
+            this.tubeResolution = 8;
 
             // Un botón para dejarlo todo en su posición inicial. Cuando se pulse, se
             // ejecutará esta función
             this.reset = function () {
-                this.sizeX = 1.0;
-                this.sizeY = 1.0;
-                this.sizeZ = 1.0;
+                this.torusRadius = 3.0;
+                this.tubeRadius = 1.0;
+                this.torusResolution = 8;
+                this.tubeResolution = 8;
             }
         }
 
@@ -45,17 +47,18 @@ class MyBox extends THREE.Object3D {
         // Las tres cifras indican un valor mínimo, un máximo y el incremento.
         // El método listen() permite que si se cambia el valor de la variable en
         // código, el deslizador de la interfaz se actualice.
-        folder.add(this.guiControls, 'sizeX', 0.1, 5.0, 0.1).name("Tamaño X : ").listen();
-        folder.add(this.guiControls, 'sizeY', 0.1, 5.0, 0.1).name("Tamaño Y : ").listen();
-        folder.add(this.guiControls, 'sizeZ', 0.1, 5.0, 0.1).name("Tamaño Z : ").listen();
+        folder.add(this.guiControls, 'torusRadius', 0.1, 5.0, 0.1).name("Radio Toro : ").listen();
+        folder.add(this.guiControls, 'tubeRadius', 0.1, 5.0, 0.1).name("Radio Tubo : ").listen();
+        folder.add(this.guiControls, 'torusResolution', 3, 20, 1).name("Res. Toro : ").listen();
+        folder.add(this.guiControls, 'tubeResolution', 3, 20, 1).name("Res. Tubo : ").listen();
 
         folder.add(this.guiControls, 'reset').name('[ Reset ]');
     }
 
     update() {
-        this.scale.set(this.guiControls.sizeX, this.guiControls.sizeY, this.guiControls.sizeZ);
+        this.torus.geometry = new THREE.TorusGeometry(this.guiControls.torusRadius, this.guiControls.tubeRadius, this.guiControls.torusResolution, this.guiControls.tubeResolution);
     }
 
 }
 
-export {MyBox};
+export {MyTorus};
