@@ -17,7 +17,7 @@ class MyRevolObj extends THREE.Object3D {
         // se crea uno a partir de un color
         //var geom = new THREE.BoxGeometry(1, 1, 1);
         var geom = new LatheGeometry(this.points, 12, 0, 2 * Math.PI);
-        this.mat = new THREE.MeshNormalMaterial({flatShading: true});
+        this.mat = new THREE.MeshNormalMaterial({flatShading: true, side: THREE.DoubleSide});
 
         // Ya podemos construir el Mesh
         this.obj = new THREE.Mesh(geom, this.mat);
