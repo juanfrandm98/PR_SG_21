@@ -51,7 +51,7 @@ class MyScene extends THREE.Scene {
 
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     this.axis = new THREE.AxesHelper(5);
-    this.add( axis );
+    this.add( this.axis );
 
     // A partir de aquí, creamos los modelos necesarios para el ejercicio. Cada
     // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
