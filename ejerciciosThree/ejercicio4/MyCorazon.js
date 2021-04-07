@@ -2,7 +2,7 @@ import * as THREE from '../libs/three.module.js'
 
 class MyCorazon extends THREE.Object3D {
 
-    constructor() {
+    constructor(color) {
         super();
 
         var shape = new THREE.Shape();
@@ -28,15 +28,15 @@ class MyCorazon extends THREE.Object3D {
         // se crea uno a partir de un color
         //var geom = new THREE.BoxGeometry(1, 1, 1);
         var geom = new THREE.ExtrudeBufferGeometry(shape, options);
-        this.mat = new THREE.MeshPhongMaterial({color: new THREE.Color(255, 0, 0)});
+        this.mat = new THREE.MeshPhongMaterial({color: color});
 
         // Ya podemos construir el Mesh
         this.obj = new THREE.Mesh(geom, this.mat);
-        this.obj.rotateZ(Math.PI)
         this.obj.scale.x = 0.3;
         this.obj.scale.y = 0.3;
         this.obj.scale.z = 0.3;
-        this.obj.position.y += 3;
+        this.obj.position.y -= 3;
+        this.obj.position.x -= 1.55;
 
         // Y añadirlo como hijo del Object3D (el this)
         this.add(this.obj);

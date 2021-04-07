@@ -1,26 +1,35 @@
 /*
- * EJERCICIO 4. GEOMETRÍA POR BARRIDO
+ * EJERCICIO 5. GEOMETRÍA DE SÓLIDOS CONSTRUCTIVA
  *
- * Mediante este ejercicio el alumno aprenderá varias cosas:
- * a) Crear contornos con THREE.Shape.
- * b) Usar dichos contornos para realizar extrusiones (con y sin bisel).
- * c) Usar dichos contornos para realizar barridos por una trayectoria definida
- *    mediante puntos.
- * d) Realizar animaciones que implican combinar rotaciones sobre varios ejes.
+ * Con este ejercicio el alumno se familiarizará con las operaciones booleanas
+ * como medio de construir sólidos con geometría compleja a partir de sólidos
+ * más sencillos. El vídeo geometria-solidos-constructiva.mp4 muestra el
+ * resultado.
  *
- * El vídeo geometría-barrido.mp4 muestra un posible resultado. En el vídeo, las
- * figuras diamante y corazón están hechas con extrusión con bisel. Las figuras
- * pica y trébol están hechas también con extrusión con bisel salvo el pie que
- * está hecho con una revolución. Para las columnas se han aprovechado los
- * contornos del trebol y corazón para hacer un barrido por una trayectoria de
- * varios puntos.
+ * No es necesario implementar todas las rotaciones que se muestran en el vídeo.
+ * Ni realizar exactamente todas las figuras mostradas. Basta con que se aprenda
+ * a crear figuras con esta técnica.
  *
- * No es necesario implementar las rotaciones que se muestran en el vídeo. Basta
- * con que se aprenda a crear figuras con esa topología: el barrido de un
- * contorno.
+ * Eso sí, para un mejor aprendizaje es IMPORTANTE fijarse una figura objetivo e
+ * intentar reproducirla. No realizar operaciones booleanas sin ningún sentido a
+ * ver lo que sale.
  *
  * A tener en cuenta:
- * - Para la trayectoria del barrido se ha usado THREE.CatmullRomCurve3.
+ * - En cada operación se puede partir de sólidos que se hayan generado a partir
+ *   de:
+ *     - Primitivas.
+ *     - Revolución.
+ *     - Barridos.
+ *     - Otras operaciones booleanas.
+ * - El procedimiento a seguir es, en general, el siguiente:
+ *     a) Crear las geometrías con las que se va a operar.
+ *     b) Colocarlas en posición y orientación adecuada para la siguiente
+ *        operación.
+ *     c) Construir las versiones ThreeBSP de dichas geometrías.
+ *     d) Operarlas.
+ *     e) Finalmente, se construye el Mesh a partir de la geometría final.
+ * - La rosca de la tuerca, que supone bastantes operaciones entre las mallas de
+ *   polígonos corresopndientes, tarda un cierto tiempo en completarse.
  *
  */
 
@@ -68,26 +77,6 @@ class MyScene extends THREE.Scene {
         // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
         // referencia a la gui y el texto bajo el que se agruparán los controles de
         // la interfaz que añada el modelo
-        this.diamante = new MyDiamante();
-        this.diamante.position.x = 5;
-        this.diamante.position.y = 5;
-        this.add(this.diamante);
-
-        this.corazon = new MyCorazon(new Color(255, 0, 0));
-        this.corazon.rotateZ(Math.PI)
-        this.corazon.position.x = -5;
-        this.corazon.position.y = -5;
-        this.add(this.corazon);
-
-        this.pica = new MyPica();
-        this.pica.position.x = -5;
-        this.pica.position.y = 5;
-        this.add(this.pica);
-
-        this.trebol = new MyTrebol();
-        this.trebol.position.x = +5;
-        this.trebol.position.y = -5;
-        this.add(this.trebol);
 
     }
 
@@ -127,8 +116,6 @@ class MyScene extends THREE.Scene {
         this.guiControls = new function () {
             // En el contexto de una función, this alude a la función
             this.lightIntensity = 0.5;
-            this.animationOnOff = false;
-            this.animationSpeed = 0.01;
         }
 
         // Se va a crear una sección para los controles de esta clase
@@ -136,10 +123,6 @@ class MyScene extends THREE.Scene {
 
         // Se le añade un control para la intensidad de la luz
         lightFolder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1).name('Intensidad de la luz : ');
-
-        var animationFolder = gui.addFolder('Animación');
-        animationFolder.add(this.guiControls, 'animationOnOff').name('Activa : ');
-        animationFolder.add(this.guiControls, 'animationSpeed', 0.01, 0.1, 0.01).name('Velocidad : ');
 
         return gui;
     }
@@ -218,17 +201,6 @@ class MyScene extends THREE.Scene {
         this.cameraControl.update();
 
         // Se actualizan el resto de los modelos
-        this.diamante.update();
-        this.corazon.update();
-        this.pica.update();
-        this.trebol.update();
-
-        if (this.guiControls.animationOnOff) {
-            this.diamante.rotateY(this.guiControls.animationSpeed);
-            this.corazon.rotateY(-this.guiControls.animationSpeed);
-            this.pica.rotateY(this.guiControls.animationSpeed);
-            this.trebol.rotateY(this.guiControls.animationSpeed);
-        }
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
