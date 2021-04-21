@@ -1,35 +1,10 @@
 /*
- * EJERCICIO 5. GEOMETRÍA DE SÓLIDOS CONSTRUCTIVA
+ * EJERCICIO 6. CARGAR UN MODELO EN FORMATO .OBJ
  *
- * Con este ejercicio el alumno se familiarizará con las operaciones booleanas
- * como medio de construir sólidos con geometría compleja a partir de sólidos
- * más sencillos. El vídeo geometria-solidos-constructiva.mp4 muestra el
- * resultado.
+ * Este ejercicio consiste en cargar un modelo en formato .obj. Se proporciona
+ * un modelo, pero el alumno puede buscar otro si lo desea.
  *
- * No es necesario implementar todas las rotaciones que se muestran en el vídeo.
- * Ni realizar exactamente todas las figuras mostradas. Basta con que se aprenda
- * a crear figuras con esta técnica.
- *
- * Eso sí, para un mejor aprendizaje es IMPORTANTE fijarse una figura objetivo e
- * intentar reproducirla. No realizar operaciones booleanas sin ningún sentido a
- * ver lo que sale.
- *
- * A tener en cuenta:
- * - En cada operación se puede partir de sólidos que se hayan generado a partir
- *   de:
- *     - Primitivas.
- *     - Revolución.
- *     - Barridos.
- *     - Otras operaciones booleanas.
- * - El procedimiento a seguir es, en general, el siguiente:
- *     a) Crear las geometrías con las que se va a operar.
- *     b) Colocarlas en posición y orientación adecuada para la siguiente
- *        operación.
- *     c) Construir las versiones ThreeBSP de dichas geometrías.
- *     d) Operarlas.
- *     e) Finalmente, se construye el Mesh a partir de la geometría final.
- * - La rosca de la tuerca, que supone bastantes operaciones entre las mallas de
- *   polígonos corresopndientes, tarda un cierto tiempo en completarse.
+ * Se muestra un posible resultado en el vídeo modeloCargado.mp4.
  *
  */
 
@@ -39,9 +14,8 @@ import {GUI} from '../libs/dat.gui.module.js'
 import {TrackballControls} from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
-import {MyTaza} from "./MyTaza.js";
-import {MyPiezaCurva} from "./MyPiezaCurva.js";
-import {MyTuerca} from "./MyTuerca.js";
+import {MyModeloObj} from "./MyModeloObj.js"
+import {MyGround} from "./MyGround.js";
 
 /// La clase fachada del modelo
 /**
@@ -71,20 +45,15 @@ class MyScene extends THREE.Scene {
         // Tendremos una cámara con un control de movimiento con el ratón
         this.createCamera();
 
+        this.ground = new MyGround();
+        this.add(this.ground);
+
         // A partir de aquí, creamos los modelos necesarios para el ejercicio. Cada
         // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
         // referencia a la gui y el texto bajo el que se agruparán los controles de
         // la interfaz que añada el modelo
-        this.taza = new MyTaza();
-        this.add(this.taza);
-
-        this.piezaCurva = new MyPiezaCurva();
-        this.piezaCurva.position.x = 5;
-        this.add(this.piezaCurva);
-
-        this.tuerca = new MyTuerca();
-        this.tuerca.position.x = -5;
-        this.add(this.tuerca);
+        this.modelo = new MyModeloObj();
+        this.add(this.modelo);
 
     }
 
@@ -215,11 +184,7 @@ class MyScene extends THREE.Scene {
         this.cameraControl.update();
 
         // Se actualizan el resto de los modelos
-        if (this.guiControls.animationOnOff) {
-            this.taza.update(this.guiControls.animationSpeed);
-            this.piezaCurva.update(this.guiControls.animationSpeed);
-            this.tuerca.update(this.guiControls.animationSpeed);
-        }
+        if (this.guiControls.animationOnOff) this.modelo.update(this.guiControls.animationSpeed);
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
