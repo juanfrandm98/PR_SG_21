@@ -20,6 +20,7 @@ class MyTuerca extends THREE.Object3D {
           extrudePath: path,
         };
         var rosca = new THREE.ExtrudeGeometry(shape, options);
+        rosca.rotateX(Math.PI / 2);
 
         var cuerpoTuercaBsp = new ThreeBSP(cuerpoTuerca);
         var bordesTuercaBsp = new ThreeBSP(bordesTuerca);
@@ -52,25 +53,23 @@ class MyTuerca extends THREE.Object3D {
     createPath() {
         var path = [];
 
-        path.push(new THREE.Vector3(-0.5,-0.5,0));
-        path.push(new THREE.Vector3(0,-0.45,0.5));
-        path.push(new THREE.Vector3(0.5,-0.4,0));
-        path.push(new THREE.Vector3(0,-0.35,-0.5));
-        path.push(new THREE.Vector3(-0.5,-0.3,0));
-        path.push(new THREE.Vector3(0,-0.25,0.5));
-        path.push(new THREE.Vector3(0.5,-0.2,0));
-        path.push(new THREE.Vector3(0,-0.15,-0.5));
-        path.push(new THREE.Vector3(-0.5,-0.1,0));
-        path.push(new THREE.Vector3(0,-0.05,0.5));
-        path.push(new THREE.Vector3(0.5,0,0));
-        path.push(new THREE.Vector3(0,0.05,-0.5));
-        path.push(new THREE.Vector3(-0.5,0.1,0));
-        path.push(new THREE.Vector3(0,0.15,0.5));
-        path.push(new THREE.Vector3(0.5,0.2,0));
-        path.push(new THREE.Vector3(0,0.25,-0.5));
-        path.push(new THREE.Vector3(-0.5,0.3,0));
-        path.push(new THREE.Vector3(0,0.35,0.5));
-        path.push(new THREE.Vector3(0.5,0.4,0));
+        var anguloAcumulado = 0;
+        var anguloPorVertice = Math.PI / 10;
+        var altura= -0.4;
+        var maxAltura = 0.4;
+        var radio = 0.4;
+        var alturaPorVertice = 0.005;
+
+        while( altura < maxAltura ) {
+            var x = Math.sin(anguloAcumulado) * radio;
+            var y = - Math.cos(anguloAcumulado) * radio;
+            var z = altura;
+
+            path.push(new THREE.Vector3(x,y,z));
+
+            altura += alturaPorVertice;
+            anguloAcumulado += anguloPorVertice;
+        }
 
         return new THREE.CatmullRomCurve3(path);
     }
