@@ -26,6 +26,8 @@ import {GUI} from '../libs/dat.gui.module.js'
 import {TrackballControls} from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
+import {MyNave} from "./MyNave.js"
+import {MyGround} from "./MyGround.js"
 
 /// La clase fachada del modelo
 /**
@@ -59,6 +61,11 @@ class MyScene extends THREE.Scene {
         // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
         // referencia a la gui y el texto bajo el que se agruparán los controles de
         // la interfaz que añada el modelo
+        this.nave = new MyNave();
+        this.add(this.nave);
+
+        this.ground = new MyGround();
+        this.add(this.ground);
 
     }
 
@@ -98,8 +105,6 @@ class MyScene extends THREE.Scene {
         this.guiControls = new function () {
             // En el contexto de una función, this alude a la función
             this.lightIntensity = 0.5;
-            this.animationOnOff = false;
-            this.animationSpeed = 0.01;
         }
 
         // Se va a crear una sección para los controles de esta clase
@@ -107,10 +112,6 @@ class MyScene extends THREE.Scene {
 
         // Se le añade un control para la intensidad de la luz
         lightFolder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1).name('Intensidad de la luz : ');
-
-        var animationFolder = gui.addFolder('Animación');
-        animationFolder.add(this.guiControls, 'animationOnOff').name('Activa : ');
-        animationFolder.add(this.guiControls, 'animationSpeed', 0.01, 0.1, 0.01).name('Velocidad : ');
 
         return gui;
     }
@@ -189,6 +190,7 @@ class MyScene extends THREE.Scene {
         this.cameraControl.update();
 
         // Se actualizan el resto de los modelos
+        this.nave.update();
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
