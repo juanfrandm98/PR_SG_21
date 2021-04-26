@@ -64,9 +64,6 @@ class MyScene extends THREE.Scene {
         this.nave = new MyNave();
         this.add(this.nave);
 
-        this.ground = new MyGround();
-        this.add(this.ground);
-
     }
 
     createCamera() {
