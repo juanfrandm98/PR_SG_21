@@ -12,8 +12,9 @@ import {GUI} from '../libs/dat.gui.module.js'
 import {TrackballControls} from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
-import {MyNave} from "./MyNave.js"
+import {MyComecocos} from "./MyComecocos.js"
 import {MyGround} from "./MyGround.js"
+import {AxisHelper} from "../libs/three.module.js";
 
 /// La clase fachada del modelo
 /**
@@ -47,8 +48,14 @@ class MyScene extends THREE.Scene {
         // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
         // referencia a la gui y el texto bajo el que se agruparán los controles de
         // la interfaz que añada el modelo
-        this.nave = new MyNave();
-        this.add(this.nave);
+        this.comecocos = new MyComecocos();
+        this.add(this.comecocos);
+
+        this.axis = new AxisHelper(5);
+        this.add(this.axis);
+
+        this.ground = new MyGround();
+        this.add(this.ground);
 
     }
 
@@ -173,7 +180,7 @@ class MyScene extends THREE.Scene {
         this.cameraControl.update();
 
         // Se actualizan el resto de los modelos
-        this.nave.update();
+        this.comecocos.update();
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
