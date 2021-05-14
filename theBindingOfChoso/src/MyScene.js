@@ -220,9 +220,10 @@ class MyScene extends THREE.Scene {
     // Controlador de eventos del ratón
     mouseController(event) {
         if(event.button === 0) {
-            var origin = this.choso.getPosition();
+            var pos = this.choso.getPosition();
+            var origin = new THREE.Vector3(pos.x, pos.y, pos.z);
             var destiny = this.getMousePos(event);
-            var speed = 1;
+            var speed = this.choso.getShootSpeed();
             this.shootsController.createShoot(origin, destiny, speed);
         }
     }

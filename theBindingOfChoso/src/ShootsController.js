@@ -12,17 +12,19 @@ class ShootsController extends THREE.Object3D {
     createShoot(origin, destiny, speed) {
         var newShoot = new Shoot(origin, destiny, speed);
         this.shoots.push(newShoot);
-        //this.add(this.shoots[this.shoots.length - 1]);
         this.add(newShoot);
     }
 
     update() {
-        for(var i = 0; i < this.shoots.length; i++)
-            if(this.shoots[i].getFinished())
-                this.shoots[i].dispose();
+        for(var i = 0; i < this.shoots.length; i++) {
+            if(this.shoots[i].getFinished()) {
+                this.shoots[i].delete();
+                this.shoots.splice(i, 1);
+                if(i > 0) i = i - 1;
+            }
 
-        for(var i = 0; i < this.shoots.length; i++)
-            this.shoots[i].update();
+            if(i < this.shoots.length) this.shoots[i].update();
+        }
     }
 
 }

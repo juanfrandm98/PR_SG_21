@@ -19,9 +19,10 @@ class Shoot extends THREE.Object3D {
         var origen = {p: 0};
         var destino = {p: 1};
         var that = this;
+        var duration = this.calculateDuration(origin, destiny, speed);
 
         var mov = new TWEEN.Tween(origen)
-            .to(destino, 1000)
+            .to(destino, duration)
             .easing(TWEEN.Easing.Linear.None)
             .onUpdate(function () {
                 var t = origen.p;
@@ -30,6 +31,7 @@ class Shoot extends THREE.Object3D {
             })
             .onComplete(function () {
                 origen = 0;
+                that.finished = true;
             });
 
         mov.start();
@@ -40,12 +42,30 @@ class Shoot extends THREE.Object3D {
         return new THREE.CatmullRomCurve3(path);
     }
 
+    calculateDuration(origin, destiny, speed) {
+        var timePerUnit = 100;
+        var distance = (destiny.x - origin.x) * (destiny.x - origin.x);
+        distance = distance + (destiny.z - origin.z) * (destiny.z - origin.z);
+        distance = Math.sqrt(distance);
+
+        var time = distance * timePerUnit;
+        return(time / speed);
+    }
+
     update() {
         TWEEN.update();
+
+        if(this.finished) {
+            this.shoot.geometry.dispose();
+        }
     }
 
     getFinished() {
         return this.finished;
+    }
+
+    delete() {
+        this.shoot.geometry.dispose();
     }
 
 }

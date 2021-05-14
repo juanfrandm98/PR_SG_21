@@ -10,6 +10,7 @@ class Choso extends Character {
         var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
 
         this.speed = 0.5;
+        this.shootSpeed = 1.25;
 
         this.choso = new THREE.Mesh(boxGeom, boxMat);
         this.choso.position.y += 1;
