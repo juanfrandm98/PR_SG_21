@@ -9,8 +9,8 @@ class ShootsController extends THREE.Object3D {
         this.shoots = [];
     }
 
-    createShoot(origin, destiny, speed) {
-        var newShoot = new Shoot(origin, destiny, speed);
+    createShoot(origin, destiny, speed, radius) {
+        var newShoot = new Shoot(origin, destiny, speed, radius);
         this.shoots.push(newShoot);
         this.add(newShoot);
     }

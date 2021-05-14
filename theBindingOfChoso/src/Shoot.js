@@ -3,10 +3,10 @@ import * as TWEEN from '../libs/tween.esm.js'
 
 class Shoot extends THREE.Object3D {
 
-    constructor(origin, destiny, speed) {
+    constructor(origin, destiny, speed, radius) {
         super();
 
-        var sphGeom = new THREE.SphereGeometry(0.25, 10, 10);
+        var sphGeom = new THREE.SphereGeometry(radius, 10, 10);
         var sphMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
 
         this.shoot = new THREE.Mesh(sphGeom, sphMat);

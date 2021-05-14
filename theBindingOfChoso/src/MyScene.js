@@ -224,7 +224,8 @@ class MyScene extends THREE.Scene {
             var origin = new THREE.Vector3(pos.x, pos.y, pos.z);
             var destiny = this.getMousePos(event);
             var speed = this.choso.getShootSpeed();
-            this.shootsController.createShoot(origin, destiny, speed);
+            var radius = this.choso.getShootRadius();
+            this.shootsController.createShoot(origin, destiny, speed, radius);
         }
     }
 
