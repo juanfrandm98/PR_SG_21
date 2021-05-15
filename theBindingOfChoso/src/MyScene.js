@@ -13,6 +13,8 @@ import {TrackballControls} from '../libs/TrackballControls.js'
 import {MyGround} from "./MyGround.js"
 import {Choso} from "./Choso.js";
 import {ShootsController} from "./ShootsController.js";
+import {Bee} from "./Bee.js";
+import {Wolf} from "./Wolf.js";
 
 /// La clase fachada del modelo
 /**
@@ -54,6 +56,13 @@ class MyScene extends THREE.Scene {
 
         this.shootsController = new ShootsController();
         this.add(this.shootsController);
+
+        this.bee = new Bee();
+        this.bee.position.x = 50;
+        this.add(this.bee);
+
+        this.wolf = new Wolf(new THREE.Vector3(-50, 0, 0));
+        this.add(this.wolf);
 
     }
 
@@ -182,6 +191,8 @@ class MyScene extends THREE.Scene {
         this.shootsController.update();
 
         // Se actualizan el resto de los modelos
+        this.bee.update();
+        this.wolf.update(this.choso.getPosition());
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
