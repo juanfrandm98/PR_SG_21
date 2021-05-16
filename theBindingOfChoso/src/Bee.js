@@ -4,7 +4,7 @@ import {MathUtils} from "../libs/three.module.js";
 
 class Bee extends Character {
 
-    constructor() {
+    constructor(initialPos) {
         super();
 
         var boxGeom = new THREE.BoxGeometry(1, 1, 1);
@@ -13,18 +13,15 @@ class Bee extends Character {
         this.speed = 0.15;
         this.shootSpeed = 0;
 
-        this.bee = new THREE.Mesh(boxGeom, boxMat);
-        this.bee.position.y += 1;
-        this.add(this.bee);
+        this.hitBox = new THREE.Mesh(boxGeom, boxMat);
+        this.hitBox.position.copy(initialPos);
+        this.hitBox.position.y += 1;
+        this.add(this.hitBox);
 
         this.directions = ["up", "down", "left", "right"];
         this.direction;
         this.tick = 0;
         this.maxTicks = 30;
-    }
-
-    getPosition() {
-        return this.bee.position;
     }
 
     update() {
@@ -34,23 +31,24 @@ class Bee extends Character {
             this.tick = 0;
         }
 
+        /*
         switch(this.direction) {
             case "up":
-                this.bee.position.z -= this.speed;
+                this.hitBox.position.z -= this.speed;
                 break;
 
             case "down":
-                this.bee.position.z += this.speed;
+                this.hitBox.position.z += this.speed;
                 break;
 
             case "left":
-                this.bee.position.x -= this.speed;
+                this.hitBox.position.x -= this.speed;
                 break;
 
             case "right":
-                this.bee.position.x += this.speed;
+                this.hitBox.position.x += this.speed;
                 break;
-        }
+        }*/
 
         this.tick++;
     }

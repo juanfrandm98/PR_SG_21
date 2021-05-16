@@ -4,7 +4,7 @@ class MyGround extends THREE.Object3D {
 
     constructor() {
         super();
-        var geometryGround = new THREE.BoxGeometry(50, 0.2, 50);
+        var geometryGround = new THREE.BoxGeometry(100, 0.2, 100);
 
         var texture = new THREE.TextureLoader().load('../imgs/grass.jpg');
         var materialGround = new THREE.MeshPhongMaterial({map: texture});

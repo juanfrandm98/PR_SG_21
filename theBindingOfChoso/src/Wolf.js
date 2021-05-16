@@ -13,26 +13,22 @@ class Wolf extends Character {
         this.speed = 0.2;
         this.shootSpeed = 0;
 
-        this.wolf = new THREE.Mesh(boxGeom, boxMat);
-        this.wolf.position.copy(pos);
-        this.wolf.position.y += 1;
-        this.add(this.wolf);
-    }
-
-    getPosition() {
-        return this.wolf.position;
+        this.hitBox = new THREE.Mesh(boxGeom, boxMat);
+        this.hitBox.position.copy(pos);
+        this.hitBox.position.y += 1;
+        this.add(this.hitBox);
     }
 
     update(target) {
-        var difX = this.wolf.position.x - target.x;
-        var difZ = this.wolf.position.z - target.z;
+        var difX = this.hitBox.position.x - target.x;
+        var difZ = this.hitBox.position.z - target.z;
 
         if(Math.abs(difX) > Math.abs(difZ)) {
-            if(difX > 0) this.wolf.position.x -= this.speed;
-            else this.wolf.position.x += this.speed;
+            if(difX > 0) this.hitBox.position.x -= this.speed;
+            else this.hitBox.position.x += this.speed;
         } else {
-            if(difZ > 0) this.wolf.position.z -= this.speed;
-            else this.wolf.position.z += this.speed;
+            if(difZ > 0) this.hitBox.position.z -= this.speed;
+            else this.hitBox.position.z += this.speed;
         }
     }
 

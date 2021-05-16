@@ -12,33 +12,29 @@ class Choso extends Character {
         this.speed = 0.5;
         this.shootSpeed = 1.25;
 
-        this.choso = new THREE.Mesh(boxGeom, boxMat);
-        this.choso.position.y += 1;
-        this.add(this.choso);
+        this.hitBox = new THREE.Mesh(boxGeom, boxMat);
+        this.hitBox.position.y += 1;
+        this.add(this.hitBox);
     }
 
     move(direction) {
         switch(direction) {
             case "up":
-                this.choso.position.z -= this.speed;
+                this.hitBox.position.z -= this.speed;
                 break;
 
             case "down":
-                this.choso.position.z += this.speed;
+                this.hitBox.position.z += this.speed;
                 break;
 
             case "left":
-                this.choso.position.x -= this.speed;
+                this.hitBox.position.x -= this.speed;
                 break;
 
             case "right":
-                this.choso.position.x += this.speed;
+                this.hitBox.position.x += this.speed;
                 break;
         }
-    }
-
-    getPosition() {
-        return this.choso.position;
     }
 
     update() {

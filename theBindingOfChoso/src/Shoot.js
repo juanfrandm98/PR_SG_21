@@ -6,7 +6,10 @@ class Shoot extends THREE.Object3D {
     constructor(origin, destiny, speed, radius) {
         super();
 
-        var sphGeom = new THREE.SphereGeometry(radius, 10, 10);
+        this.radius = radius;
+        this.damage = 1;
+
+        var sphGeom = new THREE.SphereGeometry(this.radius, 10, 10);
         var sphMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
 
         this.shoot = new THREE.Mesh(sphGeom, sphMat);
@@ -64,8 +67,24 @@ class Shoot extends THREE.Object3D {
         return this.finished;
     }
 
+    setFinished(boolean) {
+        this.finished = boolean;
+    }
+
     delete() {
         this.shoot.geometry.dispose();
+    }
+
+    getPosition() {
+        return this.shoot.position;
+    }
+
+    getRadius() {
+        return this.radius;
+    }
+
+    getDamage() {
+        return this.damage;
     }
 
 }
