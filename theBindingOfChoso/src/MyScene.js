@@ -57,7 +57,7 @@ class MyScene extends THREE.Scene {
         this.shootsController = new ShootsController();
         this.add(this.shootsController);
 
-        this.bee = new Bee(new THREE.Vector3(0,0,0));
+        this.bee = new Bee(new THREE.Vector3(50,0,0));
         this.add(this.bee);
 
         this.wolf = new Wolf(new THREE.Vector3(-50, 0, 0));
@@ -196,7 +196,7 @@ class MyScene extends THREE.Scene {
         var targets = [this.bee];
         this.shootsController.checkCollision(targets);
 
-        console.log(this.bee.isDefeated());
+        //console.log(this.bee.isDefeated());
         if(this.bee.isDefeated()) this.bee.delete();
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la

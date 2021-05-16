@@ -31,7 +31,6 @@ class Bee extends Character {
             this.tick = 0;
         }
 
-        /*
         switch(this.direction) {
             case "up":
                 this.hitBox.position.z -= this.speed;
@@ -48,7 +47,7 @@ class Bee extends Character {
             case "right":
                 this.hitBox.position.x += this.speed;
                 break;
-        }*/
+        }
 
         this.tick++;
     }

@@ -22,15 +22,21 @@ class ShootsController extends THREE.Object3D {
     }
 
     update() {
+        var delPos = [];
+        var numDel = 0;
+
         for(var i = 0; i < this.shoots.length; i++) {
             if(this.shoots[i].getFinished()) {
                 this.shoots[i].delete();
-                this.shoots.splice(i, 1);
-                if(i > 0) i = i - 1;
+                delPos.push(i - numDel);
+                numDel++;
             }
 
             if(i < this.shoots.length) this.shoots[i].update();
         }
+
+        for(var i = 0; i < delPos.length; i++)
+            this.shoots.splice(delPos[i], 1);
     }
 
     checkCollision(targets) {
