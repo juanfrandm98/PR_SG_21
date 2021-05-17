@@ -10,7 +10,7 @@ class Wolf extends Character {
         var boxGeom = new THREE.BoxGeometry(2, 2, 2);
         var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
 
-        this.speed = 0.2;
+        this.speed = 8;
         this.shootSpeed = 0;
 
         this.hitBox = new THREE.Mesh(boxGeom, boxMat);
@@ -19,17 +19,28 @@ class Wolf extends Character {
         this.add(this.hitBox);
     }
 
-    update(target) {
-        var difX = this.hitBox.position.x - target.x;
-        var difZ = this.hitBox.position.z - target.z;
+    calculateCoef(position, target, coefX) {
+        var dif;
 
-        if(Math.abs(difX) > Math.abs(difZ)) {
-            if(difX > 0) this.hitBox.position.x -= this.speed;
-            else this.hitBox.position.x += this.speed;
-        } else {
-            if(difZ > 0) this.hitBox.position.z -= this.speed;
-            else this.hitBox.position.z += this.speed;
-        }
+        if(coefX) dif = position.x - target.x;
+        else dif = position.z - target.z;
+
+        if (dif > 0) return -1;
+        else if (dif < 0) return 1;
+        else return 0;
+    }
+
+    update(target) {
+        var tiempoActual = Date.now();
+        var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
+
+        var dirX = this.calculateCoef(this.hitBox.position, target, true);
+        var dirZ = this.calculateCoef(this.hitBox.position, target, false);
+
+        this.hitBox.position.x += dirX * this.speed * segundosTranscurridos;
+        this.hitBox.position.z += dirZ * this.speed * segundosTranscurridos;
+
+        this.tiempoAnterior = tiempoActual;
     }
 
 }

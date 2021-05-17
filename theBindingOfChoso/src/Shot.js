@@ -1,32 +1,32 @@
 import * as THREE from '../libs/three.module.js'
 import * as TWEEN from '../libs/tween.esm.js'
 
-class Shoot extends THREE.Object3D {
+class Shot extends THREE.Object3D {
 
     constructor(speed, radius) {
         super();
 
-        this.defPos = new THREE.Vector3(0, -100, 0);
+        this.defPos = new THREE.Vector3(0, 5, 0);
         this.radius = radius;
         this.damage = 1;
         this.finished = true;
-        this.hidden = true;
         this.speed = speed;
 
         var sphGeom = new THREE.SphereGeometry(this.radius, 10, 10);
         var sphMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
 
-        this.shoot = new THREE.Mesh(sphGeom, sphMat);
-        this.shoot.position.copy(this.defPos);
-        this.add(this.shoot);
+        this.shot = new THREE.Mesh(sphGeom, sphMat);
+        this.shot.position.copy(this.defPos);
+        this.shot.visible = false;
+        this.add(this.shot);
     }
 
     resetShoot(origin, destiny) {
         this.route = this.createRoute(origin, destiny);
         this.finished = false;
-        this.hidden = false;
+        this.shot.visible = true;
 
-        this.shoot.position.copy(origin);
+        this.shot.position.copy(origin);
 
         var origen = {p: 0};
         var destino = {p: 1};
@@ -39,7 +39,7 @@ class Shoot extends THREE.Object3D {
             .onUpdate(function () {
                 var t = origen.p;
                 var posicion = that.route.getPointAt(t);
-                that.shoot.position.copy(posicion);
+                that.shot.position.copy(posicion);
             })
             .onComplete(function () {
                 origen = 0;
@@ -78,12 +78,12 @@ class Shoot extends THREE.Object3D {
 
     hide() {
         this.mov.stop();
-        this.hidden = true;
-        this.shoot.position.copy(this.defPos);
+        this.shot.visible = false;
+        this.shot.position.copy(this.defPos);
     }
 
     getPosition() {
-        return this.shoot.position;
+        return this.shot.position;
     }
 
     getRadius() {
@@ -95,9 +95,9 @@ class Shoot extends THREE.Object3D {
     }
 
     getHidden() {
-        return this.hidden;
+        return !this.shot.visible;
     }
 
 }
 
-export {Shoot};
+export {Shot};

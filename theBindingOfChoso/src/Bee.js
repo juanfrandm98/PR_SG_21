@@ -10,7 +10,7 @@ class Bee extends Character {
         var boxGeom = new THREE.BoxGeometry(1, 1, 1);
         var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
 
-        this.speed = 0.15;
+        this.speed = 5;
         this.shootSpeed = 0;
 
         this.hitBox = new THREE.Mesh(boxGeom, boxMat);
@@ -20,36 +20,44 @@ class Bee extends Character {
 
         this.directions = ["up", "down", "left", "right"];
         this.direction;
-        this.tick = 0;
-        this.maxTicks = 30;
+        this.tiempoAcumulado = 0;
+        this.msCambioDireccion = 2000;
     }
 
     update() {
-        if(this.tick === 0 || this.tick === this.maxTicks) {
+        var tiempoActual = Date.now();
+        var msTranscurridos = tiempoActual - this.tiempoAnterior
+        var segundosTranscurridos = msTranscurridos / 1000;
+
+        this.tiempoAcumulado += msTranscurridos;
+
+        if(!this.enMovimiento || this.tiempoAcumulado >= this.msCambioDireccion) {
             var index = MathUtils.randInt(0, 3);
             this.direction = this.directions[index];
-            this.tick = 0;
+            this.enMovimiento = true;
+            this.tiempoAcumulado = 0;
         }
 
         switch(this.direction) {
             case "up":
-                this.hitBox.position.z -= this.speed;
+                this.hitBox.position.z -= this.speed * segundosTranscurridos;
                 break;
 
             case "down":
-                this.hitBox.position.z += this.speed;
+                this.hitBox.position.z += this.speed * segundosTranscurridos;
                 break;
 
             case "left":
-                this.hitBox.position.x -= this.speed;
+                this.hitBox.position.x -= this.speed * segundosTranscurridos;
                 break;
 
             case "right":
-                this.hitBox.position.x += this.speed;
+                this.hitBox.position.x += this.speed * segundosTranscurridos;
                 break;
         }
 
-        this.tick++;
+        this.tiempoAnterior = tiempoActual;
+
     }
 
 }

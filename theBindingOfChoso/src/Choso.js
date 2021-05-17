@@ -1,5 +1,6 @@
 import * as THREE from '../libs/three.module.js'
 import {Character} from "./Character.js";
+import {ShootingController} from "./ShootingController.js";
 
 class Choso extends Character {
 
@@ -9,35 +10,36 @@ class Choso extends Character {
         var boxGeom = new THREE.BoxGeometry(2, 2, 2);
         var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
 
-        this.speed = 0.5;
+        this.speed = 10;
         this.shootSpeed = 1.25;
 
         this.hitBox = new THREE.Mesh(boxGeom, boxMat);
         this.hitBox.position.y += 1;
         this.add(this.hitBox);
+
+        this.shootingController = new ShootingController(10, 3, 1, 0.2);
+        this.add(this.shootingController);
     }
 
-    move(direction) {
-        switch(direction) {
-            case "up":
-                this.hitBox.position.z -= this.speed;
-                break;
-
-            case "down":
-                this.hitBox.position.z += this.speed;
-                break;
-
-            case "left":
-                this.hitBox.position.x -= this.speed;
-                break;
-
-            case "right":
-                this.hitBox.position.x += this.speed;
-                break;
+    update(dirX, dirZ, shooting, targets) {
+        // Movimiento
+        if(this.enMovimiento) {
+            var tiempoActual = Date.now();
+            var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
+            this.hitBox.position.x += dirX * this.speed * segundosTranscurridos;
+            this.hitBox.position.z += dirZ * this.speed * segundosTranscurridos;
+            this.tiempoAnterior = tiempoActual;
+        } else {
+            this.tiempoAnterior = Date.now();
         }
-    }
 
-    update() {
+        if(dirX !== 0 || dirZ !== 0)
+            this.enMovimiento = true;
+        else
+            this.enMovimiento = false;
+
+        var pos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
+        this.shootingController.update(shooting, pos, new THREE.Vector3(0,0,0), targets);
     }
 
 }

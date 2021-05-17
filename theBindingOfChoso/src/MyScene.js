@@ -12,7 +12,6 @@ import {TrackballControls} from '../libs/TrackballControls.js'
 // Clases para el ejercicio
 import {MyGround} from "./MyGround.js"
 import {Choso} from "./Choso.js";
-import {ShootsController} from "./ShootsController.js";
 import {Bee} from "./Bee.js";
 import {Wolf} from "./Wolf.js";
 
@@ -41,8 +40,11 @@ class MyScene extends THREE.Scene {
         // Tras crear cada elemento se añadirá a la escena con this.add(variable).
         this.createLights();
 
-        // Tendremos una cámara con un control de movimiento con el ratón
-        this.createCamera();
+        // Variables para el movimiento de Choso
+        this.pressedA = false;
+        this.pressedD = false;
+        this.pressedW = false;
+        this.pressedS = false;
 
         // A partir de aquí, creamos los modelos necesarios para el ejercicio. Cada
         // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
@@ -54,14 +56,14 @@ class MyScene extends THREE.Scene {
         this.ground = new MyGround();
         this.add(this.ground);
 
-        this.shootsController = new ShootsController(10, this.choso.getShootSpeed(), this.choso.getShootRadius());
-        this.add(this.shootsController);
-
-        this.bee = new Bee(new THREE.Vector3(50,0,0));
+        this.bee = new Bee(new THREE.Vector3(50, 0, 0));
         this.add(this.bee);
 
         this.wolf = new Wolf(new THREE.Vector3(-50, 0, 0));
         this.add(this.wolf);
+
+        // Tendremos una cámara con un control de movimiento con el ratón
+        this.createCamera();
 
     }
 
@@ -75,7 +77,7 @@ class MyScene extends THREE.Scene {
         // También se indica dónde se coloca
         this.camera.position.set(0, 25, 45);
         // Y hacia dónde mira
-        var look = new THREE.Vector3(0, 0, 0);
+        var look = this.choso.getPosition();
         this.camera.lookAt(look);
         this.add(this.camera);
 
@@ -179,6 +181,24 @@ class MyScene extends THREE.Scene {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    getXCoef(left, right) {
+        var coef = 0;
+
+        if (left) coef -= 1;
+        if (right) coef += 1;
+
+        return coef;
+    }
+
+    getZCoef(up, down) {
+        var coef = 0;
+
+        if (up) coef -= 1;
+        if (down) coef += 1;
+
+        return coef;
+    }
+
     // Se actualizan los elementos de la escena para cada frame
     update() {
         // Se actualiza la intensidad de la luz con lo que haya indicado el usuario
@@ -187,17 +207,16 @@ class MyScene extends THREE.Scene {
 
         // Se actualiza la posición de la cámara según su controlador
         //this.cameraControl.update();
-        this.shootsController.update();
 
         // Se actualizan el resto de los modelos
-        this.bee.update();
-        this.wolf.update(this.choso.getPosition());
+        var dirX = this.getXCoef(this.pressedA, this.pressedD);
+        var dirZ = this.getZCoef(this.pressedW, this.pressedS);
 
         var targets = [this.bee];
-        this.shootsController.checkCollision(targets);
 
-        //console.log(this.bee.isDefeated());
-        if(this.bee.isDefeated()) this.bee.delete();
+        this.choso.update(dirX, dirZ, this.shooting, targets);
+        this.bee.update();
+        this.wolf.update(this.choso.getPosition());
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
@@ -211,18 +230,28 @@ class MyScene extends THREE.Scene {
     }
 
     // Controlador de eventos de teclado
-    keyboardController(event) {
-        // Tecla 'a': movimiento de Choso hacia la izquierda
-        if(event.keyCode == "97") this.choso.move("left");
+    keyboardController(event, down) {
+        switch (event.keyCode) {
+            case 65:
+                if (down) this.pressedA = true;
+                else this.pressedA = false;
+                break;
 
-        // Tecla 'd': movimiento de Choso hacia la derecha
-        if(event.keyCode == "100") this.choso.move("right");
+            case 68:
+                if (down) this.pressedD = true;
+                else this.pressedD = false;
+                break;
 
-        // Tecla 'w': movimiento de Choso hacia arriba
-        if(event.keyCode == "119") this.choso.move("up");
+            case 87:
+                if (down) this.pressedW = true;
+                else this.pressedW = false;
+                break;
 
-        // Tecla 's': movimiento de Choso hacia abajo
-        if(event.keyCode == "115") this.choso.move("down");
+            case 83:
+                if (down) this.pressedS = true;
+                else this.pressedS = false;
+                break;
+        }
     }
 
     getMousePos(event) {
@@ -234,12 +263,9 @@ class MyScene extends THREE.Scene {
     }
 
     // Controlador de eventos del ratón
-    mouseController(event) {
-        if(event.button === 0) {
-            var pos = this.choso.getPosition();
-            var origin = new THREE.Vector3(pos.x, pos.y, pos.z);
-            var destiny = this.getMousePos(event);
-            this.shootsController.shoot(origin, destiny);
+    mouseClickController(event, down) {
+        if (event.button === 0) {
+            this.shooting = down;
         }
     }
 
@@ -255,8 +281,10 @@ $(function () {
     // Se añaden los listener de la aplicación. En este caso, el que va a
     // comprobar cuándo se modifica el tamaño de la ventana de la aplicación
     window.addEventListener('resize', () => scene.onWindowResize());
-    window.addEventListener('keypress', (event) => scene.keyboardController(event));
-    window.addEventListener('mousedown', (event) => scene.mouseController(event));
+    window.addEventListener('keydown', (event) => scene.keyboardController(event, true));
+    window.addEventListener('keyup', (event) => scene.keyboardController(event, false));
+    window.addEventListener('mousedown', (event) => scene.mouseClickController(event, true));
+    window.addEventListener('mouseup', (event) => scene.mouseClickController(event, false));
 
     // Que no se nos olvide, la primera visualización
     scene.update();
