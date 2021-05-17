@@ -17,13 +17,13 @@ class Choso extends Character {
         this.hitBox.position.y += 1;
         this.add(this.hitBox);
 
-        this.shootingController = new ShootingController(10, 3, 1, 0.2);
+        this.shootingController = new ShootingController(10, 3, 15, 0.2, 20);
         this.add(this.shootingController);
     }
 
-    update(dirX, dirZ, shooting, targets) {
+    update(dirX, dirZ, shooting, dirShot, targets) {
         // Movimiento
-        if(this.enMovimiento) {
+        if (this.enMovimiento) {
             var tiempoActual = Date.now();
             var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
             this.hitBox.position.x += dirX * this.speed * segundosTranscurridos;
@@ -33,13 +33,13 @@ class Choso extends Character {
             this.tiempoAnterior = Date.now();
         }
 
-        if(dirX !== 0 || dirZ !== 0)
+        if (dirX !== 0 || dirZ !== 0)
             this.enMovimiento = true;
         else
             this.enMovimiento = false;
 
         var pos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
-        this.shootingController.update(shooting, pos, new THREE.Vector3(0,0,0), targets);
+        this.shootingController.update(shooting, pos, dirShot, targets);
     }
 
 }

@@ -46,6 +46,9 @@ class MyScene extends THREE.Scene {
         this.pressedW = false;
         this.pressedS = false;
 
+        // Variable para el control de la zona del ratón
+        this.shotDir = new THREE.Vector2(0, 0);
+
         // A partir de aquí, creamos los modelos necesarios para el ejercicio. Cada
         // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
         // referencia a la gui y el texto bajo el que se agruparán los controles de
@@ -199,6 +202,16 @@ class MyScene extends THREE.Scene {
         return coef;
     }
 
+    getCameraPosition(pos) {
+        var defPos = new THREE.Vector3(0, 25, 45);
+
+        var x = defPos.x + pos.x;
+        var y = defPos.y + pos.y;
+        var z = defPos.z + pos.z;
+
+        return (new THREE.Vector3(x, y, z));
+    }
+
     // Se actualizan los elementos de la escena para cada frame
     update() {
         // Se actualiza la intensidad de la luz con lo que haya indicado el usuario
@@ -214,9 +227,14 @@ class MyScene extends THREE.Scene {
 
         var targets = [this.bee];
 
-        this.choso.update(dirX, dirZ, this.shooting, targets);
+        this.choso.update(dirX, dirZ, this.shooting, this.shotDir, targets);
+
+        var posChoso = this.choso.getPosition();
+        this.camera.lookAt(posChoso);
+        this.camera.position.copy(this.getCameraPosition(posChoso));
+
         this.bee.update();
-        this.wolf.update(this.choso.getPosition());
+        this.wolf.update(posChoso);
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
@@ -255,11 +273,10 @@ class MyScene extends THREE.Scene {
     }
 
     getMousePos(event) {
-        var mouse = new THREE.Vector3();
+        var mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.z = 1 - 2 * (event.clientY / window.innerHeight);
-        mouse.y = 0;
-        return mouse;
+        mouse.y = - (1 - 2 * (event.clientY / window.innerHeight));
+        return mouse.normalize();
     }
 
     // Controlador de eventos del ratón
@@ -267,6 +284,10 @@ class MyScene extends THREE.Scene {
         if (event.button === 0) {
             this.shooting = down;
         }
+    }
+
+    mousePosController(event) {
+        this.shotDir = this.getMousePos(event);
     }
 
 }
@@ -283,8 +304,12 @@ $(function () {
     window.addEventListener('resize', () => scene.onWindowResize());
     window.addEventListener('keydown', (event) => scene.keyboardController(event, true));
     window.addEventListener('keyup', (event) => scene.keyboardController(event, false));
-    window.addEventListener('mousedown', (event) => scene.mouseClickController(event, true));
+    window.addEventListener('mousedown', (event) => {
+        scene.mousePosController(event);
+        scene.mouseClickController(event, true);
+    });
     window.addEventListener('mouseup', (event) => scene.mouseClickController(event, false));
+    window.addEventListener('mousemove', (event) => scene.mousePosController(event));
 
     // Que no se nos olvide, la primera visualización
     scene.update();

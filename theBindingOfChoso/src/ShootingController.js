@@ -1,24 +1,24 @@
 import * as THREE from '../libs/three.module.js'
-import {Shoot} from "./Shot.js";
+import {Shot} from "./Shot.js";
 
 class ShootingController extends THREE.Object3D {
 
-    constructor(amount, shotsPerSecond, shotSpeed, radius) {
+    constructor(amount, shotsPerSecond, shotSpeed, radius, range) {
         super();
 
         this.shots = [];
         this.msPerShot = 1000 / shotsPerSecond;
         this.shotSpeed = shotSpeed;
         this.shotRadius = radius;
+        this.range = range;
 
         for (var i = 0; i < amount; i++) {
-            this.shots.push(new Shoot(this.shotSpeed, this.shotRadius));
+            this.shots.push(new Shot(this.shotSpeed, this.shotRadius, this.range));
             this.add(this.shots[i]);
         }
 
         this.msUntilShot = 0;
         this.tiempoAnterior = Date.now();
-        console.log("Empieza habiendo " + this.shots.length + " disparos seleccionables");
     }
 
     calculateDistance(first, second) {
@@ -46,10 +46,9 @@ class ShootingController extends THREE.Object3D {
                 }
 
                 if(!encontrado) {
-                    this.shots.push(new Shoot(this.shotSpeed, this.shotRadius));
+                    this.shots.push(new Shot(this.shotSpeed, this.shotRadius));
                     this.shots[this.shots.length - 1].resetShoot(position, direction);
                     this.add(this.shots[i]);
-                    console.log("Ahora hay " + this.shots.length + " disparos seleccionables");
                 }
 
                 this.msUntilShot = this.msPerShot;
