@@ -3,10 +3,15 @@ import {Shoot} from "./Shoot.js";
 
 class ShootsController extends THREE.Object3D {
 
-    constructor() {
+    constructor(amount, speed, radius) {
         super();
 
         this.shoots = [];
+
+        for (var i = 0; i < amount; i++) {
+            this.shoots.push(new Shoot(speed, radius));
+            this.add(this.shoots[i]);
+        }
     }
 
     calculateDistance(first, second) {
@@ -15,37 +20,35 @@ class ShootsController extends THREE.Object3D {
         return Math.sqrt(distance);
     }
 
-    createShoot(origin, destiny, speed, radius) {
-        var newShoot = new Shoot(origin, destiny, speed, radius);
-        this.shoots.push(newShoot);
-        this.add(newShoot);
+    shoot(origin, destiny) {
+        var encontrado = false;
+
+        for (var i = 0; i < this.shoots.length && !encontrado; i++) {
+            if (this.shoots[i].getFinished()) {
+                this.shoots[i].resetShoot(origin, destiny);
+                encontrado = true;
+            }
+        }
     }
 
     update() {
-        var delPos = [];
-        var numDel = 0;
+        for (var i = 0; i < this.shoots.length; i++) {
+            if (!this.shoots[i].getHidden()) {
+                if (this.shoots[i].getFinished())
+                    this.shoots[i].hide();
 
-        for(var i = 0; i < this.shoots.length; i++) {
-            if(this.shoots[i].getFinished()) {
-                this.shoots[i].delete();
-                delPos.push(i - numDel);
-                numDel++;
+                this.shoots[i].update();
             }
-
-            if(i < this.shoots.length) this.shoots[i].update();
         }
-
-        for(var i = 0; i < delPos.length; i++)
-            this.shoots.splice(delPos[i], 1);
     }
 
     checkCollision(targets) {
-        for(var i = 0; i < this.shoots.length; i++) {
-            for(var j = 0; j < targets.length; j++) {
+        for (var i = 0; i < this.shoots.length; i++) {
+            for (var j = 0; j < targets.length; j++) {
                 var distance = this.calculateDistance(this.shoots[i].getPosition(), targets[j].getPosition());
                 var hitDistance = this.shoots[i].getRadius() + targets[j].getHitRadius();
 
-                if(distance <= hitDistance) {
+                if (distance <= hitDistance) {
                     targets[j].takeDamage(this.shoots[i].getDamage());
                     this.shoots[i].setFinished(true);
                 }

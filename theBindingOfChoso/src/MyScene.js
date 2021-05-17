@@ -54,7 +54,7 @@ class MyScene extends THREE.Scene {
         this.ground = new MyGround();
         this.add(this.ground);
 
-        this.shootsController = new ShootsController();
+        this.shootsController = new ShootsController(10, this.choso.getShootSpeed(), this.choso.getShootRadius());
         this.add(this.shootsController);
 
         this.bee = new Bee(new THREE.Vector3(50,0,0));
@@ -239,9 +239,7 @@ class MyScene extends THREE.Scene {
             var pos = this.choso.getPosition();
             var origin = new THREE.Vector3(pos.x, pos.y, pos.z);
             var destiny = this.getMousePos(event);
-            var speed = this.choso.getShootSpeed();
-            var radius = this.choso.getShootRadius();
-            this.shootsController.createShoot(origin, destiny, speed, radius);
+            this.shootsController.shoot(origin, destiny);
         }
     }
 

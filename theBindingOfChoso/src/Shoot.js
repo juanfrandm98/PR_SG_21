@@ -3,28 +3,37 @@ import * as TWEEN from '../libs/tween.esm.js'
 
 class Shoot extends THREE.Object3D {
 
-    constructor(origin, destiny, speed, radius) {
+    constructor(speed, radius) {
         super();
 
+        this.defPos = new THREE.Vector3(0, -100, 0);
         this.radius = radius;
         this.damage = 1;
+        this.finished = true;
+        this.hidden = true;
+        this.speed = speed;
 
         var sphGeom = new THREE.SphereGeometry(this.radius, 10, 10);
         var sphMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
 
         this.shoot = new THREE.Mesh(sphGeom, sphMat);
-        this.shoot.position.copy(origin);
+        this.shoot.position.copy(this.defPos);
         this.add(this.shoot);
+    }
 
+    resetShoot(origin, destiny) {
         this.route = this.createRoute(origin, destiny);
         this.finished = false;
+        this.hidden = false;
+
+        this.shoot.position.copy(origin);
 
         var origen = {p: 0};
         var destino = {p: 1};
         var that = this;
-        var duration = this.calculateDuration(origin, destiny, speed);
+        var duration = this.calculateDuration(origin, destiny, this.speed);
 
-        var mov = new TWEEN.Tween(origen)
+        this.mov = new TWEEN.Tween(origen)
             .to(destino, duration)
             .easing(TWEEN.Easing.Linear.None)
             .onUpdate(function () {
@@ -37,7 +46,7 @@ class Shoot extends THREE.Object3D {
                 that.finished = true;
             });
 
-        mov.start();
+        this.mov.start();
     }
 
     createRoute(origin, destiny) {
@@ -52,15 +61,11 @@ class Shoot extends THREE.Object3D {
         distance = Math.sqrt(distance);
 
         var time = distance * timePerUnit;
-        return(time / speed);
+        return (time / speed);
     }
 
     update() {
         TWEEN.update();
-
-        if(this.finished) {
-            this.shoot.geometry.dispose();
-        }
     }
 
     getFinished() {
@@ -71,8 +76,10 @@ class Shoot extends THREE.Object3D {
         this.finished = boolean;
     }
 
-    delete() {
-        this.shoot.geometry.dispose();
+    hide() {
+        this.mov.stop();
+        this.hidden = true;
+        this.shoot.position.copy(this.defPos);
     }
 
     getPosition() {
@@ -85,6 +92,10 @@ class Shoot extends THREE.Object3D {
 
     getDamage() {
         return this.damage;
+    }
+
+    getHidden() {
+        return this.hidden;
     }
 
 }
