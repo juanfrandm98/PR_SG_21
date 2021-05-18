@@ -46,8 +46,8 @@ class Character extends THREE.Object3D {
         return this.health <= 0;
     }
 
-    delete() {
-        this.hitBox.geometry.dispose();
+    hide() {
+        this.hitBox.visible = false;
     }
 
 }

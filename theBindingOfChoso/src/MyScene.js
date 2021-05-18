@@ -12,8 +12,7 @@ import {TrackballControls} from '../libs/TrackballControls.js'
 // Clases para el ejercicio
 import {MyGround} from "./MyGround.js"
 import {Choso} from "./Choso.js";
-import {Bee} from "./Bee.js";
-import {Wolf} from "./Wolf.js";
+import {EnemyController} from "./EnemyController.js";
 
 /// La clase fachada del modelo
 /**
@@ -56,14 +55,11 @@ class MyScene extends THREE.Scene {
         this.choso = new Choso();
         this.add(this.choso);
 
+        this.enemyController = new EnemyController();
+        this.add(this.enemyController);
+
         this.ground = new MyGround();
         this.add(this.ground);
-
-        this.bee = new Bee(new THREE.Vector3(50, 0, 0));
-        this.add(this.bee);
-
-        this.wolf = new Wolf(new THREE.Vector3(-50, 0, 0));
-        this.add(this.wolf);
 
         // Tendremos una cámara con un control de movimiento con el ratón
         this.createCamera();
@@ -225,7 +221,7 @@ class MyScene extends THREE.Scene {
         var dirX = this.getXCoef(this.pressedA, this.pressedD);
         var dirZ = this.getZCoef(this.pressedW, this.pressedS);
 
-        var targets = [this.bee];
+        var targets = this.enemyController.getEnemies();
 
         this.choso.update(dirX, dirZ, this.shooting, this.shotDir, targets);
 
@@ -233,8 +229,7 @@ class MyScene extends THREE.Scene {
         this.camera.lookAt(posChoso);
         this.camera.position.copy(this.getCameraPosition(posChoso));
 
-        this.bee.update();
-        this.wolf.update(posChoso);
+        this.enemyController.update(this.choso);
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
