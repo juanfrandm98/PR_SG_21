@@ -67,7 +67,6 @@ class ShootingController extends THREE.Object3D {
                 // SE COMPRUEBA SI HA GOLPEADO A ALGÚN OBJETIVO
                 var hitted = false;
 
-                console.log("TARGETS: " + targets.length);
                 for (var j = 0; j < targets.length && !hitted; j++) {
                     var distance = this.calculateDistance(this.shots[i].getPosition(), targets[j].getPosition());
                     var hitDistance = this.shots[i].getRadius() + targets[j].getHitRadius();

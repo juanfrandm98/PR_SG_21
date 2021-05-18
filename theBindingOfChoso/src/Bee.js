@@ -4,7 +4,7 @@ import {MathUtils} from "../libs/three.module.js";
 
 class Bee extends Character {
 
-    constructor(initialPos) {
+    constructor() {
         super();
 
         var boxGeom = new THREE.BoxGeometry(1, 1, 1);
@@ -12,10 +12,11 @@ class Bee extends Character {
 
         this.speed = 5;
         this.shootSpeed = 0;
+        this.maxHealth = 2;
 
         this.hitBox = new THREE.Mesh(boxGeom, boxMat);
-        this.hitBox.position.copy(initialPos);
         this.hitBox.position.y += 1;
+        this.hitBox.visible = false;
         this.add(this.hitBox);
 
         this.directions = ["up", "down", "left", "right"];
@@ -58,6 +59,11 @@ class Bee extends Character {
 
         this.tiempoAnterior = tiempoActual;
 
+    }
+
+    activate(pos) {
+        pos.y += 1;
+        super.activate(pos);
     }
 
 }

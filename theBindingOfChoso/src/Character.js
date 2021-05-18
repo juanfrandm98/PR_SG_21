@@ -50,6 +50,16 @@ class Character extends THREE.Object3D {
         this.hitBox.visible = false;
     }
 
+    getHidden() {
+        return !this.hitBox.visible;
+    }
+
+    activate(pos) {
+        this.health = this.maxHealth;
+        this.hitBox.position.copy(pos);
+        this.hitBox.visible = true;
+    }
+
 }
 
 export {Character};

@@ -13,6 +13,7 @@ import {TrackballControls} from '../libs/TrackballControls.js'
 import {MyGround} from "./MyGround.js"
 import {Choso} from "./Choso.js";
 import {EnemyController} from "./EnemyController.js";
+import {SoundsController} from "./SoundsController.js";
 
 /// La clase fachada del modelo
 /**
@@ -56,6 +57,7 @@ class MyScene extends THREE.Scene {
         this.add(this.choso);
 
         this.enemyController = new EnemyController();
+        this.enemyController.generateEnemies();
         this.add(this.enemyController);
 
         this.ground = new MyGround();
@@ -63,6 +65,10 @@ class MyScene extends THREE.Scene {
 
         // Tendremos una cámara con un control de movimiento con el ratón
         this.createCamera();
+        this.soundsController = new SoundsController(this.camera);
+        this.add(this.soundsController);
+
+
 
     }
 
@@ -221,6 +227,8 @@ class MyScene extends THREE.Scene {
         var dirX = this.getXCoef(this.pressedA, this.pressedD);
         var dirZ = this.getZCoef(this.pressedW, this.pressedS);
 
+        this.soundsController.playChosoShootingSound(this.shooting);
+
         var targets = this.enemyController.getEnemies();
 
         this.choso.update(dirX, dirZ, this.shooting, this.shotDir, targets);
@@ -263,6 +271,14 @@ class MyScene extends THREE.Scene {
             case 83:
                 if (down) this.pressedS = true;
                 else this.pressedS = false;
+                break;
+
+            case 77:
+                if(down) this.soundsController.changeBackground();
+                break;
+
+            default:
+                console.log(event.keyCode);
                 break;
         }
     }

@@ -4,7 +4,7 @@ import {MathUtils} from "../libs/three.module.js";
 
 class Wolf extends Character {
 
-    constructor(pos) {
+    constructor() {
         super();
 
         var boxGeom = new THREE.BoxGeometry(2, 2, 2);
@@ -12,10 +12,11 @@ class Wolf extends Character {
 
         this.speed = 8;
         this.shootSpeed = 0;
+        this.maxHealth = 4;
 
         this.hitBox = new THREE.Mesh(boxGeom, boxMat);
-        this.hitBox.position.copy(pos);
         this.hitBox.position.y += 1;
+        this.hitBox.visible = false;
         this.add(this.hitBox);
     }
 
@@ -41,6 +42,11 @@ class Wolf extends Character {
         this.hitBox.position.z += dirZ * this.speed * segundosTranscurridos;
 
         this.tiempoAnterior = tiempoActual;
+    }
+
+    activate(pos) {
+        pos.y += 1;
+        super.activate(pos);
     }
 
 }
