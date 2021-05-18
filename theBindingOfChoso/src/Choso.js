@@ -4,13 +4,16 @@ import {ShootingController} from "./ShootingController.js";
 
 class Choso extends Character {
 
-    constructor() {
+    constructor(maxX, maxZ) {
         super();
+
+        this.maxX = maxX;
+        this.maxZ = maxZ;
 
         var boxGeom = new THREE.BoxGeometry(2, 2, 2);
         var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
 
-        this.speed = 10;
+        this.speed = 10.0;
         this.shootSpeed = 1.25;
 
         this.hitBox = new THREE.Mesh(boxGeom, boxMat);
@@ -26,8 +29,14 @@ class Choso extends Character {
         if (this.enMovimiento) {
             var tiempoActual = Date.now();
             var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
-            this.hitBox.position.x += dirX * this.speed * segundosTranscurridos;
-            this.hitBox.position.z += dirZ * this.speed * segundosTranscurridos;
+
+            var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
+            nuevaPos.x += dirX * this.speed * segundosTranscurridos;
+            nuevaPos.z += dirZ * this.speed * segundosTranscurridos;
+            nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
+
+            this.hitBox.position.copy(nuevaPos);
+
             this.tiempoAnterior = tiempoActual;
         } else {
             this.tiempoAnterior = Date.now();

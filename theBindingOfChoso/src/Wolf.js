@@ -4,8 +4,11 @@ import {MathUtils} from "../libs/three.module.js";
 
 class Wolf extends Character {
 
-    constructor() {
+    constructor(maxX, maxZ) {
         super();
+
+        this.maxX = maxX;
+        this.maxZ = maxZ;
 
         var boxGeom = new THREE.BoxGeometry(2, 2, 2);
         var boxMat = new THREE.MeshNormalMaterial({flatShading: true});

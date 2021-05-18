@@ -5,8 +5,11 @@ import {MathUtils} from "../libs/three.module.js";
 
 class EnemyController extends THREE.Object3D {
 
-    constructor() {
+    constructor(maxX, maxZ) {
         super();
+
+        this.maxX = maxX;
+        this.maxZ = maxZ;
 
         this.bees = [];
         this.wolves = [];
@@ -14,12 +17,12 @@ class EnemyController extends THREE.Object3D {
         this.timeBetweenSpanws = 2000;
 
         for (var i = 0; i < 10; i++) {
-            this.bees.push(new Bee());
+            this.bees.push(new Bee(this.maxX, this.maxZ));
             this.add(this.bees[i]);
         }
 
         for (var i = 0; i < 10; i++) {
-            this.wolves.push(new Wolf());
+            this.wolves.push(new Wolf(this.maxX, this.maxZ));
             this.add(this.wolves[i]);
         }
 
@@ -66,7 +69,7 @@ class EnemyController extends THREE.Object3D {
                         activated = this.currentEnemyActivated(this.bees, newPos);
 
                         if(!activated) {
-                            this.bees.push(new Bee());
+                            this.bees.push(new Bee(this.maxX, this.maxZ));
                             this.add(this.bees[this.bees.length - 1]);
                             this.bees[this.bees.length - 1].activate(newPos);
                         }
@@ -77,7 +80,7 @@ class EnemyController extends THREE.Object3D {
                         activated = this.currentEnemyActivated(this.wolves, newPos);
 
                         if(!activated) {
-                            this.wolves.push(new Wolf());
+                            this.wolves.push(new Wolf(this.maxX, this.maxZ));
                             this.add(this.wolves[this.wolves.length - 1]);
                             this.wolves[this.wolves.length - 1].activate(newPos);
                         }

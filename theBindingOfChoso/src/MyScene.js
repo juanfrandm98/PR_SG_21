@@ -53,22 +53,20 @@ class MyScene extends THREE.Scene {
         // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
         // referencia a la gui y el texto bajo el que se agruparán los controles de
         // la interfaz que añada el modelo
-        this.choso = new Choso();
-        this.add(this.choso);
-
-        this.enemyController = new EnemyController();
-        this.enemyController.generateEnemies();
-        this.add(this.enemyController);
-
         this.ground = new MyGround();
         this.add(this.ground);
+
+        this.choso = new Choso(this.ground.getMaxX(), this.ground.getMaxZ());
+        this.add(this.choso);
+
+        this.enemyController = new EnemyController(this.ground.getMaxX(), this.ground.getMaxZ());
+        this.enemyController.generateEnemies();
+        this.add(this.enemyController);
 
         // Tendremos una cámara con un control de movimiento con el ratón
         this.createCamera();
         this.soundsController = new SoundsController(this.camera);
         this.add(this.soundsController);
-
-
 
     }
 
@@ -205,7 +203,7 @@ class MyScene extends THREE.Scene {
     }
 
     getCameraPosition(pos) {
-        var defPos = new THREE.Vector3(0, 25, 45);
+        var defPos = new THREE.Vector3(0, 30, 25);
 
         var x = defPos.x + pos.x;
         var y = defPos.y + pos.y;
@@ -219,6 +217,7 @@ class MyScene extends THREE.Scene {
         // Se actualiza la intensidad de la luz con lo que haya indicado el usuario
         // en la GUI
         this.spotLight.intensity = this.guiControls.lightIntensity;
+        this.ground.update();
 
         // Se actualiza la posición de la cámara según su controlador
         //this.cameraControl.update();
@@ -235,7 +234,7 @@ class MyScene extends THREE.Scene {
 
         var posChoso = this.choso.getPosition();
         this.camera.lookAt(posChoso);
-        this.camera.position.copy(this.getCameraPosition(posChoso));
+        this.camera.position.copy(this.getCameraPosition(posChoso)); // SET
 
         this.enemyController.update(this.choso);
 

@@ -4,8 +4,11 @@ import {MathUtils} from "../libs/three.module.js";
 
 class Bee extends Character {
 
-    constructor() {
+    constructor(maxX, maxZ) {
         super();
+
+        this.maxX = maxX;
+        this.maxZ = maxZ;
 
         var boxGeom = new THREE.BoxGeometry(1, 1, 1);
         var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
@@ -32,33 +35,69 @@ class Bee extends Character {
 
         this.tiempoAcumulado += msTranscurridos;
 
-        if(!this.enMovimiento || this.tiempoAcumulado >= this.msCambioDireccion) {
+        if (!this.enMovimiento || this.tiempoAcumulado >= this.msCambioDireccion) {
             var index = MathUtils.randInt(0, 3);
             this.direction = this.directions[index];
             this.enMovimiento = true;
             this.tiempoAcumulado = 0;
         }
 
-        switch(this.direction) {
+        var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
+
+        switch (this.direction) {
             case "up":
-                this.hitBox.position.z -= this.speed * segundosTranscurridos;
+                nuevaPos.z -= this.speed * segundosTranscurridos;
                 break;
 
             case "down":
-                this.hitBox.position.z += this.speed * segundosTranscurridos;
+                nuevaPos.z += this.speed * segundosTranscurridos;
                 break;
 
             case "left":
-                this.hitBox.position.x -= this.speed * segundosTranscurridos;
+                nuevaPos.x -= this.speed * segundosTranscurridos;
                 break;
 
             case "right":
-                this.hitBox.position.x += this.speed * segundosTranscurridos;
+                nuevaPos.x += this.speed * segundosTranscurridos;
                 break;
         }
 
+        this.direction = this.checkDirection(nuevaPos, this.maxX, this.maxZ, this.hitRadius, this.direction);
+        nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
+
+        this.hitBox.position.copy(nuevaPos);
+
         this.tiempoAnterior = tiempoActual;
 
+    }
+
+    opositeDirection(direction) {
+        switch (direction) {
+            case "up":
+                return "down";
+
+            case "down":
+                return "up";
+
+            case "left":
+                return "right";
+
+            case "right":
+                return "left";
+        }
+    }
+
+    checkDirection(pos, maxX, maxZ, hitRadius, direction) {
+        if (
+            (pos.x > (maxX - hitRadius)) ||
+            (pos.x < (-maxX + hitRadius)) ||
+            (pos.z > (maxZ - hitRadius)) ||
+            (pos.z < (-maxZ + hitRadius))
+        ) {
+            return this.opositeDirection(direction);
+        } else {
+            return direction;
+        }
     }
 
     activate(pos) {
