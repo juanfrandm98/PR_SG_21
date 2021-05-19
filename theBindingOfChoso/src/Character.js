@@ -12,6 +12,7 @@ class Character extends THREE.Object3D {
         this.shootSpeed = 1;
         this.shootRadius = 0.2;
         this.hitRadius = 1;
+        this.contactDamage = 1;
 
         this.maxHealth = 1;
         this.health = this.maxHealth;
@@ -34,8 +35,16 @@ class Character extends THREE.Object3D {
         return pos;
     }
 
+    setSpeed(speed) {
+        this.speed = speed;
+    }
+
     getPosition() {
         return this.hitBox.position;
+    }
+
+    setPosition(pos) {
+        this.hitBox.position.set(pos);
     }
 
     getShootSpeed() {
@@ -48,6 +57,10 @@ class Character extends THREE.Object3D {
 
     getHitRadius() {
         return this.hitRadius;
+    }
+
+    getContactDamage() {
+        return this.contactDamage;
     }
 
     takeDamage(damage) {

@@ -16,20 +16,36 @@ class Choso extends Character {
         this.speed = 10.0;
         this.shootSpeed = 1.25;
 
+        this.maxHealth = 10;
+        this.health = this.maxHealth;
+
         this.hitBox = new THREE.Mesh(boxGeom, boxMat);
         this.hitBox.position.y += 1;
         this.add(this.hitBox);
 
         this.shootingController = new ShootingController(10, 3, 15, 0.2, 20);
         this.add(this.shootingController);
+
+        this.secondsBetweenDamages = 1;
+        this.secondsToTakeDamage = 0;
+    }
+
+    takeDamage(damage) {
+        if(this.secondsToTakeDamage <= 0) {
+            super.takeDamage(damage);
+            console.log("AY, me quedan " + this.health + " de vida...");
+            this.secondsToTakeDamage = this.secondsBetweenDamages;
+        }
     }
 
     update(dirX, dirZ, shooting, dirShot, targets) {
+        var tiempoActual = Date.now();
+        var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
+
+        this.secondsToTakeDamage -= segundosTranscurridos;
+
         // Movimiento
         if (this.enMovimiento) {
-            var tiempoActual = Date.now();
-            var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
-
             var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
             nuevaPos.x += dirX * this.speed * segundosTranscurridos;
             nuevaPos.z += dirZ * this.speed * segundosTranscurridos;

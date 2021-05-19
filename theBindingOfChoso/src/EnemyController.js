@@ -52,16 +52,50 @@ class EnemyController extends THREE.Object3D {
         }
     }
 
+    randomSpawnPos(maxX, maxZ) {
+        var pos = new THREE.Vector3(0,0,0);
+        var dif = 5;
+
+        var firstRand = MathUtils.randInt(0, 3);
+
+        switch(firstRand) {
+            case 0:
+                // 0 - Pegado a la izquierda
+                pos.x = -maxX + dif;
+                pos.z = MathUtils.randInt(-maxZ + dif, maxZ - dif);
+                break;
+            case 1:
+                // 1 - Pegado arriba
+                pos.z = -maxZ + dif;
+                pos.x = MathUtils.randInt(-maxX + dif, maxX - dif);
+                break;
+
+            case 2:
+                // 2 - Pegado a la derecha
+                pos.x = maxX - dif;
+                pos.z = MathUtils.randInt(-maxZ + dif, maxZ - dif);
+                break;
+
+            case 3:
+                // 3 - pegado abajo
+                pos.z = maxZ - dif;
+                pos.x = MathUtils.randInt(-maxX + dif, maxX - dif);
+                break;
+        }
+
+        return pos;
+    }
+
     update(choso) {
         if(this.enemiesList.length > 0) {
             var tiempoActual = Date.now();
             var msTranscurridos = tiempoActual - this.tiempoAnterior;
-            var newPos = new THREE.Vector3(this.defPos.x, this.defPos.y, this.defPos.z);
 
             this.tiempoUntilNextSpawn -= msTranscurridos;
 
             if(this.tiempoUntilNextSpawn <= 0) {
                 var enemyType = this.enemiesList.pop();
+                var newPos = this.randomSpawnPos(this.maxX, this.maxZ);
                 var activated = false;
 
                 switch(enemyType) {

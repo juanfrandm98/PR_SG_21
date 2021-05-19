@@ -14,6 +14,7 @@ import {MyGround} from "./MyGround.js"
 import {Choso} from "./Choso.js";
 import {EnemyController} from "./EnemyController.js";
 import {SoundsController} from "./SoundsController.js";
+import {CollisionController} from "./CollisionController.js";
 
 /// La clase fachada del modelo
 /**
@@ -67,6 +68,9 @@ class MyScene extends THREE.Scene {
         this.createCamera();
         this.soundsController = new SoundsController(this.camera);
         this.add(this.soundsController);
+
+        this.collisionController = new CollisionController(this.ground.getMaxX(), this.ground.getMaxZ());
+        this.add(this.collisionController);
 
     }
 
@@ -237,6 +241,15 @@ class MyScene extends THREE.Scene {
         this.camera.position.copy(this.getCameraPosition(posChoso)); // SET
 
         this.enemyController.update(this.choso);
+
+        targets = this.enemyController.getEnemies();
+        this.collisionController.collisionEnemiesChoso(targets, this.choso);
+
+        if(this.choso.isDefeated()) {
+            this.choso.hide();
+            this.choso.setSpeed(0);
+            this.soundsController.stopBackground();
+        }
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'

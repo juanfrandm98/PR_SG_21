@@ -55,6 +55,11 @@ class SoundsController extends THREE.Object3D {
         }
     }
 
+    stopBackground() {
+        if(this.backgroundMusic.isPlaying)
+            this.backgroundMusic.stop();
+    }
+
 }
 
 export {SoundsController};
