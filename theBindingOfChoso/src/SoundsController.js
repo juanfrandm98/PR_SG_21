@@ -7,6 +7,7 @@ class SoundsController extends THREE.Object3D {
 
         var backgroundPath = '../sounds/background.ogg';
         var chosoShootingPath = '../sounds/chosoShooting.mp3';
+        var wolfDeathPath = '../sounds/sadWolf.ogg';
 
         const listener = new THREE.AudioListener();
         camera.add( listener );
@@ -17,6 +18,9 @@ class SoundsController extends THREE.Object3D {
 
         this.chosoShootingSound = new THREE.Audio( listener );
         this.chosoShootingSound.hasPlaybackControl = true;
+
+        this.wolfDeathSound = new THREE.Audio( listener );
+        this.wolfDeathSound.hasPlaybackControl = true;
 
 // load a sound and set it as the Audio object's buffer
         const audioLoader = new THREE.AudioLoader();
@@ -33,6 +37,11 @@ class SoundsController extends THREE.Object3D {
             that.chosoShootingSound.setBuffer( buffer );
             that.chosoShootingSound.setLoop( true );
             that.chosoShootingSound.setVolume( 0.5 );
+        });
+
+        audioLoader.load( wolfDeathPath, function( buffer ) {
+           that.wolfDeathSound.setBuffer( buffer );
+           that.wolfDeathSound.setVolume( 0.5 );
         });
 
     }
@@ -58,6 +67,10 @@ class SoundsController extends THREE.Object3D {
     stopBackground() {
         if(this.backgroundMusic.isPlaying)
             this.backgroundMusic.stop();
+    }
+
+    playWolfDeath() {
+        this.wolfDeathSound.play();
     }
 
 }

@@ -240,7 +240,7 @@ class MyScene extends THREE.Scene {
         this.camera.lookAt(posChoso);
         this.camera.position.copy(this.getCameraPosition(posChoso)); // SET
 
-        this.enemyController.update(this.choso);
+        this.enemyController.update(this.choso, this.soundsController);
 
         targets = this.enemyController.getEnemies();
         this.collisionController.collisionEnemiesChoso(targets, this.choso);

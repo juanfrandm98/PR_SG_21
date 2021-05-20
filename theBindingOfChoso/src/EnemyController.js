@@ -86,7 +86,7 @@ class EnemyController extends THREE.Object3D {
         return pos;
     }
 
-    update(choso) {
+    update(choso, soundsController) {
         if(this.enemiesList.length > 0) {
             var tiempoActual = Date.now();
             var msTranscurridos = tiempoActual - this.tiempoAnterior;
@@ -133,7 +133,10 @@ class EnemyController extends THREE.Object3D {
 
         for (var i = 0; i < this.bees.length; i++) {
             if (!this.bees[i].getHidden()) {
-                if (this.bees[i].isDefeated()) this.bees[i].hide();
+                if (this.bees[i].isDefeated()) {
+                    console.log("ABEJA MUERTA");
+                    this.bees[i].hide();
+                }
 
                 this.bees[i].update();
             }
@@ -141,7 +144,11 @@ class EnemyController extends THREE.Object3D {
 
         for (var i = 0; i < this.wolves.length; i++) {
             if (!this.wolves[i].getHidden()) {
-                if (this.wolves[i].isDefeated()) this.wolves[i].hide();
+                if (this.wolves[i].isDefeated()) {
+                    console.log("LOBO MUERTO");
+                    soundsController.playWolfDeath();
+                    this.wolves[i].hide();
+                }
 
                 this.wolves[i].update(choso.getPosition());
             }
