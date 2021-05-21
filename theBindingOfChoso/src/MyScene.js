@@ -15,6 +15,7 @@ import {Choso} from "./Choso.js";
 import {EnemyController} from "./EnemyController.js";
 import {SoundsController} from "./SoundsController.js";
 import {CollisionController} from "./CollisionController.js";
+import {PowerUpController} from "./PowerUpController.js";
 
 /// La clase fachada del modelo
 /**
@@ -63,6 +64,9 @@ class MyScene extends THREE.Scene {
         this.enemyController = new EnemyController(this.ground.getMaxX(), this.ground.getMaxZ());
         this.enemyController.generateEnemies();
         this.add(this.enemyController);
+
+        this.powerupController = new PowerUpController(this.ground.getMaxX(), this.ground.getMaxZ());
+        this.add(this.powerupController);
 
         // Tendremos una cámara con un control de movimiento con el ratón
         this.createCamera();
@@ -239,6 +243,8 @@ class MyScene extends THREE.Scene {
         var posChoso = this.choso.getPosition();
         this.camera.lookAt(posChoso);
         this.camera.position.copy(this.getCameraPosition(posChoso)); // SET
+
+        this.powerupController.update();
 
         this.enemyController.update(this.choso, this.soundsController);
 
