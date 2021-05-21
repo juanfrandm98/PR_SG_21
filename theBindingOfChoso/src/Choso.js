@@ -30,10 +30,14 @@ class Choso extends Character {
         this.secondsToTakeDamage = 0;
     }
 
-    takeDamage(damage) {
-        if(this.secondsToTakeDamage <= 0) {
+    takeDamage(damage, soundsController) {
+        if (this.secondsToTakeDamage <= 0) {
             super.takeDamage(damage);
             console.log("AY, me quedan " + this.health + " de vida...");
+
+            if (this.health > 0) soundsController.playChosoDamage();
+            else soundsController.playChosoDeath();
+
             this.secondsToTakeDamage = this.secondsBetweenDamages;
         }
     }

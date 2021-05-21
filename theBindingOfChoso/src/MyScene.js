@@ -243,7 +243,7 @@ class MyScene extends THREE.Scene {
         this.enemyController.update(this.choso, this.soundsController);
 
         targets = this.enemyController.getEnemies();
-        this.collisionController.collisionEnemiesChoso(targets, this.choso);
+        this.collisionController.collisionEnemiesChoso(targets, this.choso, this.soundsController);
 
         if(this.choso.isDefeated()) {
             this.choso.hide();

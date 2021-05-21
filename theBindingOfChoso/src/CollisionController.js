@@ -24,10 +24,10 @@ class CollisionController extends Object3D{
         }
     }
 
-    collisionEnemiesChoso(enemies, choso) {
+    collisionEnemiesChoso(enemies, choso, soundsController) {
         for(var i = 0; i < enemies.length; i++) {
             if(this.collisionDetect(enemies[i], choso)) {
-                choso.takeDamage(enemies[i].getContactDamage());
+                choso.takeDamage(enemies[i].getContactDamage(), soundsController);
             }
         }
     }
