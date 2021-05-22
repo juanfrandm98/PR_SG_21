@@ -3,7 +3,7 @@ import {Shot} from "./Shot.js";
 
 class ShootingController extends THREE.Object3D {
 
-    constructor(amount, shotsPerSecond, shotSpeed, radius, range) {
+    constructor(amount, damage, shotsPerSecond, shotSpeed, radius, range) {
         super();
 
         this.shots = [];
@@ -11,6 +11,11 @@ class ShootingController extends THREE.Object3D {
         this.shotSpeed = shotSpeed;
         this.shotRadius = radius;
         this.range = range;
+        this.damage = damage;
+
+        this.maxRange = 40;
+        this.maxShotRadius = 0.8;
+        this.maxDamage = 8;
 
         for (var i = 0; i < amount; i++) {
             this.shots.push(new Shot(this.shotSpeed, this.shotRadius, this.range));
@@ -27,6 +32,21 @@ class ShootingController extends THREE.Object3D {
         return Math.sqrt(distance);
     }
 
+    changeShotDamage(dif) {
+        this.damage += dif;
+        if (this.damage > this.maxDamage) this.damage = this.maxDamage;
+    }
+
+    changeShotRadius(dif) {
+        this.shotRadius += dif;
+        if (this.shotRadius > this.maxShotRadius) this.shotRadius = this.maxShotRadius;
+    }
+
+    changeShotRange(dif) {
+        this.range += dif;
+        if (this.range > this.maxRange) this.range = this.maxRange;
+    }
+
     update(shooting, position, direction, targets) {
         // TIME CONTROL
         var tiempoActual = Date.now();
@@ -34,20 +54,20 @@ class ShootingController extends THREE.Object3D {
         this.tiempoAnterior = tiempoActual;
 
         // NEW SHOT CONTROL
-        if(shooting) {
-            if(this.msUntilShot <= 0) {
+        if (shooting) {
+            if (this.msUntilShot <= 0) {
                 var encontrado = false;
 
                 for (var i = 0; i < this.shots.length && !encontrado; i++) {
                     if (this.shots[i].getFinished()) {
-                        this.shots[i].resetShoot(position, direction);
+                        this.shots[i].resetShoot(this.damage, this.shotRadius, position, direction, this.range);
                         encontrado = true;
                     }
                 }
 
-                if(!encontrado) {
+                if (!encontrado) {
                     this.shots.push(new Shot(this.shotSpeed, this.shotRadius));
-                    this.shots[this.shots.length - 1].resetShoot(position, direction);
+                    this.shots[this.shots.length - 1].resetShoot(this.damage, this.shotRadius, position, direction, this.range);
                     this.add(this.shots[i]);
                 }
 

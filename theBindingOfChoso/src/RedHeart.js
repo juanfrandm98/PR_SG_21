@@ -29,35 +29,6 @@ class RedHeart extends PowerUp {
         super.activate(pos);
     }
 
-    update() {
-        var tiempoActual = Date.now();
-        var msTranscurridos = tiempoActual - this.tiempoAnterior;
-
-        var h = this.nodo.position.y;
-
-        if(this.up) {
-            h += this.velH * msTranscurridos;
-
-            if(h >= this.maxH) {
-                h = this.maxH;
-                this.up = false;
-            }
-        } else {
-            h -= this.velH * msTranscurridos;
-
-            if(h <= this.minH) {
-                h = this.minH;
-                this.up = true;
-            }
-        }
-
-        this.nodo.position.y = h;
-
-        this.nodo.rotateY(this.velRot * msTranscurridos);
-
-        this.tiempoAnterior = tiempoActual;
-    }
-
 }
 
 export {RedHeart};

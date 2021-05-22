@@ -1,6 +1,9 @@
 import * as THREE from '../libs/three.module.js'
 import {MathUtils, Object3D} from "../libs/three.module.js";
 import {RedHeart} from "./RedHeart.js";
+import {Grass} from "./Grass.js";
+import {MilkingDevice} from "./MilkingDevice.js";
+import {Udder} from "./Udder.js";
 
 class PowerUpController extends Object3D {
     constructor(maxX, maxZ) {
@@ -10,12 +13,21 @@ class PowerUpController extends Object3D {
         this.maxZ = maxZ;
 
         this.powerups = [];
-        this.types = ["redheart"];
+        this.types = ["redheart", "grass", "milking", "udder"];
 
         for (var i = 0; i < 3; i++) {
             this.powerups.push(new RedHeart());
             this.add(this.powerups[this.powerups.length - 1]);
+            this.powerups.push(new Grass());
+            this.add(this.powerups[this.powerups.length - 1]);
+            this.powerups.push(new MilkingDevice());
+            this.add(this.powerups[this.powerups.length - 1]);
+            this.powerups.push(new Udder());
+            this.add(this.powerups[this.powerups.length - 1]);
         }
+
+        this.powerupsActivos = 0;
+        this.maxPowerUpsActivos = 5;
 
         this.msEntrePowerUps = 5000;
         this.msRestantes = this.msEntrePowerUps;
@@ -39,6 +51,24 @@ class PowerUpController extends Object3D {
             switch (newType) {
                 case "redheart":
                     nuevo = new RedHeart();
+                    this.add(nuevo);
+                    this.powerups.push(nuevo);
+                    break;
+
+                case "grass":
+                    nuevo = new Grass();
+                    this.add(nuevo);
+                    this.powerups.push(nuevo);
+                    break;
+
+                case "milking":
+                    nuevo = new MilkingDevice();
+                    this.add(nuevo);
+                    this.powerups.push(nuevo);
+                    break;
+
+                case "udder":
+                    nuevo = new Udder();
                     this.add(nuevo);
                     this.powerups.push(nuevo);
                     break;
@@ -73,6 +103,28 @@ class PowerUpController extends Object3D {
         }
     }
 
+    applyPowerUp(powerup, choso) {
+
+        switch(powerup.getName()) {
+            case "redheart":
+                choso.heal(powerup.getEffect());
+                break;
+
+            case "grass":
+                choso.changeShotDamage(powerup.getEffect());
+                break;
+
+            case "milking":
+                choso.changeShotRadius(powerup.getEffect());
+                break;
+
+            case "udder":
+                choso.changeShotRange(powerup.getEffect());
+                break;
+        }
+
+    }
+
     update(choso) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
@@ -80,23 +132,30 @@ class PowerUpController extends Object3D {
 
         // Generación de powerups
         if (this.msRestantes <= 0) {
-            var nuevo = this.generateRandomPowerUp(this.powerups, this.types);
-            var pos = this.generateRandomPos(this.maxX, this.maxZ, nuevo.getHitRadius());
-            nuevo.activate(pos);
+            if(this.powerupsActivos < this.maxPowerUpsActivos) {
+                var nuevo = this.generateRandomPowerUp(this.powerups, this.types);
+                var pos = this.generateRandomPos(this.maxX, this.maxZ, nuevo.getHitRadius());
+                nuevo.activate(pos);
+                this.powerupsActivos++;
+            }
+
             this.msRestantes = this.msEntrePowerUps;
         }
 
         this.tiempoAnterior = tiempoActual;
 
         for (var i = 0; i < this.powerups.length; i++) {
-            // Comprobación de powerups
-            /*if(this.collisionDetect(this.powerups[i], choso)) {
-                this.applyPowerUp(this.powerups);
-                this.powerups[i].desactivate();
-            }*/
+            if(this.powerups[i].getVisible()) {
+                // Comprobación de powerups
+                if(this.collisionDetect(this.powerups[i], choso)) {
+                    this.applyPowerUp(this.powerups[i], choso);
+                    this.powerups[i].desactivate();
+                    this.powerupsActivos--;
+                }
 
-            // Actualización de powerups
-            if (this.powerups[i].getVisible()) this.powerups[i].update();
+                // Actualización de powerups
+                if (this.powerups[i].getVisible()) this.powerups[i].update();
+            }
         }
     }
 

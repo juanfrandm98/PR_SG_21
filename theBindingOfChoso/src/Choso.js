@@ -23,7 +23,7 @@ class Choso extends Character {
         this.hitBox.position.y += 1;
         this.add(this.hitBox);
 
-        this.shootingController = new ShootingController(10, 3, 15, 0.2, 20);
+        this.shootingController = new ShootingController(10, 1, 3, 15, 0.2, 20);
         this.add(this.shootingController);
 
         this.secondsBetweenDamages = 1;
@@ -40,6 +40,18 @@ class Choso extends Character {
 
             this.secondsToTakeDamage = this.secondsBetweenDamages;
         }
+    }
+
+    changeShotDamage(amount) {
+        this.shootingController.changeShotDamage(amount);
+    }
+
+    changeShotRadius(amount) {
+        this.shootingController.changeShotRadius(amount);
+    }
+
+    changeShotRange(amount) {
+        this.shootingController.changeShotRange(amount);
     }
 
     update(dirX, dirZ, shooting, dirShot, targets) {

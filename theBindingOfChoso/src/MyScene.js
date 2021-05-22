@@ -244,7 +244,7 @@ class MyScene extends THREE.Scene {
         this.camera.lookAt(posChoso);
         this.camera.position.copy(this.getCameraPosition(posChoso)); // SET
 
-        this.powerupController.update();
+        this.powerupController.update(this.choso);
 
         this.enemyController.update(this.choso, this.soundsController);
 

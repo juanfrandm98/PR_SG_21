@@ -21,7 +21,15 @@ class Shot extends THREE.Object3D {
         this.add(this.shot);
     }
 
-    resetShoot(origin, dirShot) {
+    resetShoot(damage, shotRadius, origin, dirShot, range) {
+        this.damage = damage;
+        this.range = range;
+
+        if(shotRadius !== this.radius) {
+            this.radius = shotRadius;
+            this.shot.geometry = new THREE.SphereGeometry(this.radius, 10, 10);
+        }
+
         this.dirShot = new THREE.Vector3(dirShot.x, 0, dirShot.y);
         this.destiny = this.calculateDestiny(origin, this.dirShot, this.range);
         this.finished = false;

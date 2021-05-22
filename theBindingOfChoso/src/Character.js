@@ -27,10 +27,10 @@ class Character extends THREE.Object3D {
     }
 
     checkPosition(pos, maxX, maxZ, hitRadius) {
-        if(pos.x > (maxX - hitRadius)) pos.x = maxX - hitRadius;
-        if(pos.x < (-maxX + hitRadius)) pos.x = -maxX + hitRadius;
-        if(pos.z > (maxZ - hitRadius)) pos.z = maxZ - hitRadius;
-        if(pos.z < (-maxZ + hitRadius)) pos.z = -maxZ + hitRadius;
+        if (pos.x > (maxX - hitRadius)) pos.x = maxX - hitRadius;
+        if (pos.x < (-maxX + hitRadius)) pos.x = -maxX + hitRadius;
+        if (pos.z > (maxZ - hitRadius)) pos.z = maxZ - hitRadius;
+        if (pos.z < (-maxZ + hitRadius)) pos.z = -maxZ + hitRadius;
 
         return pos;
     }
@@ -83,6 +83,12 @@ class Character extends THREE.Object3D {
         this.health = this.maxHealth;
         this.hitBox.position.copy(pos);
         this.hitBox.visible = true;
+    }
+
+    heal(amount) {
+        this.health += amount;
+        if (this.health > this.maxHealth) this.health = this.maxHealth;
+        console.log("Me he curado " + amount + " y ahora tengo HP: " + this.health);
     }
 
 }
