@@ -26,6 +26,34 @@ class Bee extends Character {
         this.msCambioDireccion = 2000;
     }
 
+    changeBeeDirection(bee, direction) {
+        switch (direction) {
+            case "up":
+                bee.setBeeRotation(Math.PI);
+                bee.rotation.x = -Math.PI / 4;
+                bee.rotation.z = 0;
+                break;
+
+            case "down":
+                bee.setBeeRotation(0);
+                bee.rotation.x = Math.PI / 4;
+                bee.rotation.z = 0;
+                break;
+
+            case "left":
+                bee.setBeeRotation(Math.PI / 2);
+                bee.rotation.x = 0;
+                bee.rotation.z = Math.PI / 4;
+                break;
+
+            case "right":
+                bee.setBeeRotation(3 * Math.PI / 2);
+                bee.rotation.x = 0;
+                bee.rotation.z = -Math.PI / 4;
+                break;
+        }
+    }
+
     update() {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior
@@ -38,32 +66,6 @@ class Bee extends Character {
             this.direction = this.directions[index];
             this.enMovimiento = true;
             this.tiempoAcumulado = 0;
-
-            switch(this.direction) {
-                case "up":
-                    this.bee.setBeeRotation(Math.PI);
-                    this.bee.rotation.x = -Math.PI / 4;
-                    this.bee.rotation.z = 0;
-                    break;
-
-                case "down":
-                    this.bee.setBeeRotation(0);
-                    this.bee.rotation.x = Math.PI / 4;
-                    this.bee.rotation.z = 0;
-                    break;
-
-                case "left":
-                    this.bee.setBeeRotation(Math.PI / 2);
-                    this.bee.rotation.x = 0;
-                    this.bee.rotation.z = Math.PI / 4;
-                    break;
-
-                case "right":
-                    this.bee.setBeeRotation(3 * Math.PI / 2);
-                    this.bee.rotation.x = 0;
-                    this.bee.rotation.z = -Math.PI / 4;
-                    break;
-            }
         }
 
         var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
@@ -87,6 +89,8 @@ class Bee extends Character {
         }
 
         this.direction = this.checkDirection(nuevaPos, this.maxX, this.maxZ, this.hitRadius, this.direction);
+        this.changeBeeDirection(this.bee, this.direction);
+
         nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
 
         this.hitBox.position.copy(nuevaPos);
@@ -112,7 +116,7 @@ class Bee extends Character {
         }
     }
 
-    checkDirection(pos, maxX, maxZ, hitRadius, direction) {
+    checkDirection(pos, maxX, maxZ, hitRadius, direction, bee) {
         if (
             (pos.x > (maxX - hitRadius)) ||
             (pos.x < (-maxX + hitRadius)) ||

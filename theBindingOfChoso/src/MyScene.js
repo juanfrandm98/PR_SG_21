@@ -69,7 +69,7 @@ class MyScene extends THREE.Scene {
         this.add(this.powerupController);
 
         // Tendremos una cámara con un control de movimiento con el ratón
-        this.createCamera();
+        this.createCamera(this.choso.getPosition());
         this.soundsController = new SoundsController(this.camera);
         this.add(this.soundsController);
 
@@ -78,7 +78,7 @@ class MyScene extends THREE.Scene {
 
     }
 
-    createCamera() {
+    createCamera(look) {
         // Para crear una cámara le indicamos:
         // - El ángulo del campo de visión en grados sexagesimales
         // - La razón de aspecto ancho/alto
@@ -86,9 +86,8 @@ class MyScene extends THREE.Scene {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight,
             0.1, 1000);
         // También se indica dónde se coloca
-        this.camera.position.set(0, 25, 45);
+        this.camera.position.set(0, 15, 15);
         // Y hacia dónde mira
-        var look = this.choso.getPosition();
         this.camera.lookAt(look);
         this.add(this.camera);
 
@@ -241,8 +240,9 @@ class MyScene extends THREE.Scene {
         this.choso.update(dirX, dirZ, this.shooting, this.shotDir, targets);
 
         var posChoso = this.choso.getPosition();
-        this.camera.lookAt(posChoso);
-        this.camera.position.copy(this.getCameraPosition(posChoso)); // SET
+
+        var newCameraPos = this.getCameraPosition(posChoso);
+        this.camera.position.set(newCameraPos.x, newCameraPos.y, newCameraPos.z); // SET
 
         this.powerupController.update(this.choso);
 

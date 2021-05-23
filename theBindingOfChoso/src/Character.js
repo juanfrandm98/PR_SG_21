@@ -45,7 +45,7 @@ class Character extends THREE.Object3D {
     }
 
     setPosition(pos) {
-        this.hitBox.position.set(pos);
+        this.hitBox.position.set(pos.x, pos.y, pos.z);
     }
 
     getShootSpeed() {
@@ -81,8 +81,9 @@ class Character extends THREE.Object3D {
     }
 
     activate(pos) {
+        console.log(pos);
         this.health = this.maxHealth;
-        this.hitBox.position.copy(pos);
+        this.hitBox.position.set(pos.x, pos.y, pos.z);
         this.hitBox.visible = true;
     }
 
