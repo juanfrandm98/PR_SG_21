@@ -211,7 +211,7 @@ class MyScene extends THREE.Scene {
     }
 
     getCameraPosition(pos) {
-        var defPos = new THREE.Vector3(0, 30, 25);
+        var defPos = new THREE.Vector3(0, 15, 15);
 
         var x = defPos.x + pos.x;
         var y = defPos.y + pos.y;

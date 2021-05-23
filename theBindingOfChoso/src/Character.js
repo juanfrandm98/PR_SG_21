@@ -89,7 +89,6 @@ class Character extends THREE.Object3D {
     heal(amount) {
         this.health += amount;
         if (this.health > this.maxHealth) this.health = this.maxHealth;
-        console.log("Me he curado " + amount + " y ahora tengo HP: " + this.health);
     }
 
 }

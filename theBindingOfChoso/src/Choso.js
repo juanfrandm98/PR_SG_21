@@ -13,6 +13,7 @@ class Choso extends Character {
 
         this.speed = 10.0;
         this.shootSpeed = 1.25;
+        this.hitRadius = 0.5;
 
         this.maxHealth = 10;
         this.health = this.maxHealth;
@@ -30,7 +31,6 @@ class Choso extends Character {
     takeDamage(damage, soundsController) {
         if (this.secondsToTakeDamage <= 0) {
             super.takeDamage(damage);
-            console.log("AY, me quedan " + this.health + " de vida...");
 
             if (this.health > 0) soundsController.playChosoDamage();
             else soundsController.playChosoDeath();
@@ -67,24 +67,26 @@ class Choso extends Character {
 
                 this.hitBox.position.copy(nuevaPos);
 
-                if (shooting) {
-                    this.model.rotateHead(dirX, dirZ);
-                    this.model.rotateBody();
-                } else
-                    this.model.rotateChoso(dirX, dirZ);
-
                 this.tiempoAnterior = tiempoActual;
             } else {
                 this.tiempoAnterior = Date.now();
             }
+
+            if (shooting) {
+                this.model.rotateHead(dirX, dirZ);
+                this.model.rotateBody(dirShot);
+            } else
+                this.model.rotateChoso(dirX, dirZ);
 
             if (dirX !== 0 || dirZ !== 0)
                 this.enMovimiento = true;
             else
                 this.enMovimiento = false;
 
-            var pos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
+            var pos = new THREE.Vector3(this.hitBox.position.x, this.model.getUdderHeight(), this.hitBox.position.z);
             this.shootingController.update(shooting, pos, dirShot, targets);
+
+            this.model.update(this.enMovimiento, this.speed);
         }
     }
 

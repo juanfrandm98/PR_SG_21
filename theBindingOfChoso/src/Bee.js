@@ -1,6 +1,7 @@
 import * as THREE from '../libs/three.module.js'
 import {Character} from "./Character.js";
 import {MathUtils} from "../libs/three.module.js";
+import {BeeModel} from "./BeeModel.js";
 
 class Bee extends Character {
 
@@ -10,17 +11,14 @@ class Bee extends Character {
         this.maxX = maxX;
         this.maxZ = maxZ;
 
-        var boxGeom = new THREE.BoxGeometry(1, 1, 1);
-        var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
-
         this.speed = 5;
         this.shootSpeed = 0;
         this.maxHealth = 2;
+        this.hitRadius = 1.3;
 
-        this.hitBox = new THREE.Mesh(boxGeom, boxMat);
-        this.hitBox.position.y += 1;
+        this.bee = new BeeModel();
+        this.hitBox.add(this.bee);
         this.hitBox.visible = false;
-        this.add(this.hitBox);
 
         this.directions = ["up", "down", "left", "right"];
         this.direction;
@@ -40,6 +38,32 @@ class Bee extends Character {
             this.direction = this.directions[index];
             this.enMovimiento = true;
             this.tiempoAcumulado = 0;
+
+            switch(this.direction) {
+                case "up":
+                    this.bee.setBeeRotation(Math.PI);
+                    this.bee.rotation.x = -Math.PI / 4;
+                    this.bee.rotation.z = 0;
+                    break;
+
+                case "down":
+                    this.bee.setBeeRotation(0);
+                    this.bee.rotation.x = Math.PI / 4;
+                    this.bee.rotation.z = 0;
+                    break;
+
+                case "left":
+                    this.bee.setBeeRotation(Math.PI / 2);
+                    this.bee.rotation.x = 0;
+                    this.bee.rotation.z = Math.PI / 4;
+                    break;
+
+                case "right":
+                    this.bee.setBeeRotation(3 * Math.PI / 2);
+                    this.bee.rotation.x = 0;
+                    this.bee.rotation.z = -Math.PI / 4;
+                    break;
+            }
         }
 
         var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
@@ -66,6 +90,7 @@ class Bee extends Character {
         nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
 
         this.hitBox.position.copy(nuevaPos);
+        this.bee.update();
 
         this.tiempoAnterior = tiempoActual;
 

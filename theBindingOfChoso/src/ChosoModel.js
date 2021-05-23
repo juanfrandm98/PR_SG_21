@@ -58,6 +58,11 @@ class ChosoModel extends THREE.Object3D {
         this.choso.add(this.bodyNode);
 
         this.add(this.choso);
+
+        // ANIMACIÓN
+        this.maxAngle = Math.PI / 4;
+        this.ida = true;
+        this.tiempoAnterior = Date.now();
     }
 
     createHeadNode() {
@@ -147,6 +152,20 @@ class ChosoModel extends THREE.Object3D {
         return node;
     }
 
+    calculateDirection(dir) {
+        var axis = new THREE.Vector2(0, 1);
+
+        var producto = dir.x * axis.x + dir.y * axis.y;
+        var magDir = Math.sqrt(dir.x * dir.x + dir.y * dir.y);
+        var magAxis = Math.sqrt(axis.x * axis.x + axis.y * axis.y);
+
+        var cos = producto / magDir * magAxis;
+        var angle = Math.acos(cos);
+
+        if(dir.x > 0) return angle;
+        else return -angle;
+    }
+
     calculateAngle(dirX, dirZ) {
         if(dirX === 0 && dirZ > 0)
             return 0;
@@ -184,11 +203,52 @@ class ChosoModel extends THREE.Object3D {
         if(angle >= 0) this.headNode.rotation.y = angle;
     }
 
-    rotateBody() {
+    rotateBody(dir) {
+        var angle = this.calculateDirection(dir);
+
         this.choso.rotation.y = 0;
+
+        this.bodyNode.rotation.y = angle;
     }
 
-    update(){}
+    update(moving, speed){
+        if(moving) {
+            var tiempoActual = Date.now();
+            var msTranscurridos = tiempoActual - this.tiempoAnterior;
+            this.tiempoAnterior = tiempoActual;
+
+            var newAngle = 0.0;
+
+            if(this.ida) {
+                newAngle = this.nodeRightLeg.rotation.x + msTranscurridos * speed / 3000;
+
+                if(newAngle > this.maxAngle) newAngle = this.maxAngle;
+            } else {
+                newAngle = this.nodeRightLeg.rotation.x - msTranscurridos * speed / 3000;
+
+                if(newAngle < -this.maxAngle) newAngle = -this.maxAngle;
+            }
+
+            this.nodeRightLeg.rotation.x = newAngle;
+            this.nodeLeftLeg.rotation.x = -newAngle;
+            this.nodeRightArm.rotation.x = -newAngle;
+            this.nodeLeftArm.rotation.x = newAngle;
+
+            if(Math.abs(newAngle) === this.maxAngle) {
+                if(this.ida) this.ida = false;
+                else this.ida = true;
+            }
+        } else {
+            this.nodeRightLeg.rotation.x = 0;
+            this.nodeLeftLeg.rotation.x = 0;
+            this.nodeRightArm.rotation.x = 0;
+            this.nodeLeftArm.rotation.x = 0;
+        }
+    }
+
+    getUdderHeight() {
+        return 0.85;
+    }
 }
 
 export {ChosoModel};
