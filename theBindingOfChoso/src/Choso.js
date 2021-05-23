@@ -11,24 +11,17 @@ class Choso extends Character {
         this.maxX = maxX;
         this.maxZ = maxZ;
 
-        var boxGeom = new THREE.BoxGeometry(2, 2, 2);
-        var boxMat = new THREE.MeshNormalMaterial({flatShading: true});
-
         this.speed = 10.0;
         this.shootSpeed = 1.25;
 
         this.maxHealth = 10;
         this.health = this.maxHealth;
 
-        this.hitBox = new THREE.Mesh(boxGeom, boxMat);
-        this.hitBox.position.y += 1;
-        this.add(this.hitBox);
-
         this.shootingController = new ShootingController(10, 1, 3, 15, 0.2, 20);
         this.add(this.shootingController);
 
         this.model = new ChosoModel();
-        this.add(this.model);
+        this.hitBox.add(this.model);
 
         this.secondsBetweenDamages = 1;
         this.secondsToTakeDamage = 0;
@@ -59,7 +52,7 @@ class Choso extends Character {
     }
 
     update(dirX, dirZ, shooting, dirShot, targets) {
-        if(this.health > 0) {
+        if (this.health > 0) {
             var tiempoActual = Date.now();
             var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
 
@@ -73,6 +66,12 @@ class Choso extends Character {
                 nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
 
                 this.hitBox.position.copy(nuevaPos);
+
+                if (shooting) {
+                    this.model.rotateHead(dirX, dirZ);
+                    this.model.rotateBody();
+                } else
+                    this.model.rotateChoso(dirX, dirZ);
 
                 this.tiempoAnterior = tiempoActual;
             } else {

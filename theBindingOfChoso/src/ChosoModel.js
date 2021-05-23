@@ -9,8 +9,8 @@ class ChosoModel extends THREE.Object3D {
         this.headNode.position.y = 1.625;
 
         // CUERPO
-        this.bodyNode = this.createBody();
-        this.bodyNode.position.y = 1.1;
+        this.corpsNode = this.createBody();
+        this.corpsNode.position.y = 1.1;
 
         // PIERNA IZQUIERDA
         this.leftLeg = this.createLeg();
@@ -44,14 +44,18 @@ class ChosoModel extends THREE.Object3D {
         this.nodeRightArm.position.y = 1.4;
         this.nodeRightArm.position.x = 0.35;
 
+        // CUERPO SALVO CABEZA
+        this.bodyNode = new THREE.Object3D();
+        this.bodyNode.add(this.corpsNode);
+        this.bodyNode.add(this.nodeLeftLeg);
+        this.bodyNode.add(this.nodeRightLeg);
+        this.bodyNode.add(this.nodeLeftArm);
+        this.bodyNode.add(this.nodeRightArm);
+
         // GLOBAL
         this.choso = new THREE.Object3D();
         this.choso.add(this.headNode);
         this.choso.add(this.bodyNode);
-        this.choso.add(this.nodeLeftLeg);
-        this.choso.add(this.nodeRightLeg);
-        this.choso.add(this.nodeLeftArm);
-        this.choso.add(this.nodeRightArm);
 
         this.add(this.choso);
     }
@@ -141,6 +145,47 @@ class ChosoModel extends THREE.Object3D {
         node.position.y = 0.1;
 
         return node;
+    }
+
+    calculateAngle(dirX, dirZ) {
+        if(dirX === 0 && dirZ > 0)
+            return 0;
+        else if(dirX > 0 && dirZ > 0)
+            return Math.PI / 4;
+        else if(dirX > 0 && dirZ === 0)
+            return Math.PI / 2;
+        else if(dirX > 0 && dirZ < 0)
+            return 3 * Math.PI / 4;
+        else if(dirX === 0 && dirZ < 0)
+            return Math.PI;
+        else if(dirX < 0 && dirZ < 0)
+            return 5 * Math.PI / 4;
+        else if(dirX < 0 && dirZ === 0)
+            return 3 * Math.PI / 2;
+        else if(dirX < 0 && dirZ > 0)
+            return 7 * Math.PI / 4;
+        else return -1;
+    }
+
+    rotateChoso(dirX, dirZ) {
+        var angle = this.calculateAngle(dirX, dirZ);
+
+        this.headNode.rotation.y = 0;
+        this.bodyNode.rotation.y = 0;
+
+        if(angle >= 0) this.choso.rotation.y = angle;
+    }
+
+    rotateHead(dirX, dirZ) {
+        var angle = this.calculateAngle(dirX, dirZ);
+
+        this.choso.rotation.y = 0;
+
+        if(angle >= 0) this.headNode.rotation.y = angle;
+    }
+
+    rotateBody() {
+        this.choso.rotation.y = 0;
     }
 
     update(){}

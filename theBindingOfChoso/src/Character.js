@@ -17,7 +17,8 @@ class Character extends THREE.Object3D {
         this.maxHealth = 1;
         this.health = this.maxHealth;
 
-        this.hitBox = null;
+        this.hitBox = new THREE.Object3D();
+        this.add(this.hitBox);
 
         this.tiempoAnterior = Date.now();
         this.enMovimiento = false;
