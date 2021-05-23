@@ -1,6 +1,7 @@
 import * as THREE from '../libs/three.module.js'
 import {Character} from "./Character.js";
 import {ShootingController} from "./ShootingController.js";
+import {ChosoModel} from "./ChosoModel.js";
 
 class Choso extends Character {
 
@@ -25,6 +26,9 @@ class Choso extends Character {
 
         this.shootingController = new ShootingController(10, 1, 3, 15, 0.2, 20);
         this.add(this.shootingController);
+
+        this.model = new ChosoModel();
+        this.add(this.model);
 
         this.secondsBetweenDamages = 1;
         this.secondsToTakeDamage = 0;
