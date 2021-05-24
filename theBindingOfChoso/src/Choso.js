@@ -16,6 +16,7 @@ class Choso extends Character {
         this.hitRadius = 0.5;
 
         this.maxHealth = 10;
+        this.maxSpeed = 18.0;
         this.health = this.maxHealth;
 
         this.shootingController = new ShootingController(10, 1, 3, 15, 0.2, 20);
@@ -49,6 +50,11 @@ class Choso extends Character {
 
     changeShotRange(amount) {
         this.shootingController.changeShotRange(amount);
+    }
+
+    changeSpeed(amount) {
+        if(this.speed < this.maxSpeed)
+            this.speed += amount;
     }
 
     update(dirX, dirZ, shooting, dirShot, targets) {

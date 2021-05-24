@@ -81,7 +81,7 @@ class Character extends THREE.Object3D {
     }
 
     activate(pos) {
-        console.log(pos);
+        //console.log(pos);
         this.health = this.maxHealth;
         this.hitBox.position.set(pos.x, pos.y, pos.z);
         this.hitBox.visible = true;

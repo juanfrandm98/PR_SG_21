@@ -8,6 +8,7 @@ class SoundsController extends THREE.Object3D {
         var backgroundPath = '../sounds/background.ogg';
         var chosoShootingPath = '../sounds/chosoShooting.mp3';
         var wolfDeathPath = '../sounds/sadWolf.ogg';
+        var beeDeathPath = '../sounds/sadBee.ogg';
         var chosoHitPath = '../sounds/sadCow.ogg';
         var chosoDeathPath = '../sounds/chososDeath.ogg';
 
@@ -23,6 +24,9 @@ class SoundsController extends THREE.Object3D {
 
         this.wolfDeathSound = new THREE.Audio(listener);
         this.wolfDeathSound.hasPlaybackControl = true;
+
+        this.beeDeathSound = new THREE.Audio(listener);
+        this.beeDeathSound.hasPlaybackControl = true;
 
         this.chosoHitSound = new THREE.Audio(listener);
         this.chosoHitSound.hasPlaybackControl = true;
@@ -62,6 +66,11 @@ class SoundsController extends THREE.Object3D {
             that.chosoDeathSound.setVolume(0.75);
         });
 
+        audioLoader.load(beeDeathPath, function (buffer) {
+            that.beeDeathSound.setBuffer(buffer);
+            that.beeDeathSound.setVolume(0.5);
+        });
+
     }
 
     changeBackground() {
@@ -92,6 +101,13 @@ class SoundsController extends THREE.Object3D {
             this.wolfDeathSound.stop();
 
         this.wolfDeathSound.play();
+    }
+
+    playBeeDeath() {
+        if (this.beeDeathSound.isPlaying)
+            this.beeDeathSound.stop();
+
+        this.beeDeathSound.play();
     }
 
     playChosoDamage() {

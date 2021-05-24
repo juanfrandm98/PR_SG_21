@@ -10,7 +10,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
-import {BeeModel} from "./BeeModel.js";
+import {WolfModel} from "./WolfModel.js";
 
 /// La clase fachada del modelo
 /**
@@ -48,7 +48,7 @@ class MyScene extends THREE.Scene {
     // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
     // referencia a la gui y el texto bajo el que se agruparán los controles de
     // la interfaz que añada el modelo
-    this.model = new BeeModel();
+    this.model = new WolfModel();
     this.add( this.model );
   }
 

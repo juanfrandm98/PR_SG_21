@@ -134,7 +134,7 @@ class EnemyController extends THREE.Object3D {
         for (var i = 0; i < this.bees.length; i++) {
             if (!this.bees[i].getHidden()) {
                 if (this.bees[i].isDefeated()) {
-                    console.log("ABEJA MUERTA");
+                    soundsController.playBeeDeath();
                     this.bees[i].hide();
                 }
 
@@ -145,7 +145,6 @@ class EnemyController extends THREE.Object3D {
         for (var i = 0; i < this.wolves.length; i++) {
             if (!this.wolves[i].getHidden()) {
                 if (this.wolves[i].isDefeated()) {
-                    console.log("LOBO MUERTO");
                     soundsController.playWolfDeath();
                     this.wolves[i].hide();
                 }

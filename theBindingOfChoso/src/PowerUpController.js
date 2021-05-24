@@ -4,6 +4,7 @@ import {RedHeart} from "./RedHeart.js";
 import {Grass} from "./Grass.js";
 import {MilkingDevice} from "./MilkingDevice.js";
 import {Udder} from "./Udder.js";
+import {HorseShoe} from "./HorseShoe.js";
 
 class PowerUpController extends Object3D {
     constructor(maxX, maxZ) {
@@ -13,7 +14,7 @@ class PowerUpController extends Object3D {
         this.maxZ = maxZ;
 
         this.powerups = [];
-        this.types = ["redheart", "grass", "milking", "udder"];
+        this.types = ["redheart", "grass", "milking", "udder", "horseshoe"];
 
         for (var i = 0; i < 3; i++) {
             this.powerups.push(new RedHeart());
@@ -23,6 +24,8 @@ class PowerUpController extends Object3D {
             this.powerups.push(new MilkingDevice());
             this.add(this.powerups[this.powerups.length - 1]);
             this.powerups.push(new Udder());
+            this.add(this.powerups[this.powerups.length - 1]);
+            this.powerups.push(new HorseShoe());
             this.add(this.powerups[this.powerups.length - 1]);
         }
 
@@ -72,6 +75,12 @@ class PowerUpController extends Object3D {
                     this.add(nuevo);
                     this.powerups.push(nuevo);
                     break;
+
+                case "horseshoe":
+                    nuevo = new HorseShoe();
+                    this.add(nuevo);
+                    this.powerups.push(nuevo);
+                    break;
             }
         }
 
@@ -104,7 +113,6 @@ class PowerUpController extends Object3D {
     }
 
     applyPowerUp(powerup, choso) {
-
         switch(powerup.getName()) {
             case "redheart":
                 choso.heal(powerup.getEffect());
@@ -120,6 +128,10 @@ class PowerUpController extends Object3D {
 
             case "udder":
                 choso.changeShotRange(powerup.getEffect());
+                break;
+
+            case "horseshoe":
+                choso.changeSpeed(powerup.getEffect());
                 break;
         }
 
