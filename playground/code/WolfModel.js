@@ -170,8 +170,6 @@ class WolfModel extends THREE.Object3D {
         tailSup.position.y = 0.15;
         tailSup.position.z = -0.275
 
-        console.log(tailSup.position);
-
         var node = new THREE.Object3D();
         node.add(tailInf);
         node.add(tailSup);
@@ -232,8 +230,27 @@ class WolfModel extends THREE.Object3D {
         return node;
     }
 
-    update() {
-        var speed = 8;
+    calculateAngle(dirX, dirZ) {
+        if(dirX === 0 && dirZ > 0)
+            return 0;
+        else if(dirX > 0 && dirZ > 0)
+            return Math.PI / 4;
+        else if(dirX > 0 && dirZ === 0)
+            return Math.PI / 2;
+        else if(dirX > 0 && dirZ < 0)
+            return 3 * Math.PI / 4;
+        else if(dirX === 0 && dirZ < 0)
+            return Math.PI;
+        else if(dirX < 0 && dirZ < 0)
+            return 5 * Math.PI / 4;
+        else if(dirX < 0 && dirZ === 0)
+            return 3 * Math.PI / 2;
+        else if(dirX < 0 && dirZ > 0)
+            return 7 * Math.PI / 4;
+        else return -1;
+    }
+
+    update(speed, dirX, dirZ) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
         this.tiempoAnterior = tiempoActual;
@@ -243,26 +260,26 @@ class WolfModel extends THREE.Object3D {
 
         if(this.ida) {
             newAngle = this.rightLeg.rotation.x + msTranscurridos * speed / 3000;
-            newArmAngle = this.rightArm.rotation.x + msTranscurridos * speed / 6000;
 
-            if(newAngle > this.maxAngle) {
+            if(newAngle > this.maxAngle)
                 newAngle = this.maxAngle;
-                newArmAngle = this.maxAngle / 2;
-            }
         } else {
-            newAngle = this.nodeRightLeg.rotation.x - msTranscurridos * speed / 3000;
-            newArmAngle = this.rightArm.rotation.x - msTranscurridos * speed / 6000;
+            newAngle = this.rightLeg.rotation.x - msTranscurridos * speed / 3000;
 
-            if(newAngle < -this.maxAngle) {
+            if(newAngle < -this.maxAngle)
                 newAngle = -this.maxAngle;
-                newArmAngle = -this.maxAngle / 2;
-            }
         }
+
+        newArmAngle = newAngle/2;
 
         this.rightLeg.rotation.x = newAngle;
         this.leftLeg.rotation.x = -newAngle;
         this.rightArm.rotation.x = -newArmAngle;
         this.leftArm.rotation.x = newArmAngle;
+        this.tail.rotation.y = newAngle;
+
+        var angle = this.calculateAngle(dirX, dirZ);
+        if(angle >= 0) this.wolf.rotation.y = angle;
 
         if(Math.abs(newAngle) === this.maxAngle) {
             if(this.ida) this.ida = false;

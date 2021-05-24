@@ -260,26 +260,23 @@ class WolfModel extends THREE.Object3D {
 
         if(this.ida) {
             newAngle = this.rightLeg.rotation.x + msTranscurridos * speed / 3000;
-            newArmAngle = this.rightArm.rotation.x + msTranscurridos * speed / 6000;
 
-            if(newAngle > this.maxAngle) {
+            if(newAngle > this.maxAngle)
                 newAngle = this.maxAngle;
-                newArmAngle = this.maxAngle / 2;
-            }
         } else {
-            newAngle = this.nodeRightLeg.rotation.x - msTranscurridos * speed / 3000;
-            newArmAngle = this.rightArm.rotation.x - msTranscurridos * speed / 6000;
+            newAngle = this.rightLeg.rotation.x - msTranscurridos * speed / 3000;
 
-            if(newAngle < -this.maxAngle) {
+            if(newAngle < -this.maxAngle)
                 newAngle = -this.maxAngle;
-                newArmAngle = -this.maxAngle / 2;
-            }
         }
+
+        newArmAngle = newAngle/2;
 
         this.rightLeg.rotation.x = newAngle;
         this.leftLeg.rotation.x = -newAngle;
         this.rightArm.rotation.x = -newArmAngle;
         this.leftArm.rotation.x = newArmAngle;
+        this.tail.rotation.y = newAngle;
 
         var angle = this.calculateAngle(dirX, dirZ);
         if(angle >= 0) this.wolf.rotation.y = angle;

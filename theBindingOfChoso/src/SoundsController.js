@@ -68,7 +68,7 @@ class SoundsController extends THREE.Object3D {
 
         audioLoader.load(beeDeathPath, function (buffer) {
             that.beeDeathSound.setBuffer(buffer);
-            that.beeDeathSound.setVolume(0.5);
+            that.beeDeathSound.setVolume(0.8);
         });
 
     }

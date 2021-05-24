@@ -181,7 +181,7 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
 
     // Se actualizan el resto de los modelos
-    this.model.update();
+    this.model.update(8, 0, 1);
 
     // Le decimos al renderizador 'visualiza la escena que te indico usando la
     // cámara que te estoy pasando'
