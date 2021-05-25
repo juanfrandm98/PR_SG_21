@@ -81,10 +81,11 @@ class Character extends THREE.Object3D {
     }
 
     activate(pos) {
-        //console.log(pos);
+        var nuevaPos = this.checkPosition(pos, this.maxX, this.maxZ, this.hitRadius);
         this.health = this.maxHealth;
-        this.hitBox.position.set(pos.x, pos.y, pos.z);
+        this.hitBox.position.set(nuevaPos.x, nuevaPos.y, nuevaPos.z);
         this.hitBox.visible = true;
+        this.tiempoAnterior = Date.now();
     }
 
     heal(amount) {

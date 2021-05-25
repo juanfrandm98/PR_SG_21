@@ -10,7 +10,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
-import {WolfModel} from "./WolfModel.js";
+import {InterfaceController} from "./InterfaceController.js";
 
 /// La clase fachada del modelo
 /**
@@ -48,8 +48,8 @@ class MyScene extends THREE.Scene {
     // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
     // referencia a la gui y el texto bajo el que se agruparán los controles de
     // la interfaz que añada el modelo
-    this.model = new WolfModel();
-    this.add( this.model );
+    this.interface = new InterfaceController(10);
+    this.add( this.interface );
   }
 
   createCamera() {
@@ -90,6 +90,7 @@ class MyScene extends THREE.Scene {
       // En el contexto de una función, this alude a la función
       this.lightIntensity = 0.5;
       this.axisOnOff = true;
+      this.health = 10;
     }
 
     // Se va a crear una sección para los controles de esta clase
@@ -100,6 +101,9 @@ class MyScene extends THREE.Scene {
 
     // Y otro para mostrar u ocultar los ejes
     folder.add( this.guiControls, 'axisOnOff' ).name( 'Mostrar ejes : ' );
+
+    var interfaceFolder = gui.addFolder('Interface');
+    interfaceFolder.add( this.guiControls, 'health', 0, 10, 1).name('Salud');
 
     return gui;
   }
@@ -181,7 +185,7 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
 
     // Se actualizan el resto de los modelos
-    this.model.update(8, 0, 1);
+    this.interface.update(this.guiControls.health);
 
     // Le decimos al renderizador 'visualiza la escena que te indico usando la
     // cámara que te estoy pasando'

@@ -255,6 +255,7 @@ class MyScene extends THREE.Scene {
             this.choso.hide();
             this.choso.setSpeed(0);
             this.soundsController.stopBackground();
+            this.spotLight.color = 0xFF0000;
         }
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la

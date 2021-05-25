@@ -20,6 +20,13 @@ class Wolf extends Character {
         this.hitBox.add(this.wolf);
         this.hitBox.position.y += 1;
         this.hitBox.visible = false;
+
+        // Para el retroceso tras golpe
+        this.isGoingBack = false;
+        this.maxSegundosGoingBack = 0.75;
+        this.segundosGoingBack = 0.0;
+        this.dirXBack = 0;
+        this.dirZBack = 0;
     }
 
     calculateCoef(position, target, coefX) {
@@ -37,28 +44,56 @@ class Wolf extends Character {
         var tiempoActual = Date.now();
         var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
 
-        var dirX = this.calculateCoef(this.hitBox.position, target, true);
-        var dirZ = this.calculateCoef(this.hitBox.position, target, false);
+        var dirX = 0;
+        var dirZ = 0;
 
-        var newX = this.hitBox.position.x + dirX * this.speed * segundosTranscurridos;
-        var newZ = this.hitBox.position.z + dirZ * this.speed * segundosTranscurridos;
 
-        var margin = 0.5;
+        if(this.isGoingBack) {
+            dirX = this.dirXBack;
+            dirZ = this.dirZBack;
 
-        if(Math.abs(target.x - newX) < margin) {
-            dirX = 0;
-            newX = target.x;
+            this.segundosGoingBack -= segundosTranscurridos;
+
+            if(this.segundosGoingBack <= 0) this.isGoingBack = false;
+        } else {
+            dirX = this.calculateCoef(this.hitBox.position, target, true);
+            dirZ = this.calculateCoef(this.hitBox.position, target, false);
+
+            this.wolf.update(this.speed, dirX, dirZ);
         }
 
-        if(Math.abs(target.z - newZ) < margin) {
-            dirZ = 0;
-            newZ = target.z;
+        var newPos = new THREE.Vector3(0,0,0);
+        newPos.x = this.hitBox.position.x + dirX * this.speed * segundosTranscurridos;
+        newPos.y = this.hitBox.position.y;
+        newPos.z = this.hitBox.position.z + dirZ * this.speed * segundosTranscurridos;
+
+        var sameX = false;
+        var sameZ = false;
+
+        if(!this.isGoingBack) {
+            var margin = 0.5;
+
+            if(Math.abs(target.x - newPos.x) < margin) {
+                newPos.x = target.x;
+                sameX = true;
+            }
+
+            if(Math.abs(target.z - newPos.z) < margin) {
+                newPos.z = target.z;
+                sameZ = true;
+            }
         }
 
-        this.hitBox.position.x = newX;
-        this.hitBox.position.z = newZ;
+        newPos = super.checkPosition(newPos, this.maxX, this.maxZ, this.hitRadius);
 
-        this.wolf.update(this.speed, dirX, dirZ);
+        if(sameX && sameZ) {
+            this.isGoingBack = true;
+            this.segundosGoingBack = this.maxSegundosGoingBack;
+            this.dirXBack = -dirX;
+            this.dirZBack = -dirZ;
+        }
+
+        this.hitBox.position.set(newPos.x, newPos.y, newPos.z);
 
         this.tiempoAnterior = tiempoActual;
     }

@@ -102,16 +102,56 @@ class ChosoModel extends THREE.Object3D {
         return head;
     }
 
-    createBody() {
-        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1,1,1)});
+    createUdder() {
         var pinkMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.964, 0.352, 0.827)});
 
+        var mainUdderGeom = new THREE.BoxGeometry(0.3, 0.3, 0.15);
+        var udderGeom = new THREE.CylinderGeometry(0.01, 0.01, 0.05);
+
+        var mainUdder = new THREE.Mesh(mainUdderGeom, pinkMat);
+
+        var leftUpUdder = new THREE.Mesh(udderGeom, pinkMat);
+        leftUpUdder.rotateX(Math.PI / 2);
+        leftUpUdder.position.x = -0.1;
+        leftUpUdder.position.y = 0.1;
+        leftUpUdder.position.z = 0.1;
+
+        var rightUpUdder = new THREE.Mesh(udderGeom, pinkMat);
+        rightUpUdder.rotateX(Math.PI / 2);
+        rightUpUdder.position.x = 0.1;
+        rightUpUdder.position.y = 0.1;
+        rightUpUdder.position.z = 0.1;
+
+        var leftDwUdder = new THREE.Mesh(udderGeom, pinkMat);
+        leftDwUdder.rotateX(Math.PI / 2);
+        leftDwUdder.position.x = -0.1;
+        leftDwUdder.position.y = -0.1;
+        leftDwUdder.position.z = 0.1;
+
+        var rightDwUdder = new THREE.Mesh(udderGeom, pinkMat);
+        rightDwUdder.rotateX(Math.PI / 2);
+        rightDwUdder.position.x = 0.1;
+        rightDwUdder.position.y = -0.1;
+        rightDwUdder.position.z = 0.1;
+
+        var node = new THREE.Object3D();
+        node.add(mainUdder);
+        node.add(leftUpUdder);
+        node.add(rightUpUdder);
+        node.add(leftDwUdder);
+        node.add(rightDwUdder);
+
+        return node;
+    }
+
+    createBody() {
+        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1,1,1)});
+
         var bodyGeom = new THREE.BoxGeometry(0.5, 1, 0.5);
-        var udderGeom = new THREE.BoxGeometry(0.3, 0.3, 0.15);
 
         var body = new THREE.Mesh(bodyGeom, whiteMat);
 
-        var udder = new THREE.Mesh(udderGeom, pinkMat);
+        var udder = this.createUdder();
         udder.position.z = 0.3;
         udder.position.y = -0.25;
 
