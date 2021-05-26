@@ -11,11 +11,11 @@ import {TrackballControls} from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
 import {MyGround} from "./MyGround.js"
-import {Choso} from "./Choso.js";
-import {EnemyController} from "./EnemyController.js";
+import {Choso} from "./characters/Choso.js";
+import {EnemyController} from "./characters/EnemyController.js";
 import {SoundsController} from "./SoundsController.js";
 import {CollisionController} from "./CollisionController.js";
-import {PowerUpController} from "./PowerUpController.js";
+import {PowerUpController} from "./powerups/PowerUpController.js";
 import {InterfaceController} from "./interface/InterfaceController.js";
 
 /// La clase fachada del modelo

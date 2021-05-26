@@ -1,4 +1,4 @@
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 import {Character} from "./Character.js";
 import {ShootingController} from "./ShootingController.js";
 import {ChosoModel} from "./ChosoModel.js";

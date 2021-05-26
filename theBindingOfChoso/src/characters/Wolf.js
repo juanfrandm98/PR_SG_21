@@ -1,6 +1,6 @@
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 import {Character} from "./Character.js";
-import {MathUtils} from "../libs/three.module.js";
+import {MathUtils} from "../../libs/three.module.js";
 import {WolfModel} from "./WolfModel.js";
 
 class Wolf extends Character {

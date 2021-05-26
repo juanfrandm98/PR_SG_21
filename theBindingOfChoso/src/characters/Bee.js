@@ -1,6 +1,6 @@
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 import {Character} from "./Character.js";
-import {MathUtils} from "../libs/three.module.js";
+import {MathUtils} from "../../libs/three.module.js";
 import {BeeModel} from "./BeeModel.js";
 
 class Bee extends Character {

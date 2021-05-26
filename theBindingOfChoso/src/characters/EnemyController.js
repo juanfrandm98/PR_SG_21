@@ -1,7 +1,7 @@
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 import {Bee} from "./Bee.js";
 import {Wolf} from "./Wolf.js";
-import {MathUtils} from "../libs/three.module.js";
+import {MathUtils} from "../../libs/three.module.js";
 
 class EnemyController extends THREE.Object3D {
 

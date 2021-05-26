@@ -1,4 +1,4 @@
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 import {PowerUp} from "./PowerUp.js"
 import {Heart} from "./Heart.js"
 

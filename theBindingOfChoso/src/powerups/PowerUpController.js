@@ -1,5 +1,5 @@
-import * as THREE from '../libs/three.module.js'
-import {MathUtils, Object3D} from "../libs/three.module.js";
+import * as THREE from '../../libs/three.module.js'
+import {MathUtils, Object3D} from "../../libs/three.module.js";
 import {RedHeart} from "./RedHeart.js";
 import {Grass} from "./Grass.js";
 import {MilkingDevice} from "./MilkingDevice.js";
