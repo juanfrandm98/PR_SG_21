@@ -26,6 +26,14 @@ class ShootingController extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
     }
 
+    getDamage() {
+        return this.damage;
+    }
+
+    getRange() {
+        return this.range;
+    }
+
     calculateDistance(first, second) {
         var distance = Math.pow((first.x - second.x), 2);
         distance += Math.pow((first.z - second.z), 2);

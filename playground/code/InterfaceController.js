@@ -1,21 +1,25 @@
-import * as THREE from '../../libs/three.module.js'
+import * as THREE from '../libs/three.module.js'
 import {SemiHeart} from "./SemiHeart.js";
-import {TextBufferGeometry} from "../libs/three.module.js";
+import {Sword} from "./Sword.js";
+import {ShotIcon} from "./ShotIcon.js";
+import {RangeIcon} from "./RangeIcon.js";
+import {PointsController} from "./PointsController.js";
+import {SpeedIcon} from "./SpeedIcon.js";
 
 class InterfaceController extends THREE.Object3D {
 
-    constructor(maxHP) {
+    constructor(maxHP, initialAtk, initialShotRadius, initialRange, initialSpeed) {
         super();
 
+        // HEALTH
         this.hearts = [];
         var i;
-        var y = -0.5;
         var x = 0.5;
         var xPerCouple = 0.75;
 
         for(i = 0; i < maxHP; i++) {
             this.hearts.push(new SemiHeart());
-            this.hearts[i].position.y = y;
+            this.hearts[i].position.y = 3;
             this.add(this.hearts[i]);
         }
 
@@ -25,10 +29,7 @@ class InterfaceController extends THREE.Object3D {
             this.hearts[i + 1].position.x = x + xPerCouple * i;
         }
 
-        this.icon = new SemiHeart();
-        this.icon.position.set(0.5, -2, 0);
-        this.add(this.icon);
-
+        // HEALTH ANIMATION
         this.maxHealth = maxHP;
         this.currentHeart = maxHP - 1;
         this.beatingSpeed = 0.001;
@@ -36,10 +37,56 @@ class InterfaceController extends THREE.Object3D {
         this.minBeat = 1;
         this.beatUp = true;
 
+        // ATACK
+        this.attackIcon = new Sword();
+        this.attackController = new PointsController(initialAtk);
+        this.attackController.position.x = 1;
+
+        this.attackNode = new THREE.Object3D();
+        this.attackNode.add(this.attackIcon);
+        this.attackNode.add(this.attackController);
+        this.attackNode.position.set(0.5, 1.5, 0);
+        this.add(this.attackNode);
+
+        // SHOT RADIUS
+        this.shotRadiusIcon = new ShotIcon();
+        this.shotRadiusController = new PointsController(2);
+        this.shotRadiusController.position.x = 1;
+
+        this.shotRadiusNode = new THREE.Object3D();
+        this.shotRadiusNode.add(this.shotRadiusIcon);
+        this.shotRadiusNode.add(this.shotRadiusController);
+        this.shotRadiusNode.position.set(0.5, 0, 0);
+        this.add(this.shotRadiusNode);
+
+        // RANGE
+        this.rangeIcon = new RangeIcon();
+        this.rangeController = new PointsController(3);
+        this.rangeController.position.x = 1;
+
+        this.rangeNode = new THREE.Object3D();
+        this.rangeNode.add(this.rangeIcon);
+        this.rangeNode.add(this.rangeController);
+        this.rangeNode.position.set(0.5, -1.5, 0);
+        this.add(this.rangeNode);
+
+        // SPEED
+        this.speedIcon = new SpeedIcon();
+        this.speedController = new PointsController(3);
+        this.speedController.position.x = 1;
+
+        this.speedNode = new THREE.Object3D();
+        this.speedNode.add(this.speedIcon);
+        this.speedNode.add(this.speedController);
+        this.speedNode.position.set(0.5, -3, 0);
+        this.add(this.speedNode);
+
         this.tiempoAnterior = Date.now();
     }
 
-    update(health) {
+    update(health, attack) {
+
+        // HEALTH
         if(health >= 0 && health <= this.maxHealth) {
             var currentHealth = this.currentHeart + 1;
             var i;
@@ -89,6 +136,10 @@ class InterfaceController extends THREE.Object3D {
             this.hearts[0].changeScale(1);
             this.hearts[1].changeScale(1);
         }
+
+        // ATTACK
+        this.attackController.update(attack);
+        this.shotRadiusController.update(2);
 
     }
 

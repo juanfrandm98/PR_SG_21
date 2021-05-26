@@ -1,4 +1,4 @@
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 
 class SemiHeart extends THREE.Object3D {
 
@@ -17,6 +17,7 @@ class SemiHeart extends THREE.Object3D {
             depth: 0.2,
             steps: 1,
             curveSegments: 55,
+            bevelEnabled: false,
         };
 
         // Un Mesh se compone de geometría y material. En este caso, como material
@@ -29,20 +30,37 @@ class SemiHeart extends THREE.Object3D {
 
         // Ya podemos construir el Mesh
         this.obj = new THREE.Mesh(geom, this.redMat);
+        this.obj.position.z = -0.1;
+
+        this.scaleNode = new THREE.Object3D();
+        this.scaleNode.add(this.obj);
+
+        this.node = new THREE.Object3D();
+        this.node.add(this.scaleNode);
 
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(this.obj);
+        this.add(this.node);
 
     }
 
     rotateY() {
-        this.obj.rotateY(Math.PI);
+        this.node.rotateY(Math.PI);
     }
 
     changeColor() {
         if(this.obj.material === this.redMat) this.obj.material = this.greyMat;
         else this.obj.material = this.redMat;
     }
+
+    changeScale(scale) {
+        this.scaleNode.scale.y = scale;
+    }
+
+    getScale() {
+        return this.scaleNode.scale.y;
+    }
+
+    update(){};
 
 }
 

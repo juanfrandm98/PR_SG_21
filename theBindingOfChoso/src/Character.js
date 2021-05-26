@@ -64,6 +64,14 @@ class Character extends THREE.Object3D {
         return this.contactDamage;
     }
 
+    getMaxHealth() {
+        return this.maxHealth;
+    }
+
+    getHealth() {
+        return this.health;
+    }
+
     takeDamage(damage) {
         this.health -= damage;
     }

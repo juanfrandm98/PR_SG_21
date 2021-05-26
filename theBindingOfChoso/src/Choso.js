@@ -29,6 +29,18 @@ class Choso extends Character {
         this.secondsToTakeDamage = 0;
     }
 
+    getAttack() {
+        return this.shootingController.getDamage();
+    }
+
+    getRange() {
+        return this.shootingController.getRange();
+    }
+
+    getSpeed() {
+        return this.speed;
+    }
+
     takeDamage(damage, soundsController) {
         if (this.secondsToTakeDamage <= 0) {
             super.takeDamage(damage);

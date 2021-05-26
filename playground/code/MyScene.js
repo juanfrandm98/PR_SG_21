@@ -48,7 +48,7 @@ class MyScene extends THREE.Scene {
     // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
     // referencia a la gui y el texto bajo el que se agruparán los controles de
     // la interfaz que añada el modelo
-    this.interface = new InterfaceController(10);
+    this.interface = new InterfaceController(10, this.guiControls.attack);
     this.add( this.interface );
   }
 
@@ -91,6 +91,7 @@ class MyScene extends THREE.Scene {
       this.lightIntensity = 0.5;
       this.axisOnOff = true;
       this.health = 10;
+      this.attack = 2;
     }
 
     // Se va a crear una sección para los controles de esta clase
@@ -104,6 +105,7 @@ class MyScene extends THREE.Scene {
 
     var interfaceFolder = gui.addFolder('Interface');
     interfaceFolder.add( this.guiControls, 'health', 0, 10, 1).name('Salud');
+    interfaceFolder.add(this.guiControls, 'attack', 1, 5, 1).name('Ataque');
 
     return gui;
   }
@@ -185,7 +187,7 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
 
     // Se actualizan el resto de los modelos
-    this.interface.update(this.guiControls.health);
+    this.interface.update(this.guiControls.health, this.guiControls.attack);
 
     // Le decimos al renderizador 'visualiza la escena que te indico usando la
     // cámara que te estoy pasando'

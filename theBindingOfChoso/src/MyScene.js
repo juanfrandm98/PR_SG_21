@@ -16,6 +16,7 @@ import {EnemyController} from "./EnemyController.js";
 import {SoundsController} from "./SoundsController.js";
 import {CollisionController} from "./CollisionController.js";
 import {PowerUpController} from "./PowerUpController.js";
+import {InterfaceController} from "./interface/InterfaceController.js";
 
 /// La clase fachada del modelo
 /**
@@ -75,6 +76,16 @@ class MyScene extends THREE.Scene {
 
         this.collisionController = new CollisionController(this.ground.getMaxX(), this.ground.getMaxZ());
         this.add(this.collisionController);
+
+        this.interfaceController = new InterfaceController(
+            this.choso.getMaxHealth(),
+            this.choso.getAttack(),
+            this.choso.getShootRadius() * 10,
+            this.choso.getRange() / 5,
+            this.choso.getSpeed() - 5
+        );
+        this.interfaceController.position.y = 5;
+        this.add(this.interfaceController);
 
     }
 
@@ -251,7 +262,15 @@ class MyScene extends THREE.Scene {
         targets = this.enemyController.getEnemies();
         this.collisionController.collisionEnemiesChoso(targets, this.choso, this.soundsController);
 
-        if(this.choso.isDefeated()) {
+        this.interfaceController.update(
+            this.choso.getHealth(),
+            this.choso.getAttack(),
+            this.choso.getShootRadius() * 10,
+            this.choso.getRange() / 5,
+            this.choso.getSpeed() - 5
+        );
+
+        if (this.choso.isDefeated()) {
             this.choso.hide();
             this.choso.setSpeed(0);
             this.soundsController.stopBackground();
@@ -293,7 +312,7 @@ class MyScene extends THREE.Scene {
                 break;
 
             case 77:
-                if(down) this.soundsController.changeBackground();
+                if (down) this.soundsController.changeBackground();
                 break;
 
             default:
@@ -305,7 +324,7 @@ class MyScene extends THREE.Scene {
     getMousePos(event) {
         var mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = - (1 - 2 * (event.clientY / window.innerHeight));
+        mouse.y = -(1 - 2 * (event.clientY / window.innerHeight));
         return mouse.normalize();
     }
 
