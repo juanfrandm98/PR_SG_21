@@ -14,10 +14,12 @@ class InterfaceController extends THREE.Object3D {
         // FONDO
         var backGeom = new THREE.BoxGeometry(25, 25, 0.1);
         var backText = new THREE.TextureLoader().load('../../imgs/background.jpg');
+        backText.wrapS = THREE.RepeatWrapping;
+        backText.repeat.set(2, 1);
         var backMat = new THREE.MeshPhongMaterial({map: backText});
 
         this.backGround = new THREE.Mesh(backGeom, backMat);
-        this.backGround.position.x = 5;
+        this.backGround.position.x = -2.5;
         this.backGround.position.z = -0.5;
         this.add(this.backGround);
 
@@ -98,6 +100,10 @@ class InterfaceController extends THREE.Object3D {
         this.camera = this.createCamera();
         this.add(this.camera);
 
+        // LIGHT
+        this.light = this.createLight();
+        this.add(this.light);
+
         this.tiempoAnterior = Date.now();
     }
 
@@ -108,6 +114,14 @@ class InterfaceController extends THREE.Object3D {
         camera.lookAt(new THREE.Vector3(3.5,0,0));
 
         return camera;
+    }
+
+    createLight() {
+        var light = new THREE.SpotLight(new THREE.Color(1,1,1), 0.5, 30, 45);
+        light.position.set(3.5, 0, 10);
+        light.target = this.shotRadiusIcon;
+
+        return light;
     }
 
     getCamera() {
