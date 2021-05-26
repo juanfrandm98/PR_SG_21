@@ -50,6 +50,10 @@ class ShootingController extends THREE.Object3D {
         if (this.shotRadius > this.maxShotRadius) this.shotRadius = this.maxShotRadius;
     }
 
+    getShootingRadius() {
+        return this.shotRadius;
+    }
+
     changeShotRange(dif) {
         this.range += dif;
         if (this.range > this.maxRange) this.range = this.maxRange;

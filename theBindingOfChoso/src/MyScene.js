@@ -80,11 +80,11 @@ class MyScene extends THREE.Scene {
         this.interfaceController = new InterfaceController(
             this.choso.getMaxHealth(),
             this.choso.getAttack(),
-            this.choso.getShootRadius() * 10,
-            this.choso.getRange() / 5,
+            Math.round(this.choso.getShootingRadius() * 10),
+            Math.round(this.choso.getRange() / 5),
             this.choso.getSpeed() - 5
         );
-        this.interfaceController.position.y = 5;
+        this.interfaceController.position.y = -50;
         this.add(this.interfaceController);
 
     }
@@ -265,8 +265,8 @@ class MyScene extends THREE.Scene {
         this.interfaceController.update(
             this.choso.getHealth(),
             this.choso.getAttack(),
-            this.choso.getShootRadius() * 10,
-            this.choso.getRange() / 5,
+            Math.round(this.choso.getShootingRadius() * 10),
+            Math.round(this.choso.getRange() / 5),
             this.choso.getSpeed() - 5
         );
 
@@ -279,13 +279,32 @@ class MyScene extends THREE.Scene {
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
-        this.renderer.render(this, this.getCamera());
+        //this.renderer.render(this, this.getCamera());
+        //this.renderer.render(this, this.interfaceController.getCamera());
+        this.renderViewPort(this, this.camera, 0.2, 0, 0.8, 1);
+        this.renderViewPort(this, this.interfaceController.getCamera(), 0, 0, 0.2, 1);
 
         // Este método debe ser llamado cada vez que queramos visualizar la escena
         // de nuevo. Literalmente le decimos al nevagador: 'la próxima vez que haya
         // que refrescar la pantalla, llama al método que te indico'. Si no
         // existiera esta línea, update() se ejecutaría sólo la primera vez.
         requestAnimationFrame(() => this.update());
+    }
+
+    renderViewPort(escena, camara, left, top, width, height) {
+        var l = left * window.innerWidth;
+        var w = width * window.innerWidth;
+        var t = top * window.innerHeight;
+        var h = height * window.innerHeight;
+
+        this.renderer.setViewport(l, t, w, h);
+        this.renderer.setScissor(l, t, w, h);
+        this.renderer.setScissorTest(true);
+
+        camara.aspect = w / h;
+        camara.updateProjectionMatrix();
+
+        this.renderer.render(escena, camara);
     }
 
     // Controlador de eventos de teclado
@@ -324,6 +343,7 @@ class MyScene extends THREE.Scene {
     getMousePos(event) {
         var mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.x -= 0.2;
         mouse.y = -(1 - 2 * (event.clientY / window.innerHeight));
         return mouse.normalize();
     }

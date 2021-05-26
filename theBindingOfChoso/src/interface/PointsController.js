@@ -66,6 +66,7 @@ class PointsController extends THREE.Object3D {
             if (points > this.currentPoints) {
                 for (i = this.currentPoints; i < points; i++) {
                     if (i < this.points.length) {
+                        console.log(i);
                         this.points[i].material = this.gainMat;
                         this.tiempoAcumulado = this.tiempoParaCambio;
                         this.tiempoAnterior = Date.now();

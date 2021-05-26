@@ -12,11 +12,12 @@ class InterfaceController extends THREE.Object3D {
         super();
 
         // FONDO
-        var backGeom = new THREE.BoxGeometry(20, 20, 0.1);
-        var backText = new THREE.TextureLoader().load('../../imgs/cow.jpg');
+        var backGeom = new THREE.BoxGeometry(25, 25, 0.1);
+        var backText = new THREE.TextureLoader().load('../../imgs/background.jpg');
         var backMat = new THREE.MeshPhongMaterial({map: backText});
 
         this.backGround = new THREE.Mesh(backGeom, backMat);
+        this.backGround.position.x = 5;
         this.backGround.position.z = -0.5;
         this.add(this.backGround);
 
@@ -47,7 +48,7 @@ class InterfaceController extends THREE.Object3D {
         this.beatUp = true;
 
         // COLOR PARA ICONOS
-        var iconMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 0)});
+        var iconMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0, 0, 0)});
 
         // ATACK
         this.attackIcon = new Sword(iconMat);
@@ -93,7 +94,24 @@ class InterfaceController extends THREE.Object3D {
         this.speedNode.position.set(0.5, -3, 0);
         this.add(this.speedNode);
 
+        // CAM
+        this.camera = this.createCamera();
+        this.add(this.camera);
+
         this.tiempoAnterior = Date.now();
+    }
+
+    createCamera() {
+        //var camera = new THREE.OrthographicCamera(-10, 10, 10, 10, 0.1, 1000);
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(3.5, 0, 25);
+        camera.lookAt(new THREE.Vector3(3.5,0,0));
+
+        return camera;
+    }
+
+    getCamera() {
+        return this.camera;
     }
 
     update(health, attack, shotRadius, range, speed) {
