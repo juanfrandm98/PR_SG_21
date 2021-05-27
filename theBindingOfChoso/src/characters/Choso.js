@@ -19,7 +19,8 @@ class Choso extends Character {
         this.maxSpeed = 15.0;
         this.health = this.maxHealth;
 
-        this.shootingController = new ShootingController(10, 1, 3, 15, 0.2, 20);
+        var shotMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
+        this.shootingController = new ShootingController(10, 1, 3, 15, 0.2, 20, shotMat);
         this.add(this.shootingController);
 
         this.model = new ChosoModel();

@@ -2,7 +2,7 @@ import * as THREE from '../../libs/three.module.js'
 
 class Shot extends THREE.Object3D {
 
-    constructor(speed, radius, range) {
+    constructor(speed, radius, range, sphMat) {
         super();
 
         this.defPos = new THREE.Vector3(0, 5, 0);
@@ -13,7 +13,6 @@ class Shot extends THREE.Object3D {
         this.range = range;
 
         var sphGeom = new THREE.SphereGeometry(this.radius, 10, 10);
-        var sphMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
 
         this.shot = new THREE.Mesh(sphGeom, sphMat);
         this.shot.position.copy(this.defPos);

@@ -1,6 +1,7 @@
 import * as THREE from '../../libs/three.module.js'
 import {Bee} from "./Bee.js";
 import {Wolf} from "./Wolf.js";
+import {Bear} from "./Bear.js";
 import {MathUtils} from "../../libs/three.module.js";
 
 class EnemyController extends THREE.Object3D {
@@ -13,6 +14,7 @@ class EnemyController extends THREE.Object3D {
 
         this.bees = [];
         this.wolves = [];
+        this.bears = [];
         this.defPos = new THREE.Vector3(20, 0, -20);
         this.timeBetweenSpanws = 2000;
 
@@ -24,6 +26,11 @@ class EnemyController extends THREE.Object3D {
         for (var i = 0; i < 10; i++) {
             this.wolves.push(new Wolf(this.maxX, this.maxZ));
             this.add(this.wolves[i]);
+        }
+
+        for (var i = 0; i < 10; i++) {
+            this.bears.push(new Bear(this.maxX, this.maxZ));
+            this.add(this.bears[i]);
         }
 
         this.enemiesList = [];
@@ -47,7 +54,7 @@ class EnemyController extends THREE.Object3D {
 
     generateEnemies() {
         for (var i = 0; i < 10; i++) {
-            var type = MathUtils.randInt(0, 1);
+            var type = MathUtils.randInt(0, 2);
             this.enemiesList.push(type);
         }
     }
@@ -120,6 +127,18 @@ class EnemyController extends THREE.Object3D {
                         }
 
                         break;
+
+                    case 2:
+                        activated = this.currentEnemyActivated(this.bears, newPos);
+
+                        if(!activated) {
+                            this.bears.push(new Bear(this.maxX, this.maxZ));
+                            this.add(this.bears[this.bears.length - 1]);
+                            this.bears[this.bears.length - 1].activate(newPos);
+                        }
+
+
+                        break;
                 }
 
                 this.tiempoUntilNextSpawn = this.timeBetweenSpanws;
@@ -152,6 +171,17 @@ class EnemyController extends THREE.Object3D {
                 this.wolves[i].update(choso.getPosition());
             }
         }
+
+        for (var i = 0; i < this.bears.length; i++) {
+            if (!this.bears[i].getHidden()) {
+                if (this.bears[i].isDefeated()) {
+                    //soundsController.playWolfDeath();
+                    this.bears[i].hide();
+                }
+
+                this.bears[i].update(choso, soundsController);
+            }
+        }
     }
 
     getEnemies() {
@@ -164,6 +194,10 @@ class EnemyController extends THREE.Object3D {
         for (var i = 0; i < this.wolves.length; i++)
             if (!this.wolves[i].getHidden())
                 enemies.push(this.wolves[i]);
+
+        for (var i = 0; i < this.bears.length; i++)
+            if (!this.bears[i].getHidden())
+                enemies.push(this.bears[i]);
 
         return enemies;
     }

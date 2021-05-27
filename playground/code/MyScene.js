@@ -10,7 +10,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
-import {InterfaceController} from "./InterfaceController.js";
+import {BearModel} from "./BearModel.js";
 
 /// La clase fachada del modelo
 /**
@@ -48,8 +48,8 @@ class MyScene extends THREE.Scene {
     // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
     // referencia a la gui y el texto bajo el que se agruparán los controles de
     // la interfaz que añada el modelo
-    this.interface = new InterfaceController(10, this.guiControls.attack);
-    this.add( this.interface );
+    this.model = new BearModel();
+    this.add(this.model);
   }
 
   createCamera() {
@@ -90,8 +90,8 @@ class MyScene extends THREE.Scene {
       // En el contexto de una función, this alude a la función
       this.lightIntensity = 0.5;
       this.axisOnOff = true;
-      this.health = 10;
-      this.attack = 2;
+      this.dirX = 0;
+      this.dirZ = 0;
     }
 
     // Se va a crear una sección para los controles de esta clase
@@ -103,9 +103,9 @@ class MyScene extends THREE.Scene {
     // Y otro para mostrar u ocultar los ejes
     folder.add( this.guiControls, 'axisOnOff' ).name( 'Mostrar ejes : ' );
 
-    var interfaceFolder = gui.addFolder('Interface');
-    interfaceFolder.add( this.guiControls, 'health', 0, 10, 1).name('Salud');
-    interfaceFolder.add(this.guiControls, 'attack', 1, 5, 1).name('Ataque');
+    var modelFolder = gui.addFolder('Modelo');
+    modelFolder.add(this.guiControls, 'dirX', -1, 1, 1).name('DirX');
+    modelFolder.add(this.guiControls, 'dirZ', -1, 1, 1).name('DirZ');
 
     return gui;
   }
@@ -187,7 +187,7 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
 
     // Se actualizan el resto de los modelos
-    this.interface.update(this.guiControls.health, this.guiControls.attack);
+    this.model.update(4, this.guiControls.dirX, this.guiControls.dirZ);
 
     // Le decimos al renderizador 'visualiza la escena que te indico usando la
     // cámara que te estoy pasando'

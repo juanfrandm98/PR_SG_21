@@ -3,7 +3,7 @@ import {Shot} from "./Shot.js";
 
 class ShootingController extends THREE.Object3D {
 
-    constructor(amount, damage, shotsPerSecond, shotSpeed, radius, range) {
+    constructor(amount, damage, shotsPerSecond, shotSpeed, radius, range, mat) {
         super();
 
         this.shots = [];
@@ -12,13 +12,14 @@ class ShootingController extends THREE.Object3D {
         this.shotRadius = radius;
         this.range = range;
         this.damage = damage;
+        this.mat = mat;
 
         this.maxRange = 40;
         this.maxShotRadius = 0.8;
         this.maxDamage = 8;
 
         for (var i = 0; i < amount; i++) {
-            this.shots.push(new Shot(this.shotSpeed, this.shotRadius, this.range));
+            this.shots.push(new Shot(this.shotSpeed, this.shotRadius, this.range, mat));
             this.add(this.shots[i]);
         }
 
@@ -59,7 +60,7 @@ class ShootingController extends THREE.Object3D {
         if (this.range > this.maxRange) this.range = this.maxRange;
     }
 
-    update(shooting, position, direction, targets) {
+    update(shooting, position, direction, targets, soundsController) {
         // TIME CONTROL
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
@@ -72,7 +73,7 @@ class ShootingController extends THREE.Object3D {
 
                 for (var i = 0; i < this.shots.length && !encontrado; i++) {
                     if (this.shots[i].getFinished()) {
-                        this.shots[i].resetShoot(this.damage, this.shotRadius, position, direction, this.range);
+                        this.shots[i].resetShoot(this.damage, this.shotRadius, position, direction, this.range, this.mat);
                         encontrado = true;
                     }
                 }
@@ -105,7 +106,7 @@ class ShootingController extends THREE.Object3D {
 
                     if (distance <= hitDistance) {
                         hitted = true;
-                        targets[j].takeDamage(this.shots[i].getDamage());
+                        targets[j].takeDamage(this.shots[i].getDamage(), soundsController);
                         this.shots[i].setFinished(true);
                     }
                 }
