@@ -13,6 +13,7 @@ class SoundsController extends THREE.Object3D {
         var chosoHitPath = '../sounds/sadCow.ogg';
         var chosoDeathPath = '../sounds/chososDeath.ogg';
         var powerUpPath = '../sounds/powerup.mp3';
+        var trapPath = '../sounds/trap.ogg';
 
         const listener = new THREE.AudioListener();
         camera.add(listener);
@@ -41,6 +42,9 @@ class SoundsController extends THREE.Object3D {
 
         this.powerUpSound = new THREE.Audio(listener);
         this.powerUpSound.hasPlaybackControl = true;
+
+        this.trapSound = new THREE.Audio(listener);
+        this.trapSound.hasPlaybackControl = true;
 
 // load a sound and set it as the Audio object's buffer
         const audioLoader = new THREE.AudioLoader();
@@ -87,6 +91,11 @@ class SoundsController extends THREE.Object3D {
         audioLoader.load(powerUpPath, function(buffer) {
             that.powerUpSound.setBuffer(buffer);
             that.powerUpSound.setVolume(0.5);
+        });
+
+        audioLoader.load(trapPath, function(buffer) {
+            that.trapSound.setBuffer(buffer);
+            that.trapSound.setVolume(1);
         });
 
     }
@@ -151,6 +160,13 @@ class SoundsController extends THREE.Object3D {
             this.powerUpSound.stop();
 
         this.powerUpSound.play();
+    }
+
+    playTrapSound() {
+        if (this.trapSound.isPlaying)
+            this.trapSound.stop();
+
+        this.trapSound.play();
     }
 
 }

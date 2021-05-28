@@ -5,6 +5,7 @@ import {Grass} from "./Grass.js";
 import {MilkingDevice} from "./MilkingDevice.js";
 import {Udder} from "./Udder.js";
 import {HorseShoe} from "./HorseShoe.js";
+import {Trap} from "./Trap.js";
 
 class PowerUpController extends Object3D {
     constructor(maxX, maxZ) {
@@ -14,7 +15,7 @@ class PowerUpController extends Object3D {
         this.maxZ = maxZ;
 
         this.powerups = [];
-        this.types = ["redheart", "grass", "milking", "udder", "horseshoe"];
+        this.types = ["redheart", "grass", "milking", "udder", "horseshoe", "trap"];
 
         for (var i = 0; i < 3; i++) {
             this.powerups.push(new RedHeart());
@@ -26,6 +27,8 @@ class PowerUpController extends Object3D {
             this.powerups.push(new Udder());
             this.add(this.powerups[this.powerups.length - 1]);
             this.powerups.push(new HorseShoe());
+            this.add(this.powerups[this.powerups.length - 1]);
+            this.powerups.push(new Trap());
             this.add(this.powerups[this.powerups.length - 1]);
         }
 
@@ -81,6 +84,12 @@ class PowerUpController extends Object3D {
                     this.add(nuevo);
                     this.powerups.push(nuevo);
                     break;
+
+                case "trap":
+                    nuevo = new Trap();
+                    this.add(nuevo);
+                    this.powerups.push(nuevo);
+                    break;
             }
         }
 
@@ -113,7 +122,10 @@ class PowerUpController extends Object3D {
     }
 
     applyPowerUp(powerup, choso, soundsController) {
-        soundsController.playPowerUpSound();
+        if(powerup.getName() !== "trap")
+            soundsController.playPowerUpSound();
+        else
+            soundsController.playTrapSound();
 
         switch(powerup.getName()) {
             case "redheart":
@@ -134,6 +146,10 @@ class PowerUpController extends Object3D {
 
             case "horseshoe":
                 choso.changeSpeed(powerup.getEffect());
+                break;
+
+            case "trap":
+                choso.takeDamage(powerup.getEffect(), soundsController);
                 break;
         }
 
