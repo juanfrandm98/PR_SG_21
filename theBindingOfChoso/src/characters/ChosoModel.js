@@ -66,8 +66,8 @@ class ChosoModel extends THREE.Object3D {
     }
 
     createHeadNode() {
-        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1,1,1)});
-        var blackMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0,0,0)});
+        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
+        var blackMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0, 0, 0)});
         var pinkMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.964, 0.352, 0.827)});
 
         var baseGeom = new THREE.BoxGeometry(0.35, 0.3, 0.3);
@@ -145,7 +145,7 @@ class ChosoModel extends THREE.Object3D {
     }
 
     createBody() {
-        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1,1,1)});
+        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
 
         var bodyGeom = new THREE.BoxGeometry(0.5, 1, 0.5);
 
@@ -163,8 +163,8 @@ class ChosoModel extends THREE.Object3D {
     }
 
     createLeg() {
-        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1,1,1)});
-        var blackMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0,0,0)});
+        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
+        var blackMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0, 0, 0)});
 
         var legGeom = new THREE.BoxGeometry(0.2, 0.5, 0.2);
         var hoofGeom = new THREE.BoxGeometry(0.2, 0.1, 0.2);
@@ -202,26 +202,26 @@ class ChosoModel extends THREE.Object3D {
         var cos = producto / magDir * magAxis;
         var angle = Math.acos(cos);
 
-        if(dir.x > 0) return angle;
+        if (dir.x > 0) return angle;
         else return -angle;
     }
 
     calculateAngle(dirX, dirZ) {
-        if(dirX === 0 && dirZ > 0)
+        if (dirX === 0 && dirZ > 0)
             return 0;
-        else if(dirX > 0 && dirZ > 0)
+        else if (dirX > 0 && dirZ > 0)
             return Math.PI / 4;
-        else if(dirX > 0 && dirZ === 0)
+        else if (dirX > 0 && dirZ === 0)
             return Math.PI / 2;
-        else if(dirX > 0 && dirZ < 0)
+        else if (dirX > 0 && dirZ < 0)
             return 3 * Math.PI / 4;
-        else if(dirX === 0 && dirZ < 0)
+        else if (dirX === 0 && dirZ < 0)
             return Math.PI;
-        else if(dirX < 0 && dirZ < 0)
+        else if (dirX < 0 && dirZ < 0)
             return 5 * Math.PI / 4;
-        else if(dirX < 0 && dirZ === 0)
+        else if (dirX < 0 && dirZ === 0)
             return 3 * Math.PI / 2;
-        else if(dirX < 0 && dirZ > 0)
+        else if (dirX < 0 && dirZ > 0)
             return 7 * Math.PI / 4;
         else return -1;
     }
@@ -232,7 +232,7 @@ class ChosoModel extends THREE.Object3D {
         this.headNode.rotation.y = 0;
         this.bodyNode.rotation.y = 0;
 
-        if(angle >= 0) this.choso.rotation.y = angle;
+        if (angle >= 0) this.choso.rotation.y = angle;
     }
 
     rotateHead(dirX, dirZ) {
@@ -240,7 +240,7 @@ class ChosoModel extends THREE.Object3D {
 
         this.choso.rotation.y = 0;
 
-        if(angle >= 0) this.headNode.rotation.y = angle;
+        if (angle >= 0) this.headNode.rotation.y = angle;
     }
 
     rotateBody(dir) {
@@ -251,38 +251,53 @@ class ChosoModel extends THREE.Object3D {
         this.bodyNode.rotation.y = angle;
     }
 
-    update(moving, speed){
-        if(moving) {
-            var tiempoActual = Date.now();
-            var msTranscurridos = tiempoActual - this.tiempoAnterior;
-            this.tiempoAnterior = tiempoActual;
+    update(moving, speed, health) {
+        var tiempoActual = Date.now();
+        var msTranscurridos = tiempoActual - this.tiempoAnterior;
+        this.tiempoAnterior = tiempoActual;
 
-            var newAngle = 0.0;
+        if (health > 0) {
+            if (moving) {
+                var newAngle = 0.0;
 
-            if(this.ida) {
-                newAngle = this.nodeRightLeg.rotation.x + msTranscurridos * speed / 3000;
+                if (this.ida) {
+                    newAngle = this.nodeRightLeg.rotation.x + msTranscurridos * speed / 3000;
 
-                if(newAngle > this.maxAngle) newAngle = this.maxAngle;
+                    if (newAngle > this.maxAngle) newAngle = this.maxAngle;
+                } else {
+                    newAngle = this.nodeRightLeg.rotation.x - msTranscurridos * speed / 3000;
+
+                    if (newAngle < -this.maxAngle) newAngle = -this.maxAngle;
+                }
+
+                this.nodeRightLeg.rotation.x = newAngle;
+                this.nodeLeftLeg.rotation.x = -newAngle;
+                this.nodeRightArm.rotation.x = -newAngle;
+                this.nodeLeftArm.rotation.x = newAngle;
+
+                if (Math.abs(newAngle) === this.maxAngle) {
+                    if (this.ida) this.ida = false;
+                    else this.ida = true;
+                }
             } else {
-                newAngle = this.nodeRightLeg.rotation.x - msTranscurridos * speed / 3000;
-
-                if(newAngle < -this.maxAngle) newAngle = -this.maxAngle;
-            }
-
-            this.nodeRightLeg.rotation.x = newAngle;
-            this.nodeLeftLeg.rotation.x = -newAngle;
-            this.nodeRightArm.rotation.x = -newAngle;
-            this.nodeLeftArm.rotation.x = newAngle;
-
-            if(Math.abs(newAngle) === this.maxAngle) {
-                if(this.ida) this.ida = false;
-                else this.ida = true;
+                this.nodeRightLeg.rotation.x = 0;
+                this.nodeLeftLeg.rotation.x = 0;
+                this.nodeRightArm.rotation.x = 0;
+                this.nodeLeftArm.rotation.x = 0;
             }
         } else {
+            this.choso.rotation.y = 0;
             this.nodeRightLeg.rotation.x = 0;
             this.nodeLeftLeg.rotation.x = 0;
             this.nodeRightArm.rotation.x = 0;
             this.nodeLeftArm.rotation.x = 0;
+
+            if (this.choso.rotation.x > -(Math.PI / 2)) {
+                this.choso.rotation.x -= msTranscurridos * 0.01;
+            } else {
+                this.choso.rotation.x = -Math.PI / 2;
+                this.choso.position.y = 0.25;
+            }
         }
     }
 

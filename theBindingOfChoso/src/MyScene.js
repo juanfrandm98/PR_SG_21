@@ -68,9 +68,7 @@ class MyScene extends THREE.Scene {
         this.powerupController = new PowerUpController(this.ground.getMaxX(), this.ground.getMaxZ());
         this.add(this.powerupController);
 
-        // Tendremos una cámara con un control de movimiento con el ratón
-        this.createCamera(this.choso.getPosition());
-        this.soundsController = new SoundsController(this.camera);
+        this.soundsController = new SoundsController(this.choso.getCamera());
         this.add(this.soundsController);
 
         this.collisionController = new CollisionController(this.ground.getMaxX(), this.ground.getMaxZ());
@@ -86,34 +84,6 @@ class MyScene extends THREE.Scene {
         this.interfaceController.position.y = -50;
         this.add(this.interfaceController);
 
-    }
-
-    createCamera(look) {
-        // Para crear una cámara le indicamos:
-        // - El ángulo del campo de visión en grados sexagesimales
-        // - La razón de aspecto ancho/alto
-        // - Los planos de recorte cercano y lejano
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight,
-            0.1, 1000);
-        // También se indica dónde se coloca
-        this.camera.position.set(0, 15, 15);
-        // Y hacia dónde mira
-        this.camera.lookAt(look);
-        this.add(this.camera);
-
-        // Para el control de cámara usamos una clase que ya tiene implementados los
-        // movimientos de órbita
-        /*
-        this.cameraControl = new TrackballControls(this.camera,
-            this.renderer.domElement);
-
-
-        // Se configuran las velocidades de los movimientos
-        this.cameraControl.rotateSpeed = 5;
-        this.cameraControl.zoomSpeed = -2;
-        this.cameraControl.panSpeed = 0.5;
-        // Debe orbitar con respecto al punto de mira de la cámara
-        this.cameraControl.target = look;*/
     }
 
     createGUI() {
@@ -177,20 +147,14 @@ class MyScene extends THREE.Scene {
         return renderer;
     }
 
-    // En principio, se devuelve la única cámara que tenemos. Si hubiera varias,
-    // este método decidiría qué camara devuelve cada vez que es consultado.
-    getCamera() {
-        return this.camera;
-    }
-
     // Cada vez que el usuario modifica el tamaño de la ventana desde el gestor de
     // ventanas de su sistema operativo, hay que actualizar el ratio de aspecto de
     // la cámara.
     // Si se cambia ese dato, además hay que actualizar la matriz de proyección de
     // la cámara
     setCameraAspect(ratio) {
-        this.camera.aspect = ratio;
-        this.camera.updateProjectionMatrix();
+        this.choso.getCamera().aspect = ratio;
+        this.choso.getCamera().updateProjectionMatrix();
     }
 
     // Este método es llamado cada vez que el usuario modifica el tamaño de la
@@ -219,16 +183,6 @@ class MyScene extends THREE.Scene {
         return coef;
     }
 
-    getCameraPosition(pos) {
-        var defPos = new THREE.Vector3(0, 15, 15);
-
-        var x = defPos.x + pos.x;
-        var y = defPos.y + pos.y;
-        var z = defPos.z + pos.z;
-
-        return (new THREE.Vector3(x, y, z));
-    }
-
     // Se actualizan los elementos de la escena para cada frame
     update() {
         // Se actualiza la intensidad de la luz con lo que haya indicado el usuario
@@ -249,13 +203,7 @@ class MyScene extends THREE.Scene {
 
         this.choso.update(dirX, dirZ, this.shooting, this.shotDir, targets);
 
-        var posChoso = this.choso.getPosition();
-
-        var newCameraPos = this.getCameraPosition(posChoso);
-        this.camera.position.set(newCameraPos.x, newCameraPos.y, newCameraPos.z); // SET
-
         this.powerupController.update(this.choso, this.soundsController);
-
         this.enemyController.update(this.choso, this.soundsController);
 
         targets = this.enemyController.getEnemies();
@@ -270,17 +218,13 @@ class MyScene extends THREE.Scene {
         );
 
         if (this.choso.isDefeated()) {
-            this.choso.hide();
             this.choso.setSpeed(0);
             this.soundsController.stopBackground();
-            this.spotLight.color = 0xFF0000;
         }
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la
         // cámara que te estoy pasando'
-        //this.renderer.render(this, this.getCamera());
-        //this.renderer.render(this, this.interfaceController.getCamera());
-        this.renderViewPort(this, this.camera, 0.2, 0, 0.8, 1);
+        this.renderViewPort(this, this.choso.getCamera(), 0.2, 0, 0.8, 1);
         this.renderViewPort(this, this.interfaceController.getCamera(), 0, 0, 0.2, 1);
 
         // Este método debe ser llamado cada vez que queramos visualizar la escena
