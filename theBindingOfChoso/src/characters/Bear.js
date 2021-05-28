@@ -136,6 +136,11 @@ class Bear extends Character {
         super.activate(pos);
     }
 
+    hide() {
+        super.hide();
+        this.shootingController.hide();
+    }
+
 }
 
 export {Bear};

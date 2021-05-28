@@ -118,6 +118,11 @@ class ShootingController extends THREE.Object3D {
         }
     }
 
+    hide() {
+        for(var i = 0; i < this.shots.length; i++)
+            this.shots[i].hide();
+    }
+
 }
 
 export {ShootingController};

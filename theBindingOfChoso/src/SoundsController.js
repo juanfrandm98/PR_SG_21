@@ -9,8 +9,10 @@ class SoundsController extends THREE.Object3D {
         var chosoShootingPath = '../sounds/chosoShooting.mp3';
         var wolfDeathPath = '../sounds/sadWolf.ogg';
         var beeDeathPath = '../sounds/sadBee.ogg';
+        var bearDeathPath = '../sounds/sadBear.ogg';
         var chosoHitPath = '../sounds/sadCow.ogg';
         var chosoDeathPath = '../sounds/chososDeath.ogg';
+        var powerUpPath = '../sounds/powerup.mp3';
 
         const listener = new THREE.AudioListener();
         camera.add(listener);
@@ -33,6 +35,12 @@ class SoundsController extends THREE.Object3D {
 
         this.chosoDeathSound = new THREE.Audio(listener);
         this.chosoDeathSound.hasPlaybackControl = true;
+
+        this.bearDeathSound = new THREE.Audio(listener);
+        this.bearDeathSound.hasPlaybackControl = true;
+
+        this.powerUpSound = new THREE.Audio(listener);
+        this.powerUpSound.hasPlaybackControl = true;
 
 // load a sound and set it as the Audio object's buffer
         const audioLoader = new THREE.AudioLoader();
@@ -69,6 +77,16 @@ class SoundsController extends THREE.Object3D {
         audioLoader.load(beeDeathPath, function (buffer) {
             that.beeDeathSound.setBuffer(buffer);
             that.beeDeathSound.setVolume(0.8);
+        });
+
+        audioLoader.load(bearDeathPath, function(buffer) {
+            that.bearDeathSound.setBuffer(buffer);
+            that.bearDeathSound.setVolume(0.5);
+        });
+
+        audioLoader.load(powerUpPath, function(buffer) {
+            that.powerUpSound.setBuffer(buffer);
+            that.powerUpSound.setVolume(0.5);
         });
 
     }
@@ -110,6 +128,13 @@ class SoundsController extends THREE.Object3D {
         this.beeDeathSound.play();
     }
 
+    playBearDeath() {
+        if (this.bearDeathSound.isPlaying)
+            this.bearDeathSound.stop();
+
+        this.bearDeathSound.play();
+    }
+
     playChosoDamage() {
         if (this.chosoHitSound.isPlaying)
             this.chosoHitSound.stop();
@@ -119,6 +144,13 @@ class SoundsController extends THREE.Object3D {
 
     playChosoDeath() {
         this.chosoDeathSound.play();
+    }
+
+    playPowerUpSound() {
+        if (this.powerUpSound.isPlaying)
+            this.powerUpSound.stop();
+
+        this.powerUpSound.play();
     }
 
 }

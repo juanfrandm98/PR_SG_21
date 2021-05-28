@@ -112,7 +112,9 @@ class PowerUpController extends Object3D {
         }
     }
 
-    applyPowerUp(powerup, choso) {
+    applyPowerUp(powerup, choso, soundsController) {
+        soundsController.playPowerUpSound();
+
         switch(powerup.getName()) {
             case "redheart":
                 choso.heal(powerup.getEffect());
@@ -137,7 +139,7 @@ class PowerUpController extends Object3D {
 
     }
 
-    update(choso) {
+    update(choso, soundsController) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
         this.msRestantes -= msTranscurridos;
@@ -160,7 +162,7 @@ class PowerUpController extends Object3D {
             if(this.powerups[i].getVisible()) {
                 // Comprobación de powerups
                 if(this.collisionDetect(this.powerups[i], choso)) {
-                    this.applyPowerUp(this.powerups[i], choso);
+                    this.applyPowerUp(this.powerups[i], choso, soundsController);
                     this.powerups[i].desactivate();
                     this.powerupsActivos--;
                 }

@@ -63,7 +63,6 @@ class MyScene extends THREE.Scene {
         this.add(this.choso);
 
         this.enemyController = new EnemyController(this.ground.getMaxX(), this.ground.getMaxZ());
-        this.enemyController.generateEnemies();
         this.add(this.enemyController);
 
         this.powerupController = new PowerUpController(this.ground.getMaxX(), this.ground.getMaxZ());
@@ -255,7 +254,7 @@ class MyScene extends THREE.Scene {
         var newCameraPos = this.getCameraPosition(posChoso);
         this.camera.position.set(newCameraPos.x, newCameraPos.y, newCameraPos.z); // SET
 
-        this.powerupController.update(this.choso);
+        this.powerupController.update(this.choso, this.soundsController);
 
         this.enemyController.update(this.choso, this.soundsController);
 

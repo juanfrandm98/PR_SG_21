@@ -37,13 +37,18 @@ class EnemyController extends THREE.Object3D {
 
         this.tiempoAnterior = Date.now();
         this.tiempoUntilNextSpawn = this.timeBetweenSpanws;
+
+        this.numWave = 0;
+        this.wavePause = true;
+        this.timeBetweenWaves = 5000;
+        this.timeUntilNextWave = 0;
     }
 
     currentEnemyActivated(vector, pos) {
         var encontrado = false;
 
-        for(var i = 0; i < vector.length && !encontrado; i++) {
-            if(vector[i].getHidden()) {
+        for (var i = 0; i < vector.length && !encontrado; i++) {
+            if (vector[i].getHidden()) {
                 encontrado = true;
                 vector[i].activate(pos);
             }
@@ -53,19 +58,39 @@ class EnemyController extends THREE.Object3D {
     }
 
     generateEnemies() {
-        for (var i = 0; i < 10; i++) {
-            var type = MathUtils.randInt(0, 2);
-            this.enemiesList.push(type);
+        this.numWave++;
+        var probTypes;
+        var numEnemies;
+
+        if (this.numWave === 1) {
+             probTypes = [0, 0, 0, 1];
+             numEnemies = 10;
+        } else if (this.numWave === 2) {
+            probTypes = [0, 0, 1, 1, 2];
+            numEnemies = 12;
+        } else if (this.numWave === 3) {
+            probTypes = [0, 1, 2];
+            numEnemies = 15;
+        } else {
+            probTypes = [0, 1, 1, 2, 2];
+            numEnemies = 18;
+        }
+
+        var index;
+
+        for (var i = 0; i < numEnemies; i++) {
+            index = MathUtils.randInt(0, probTypes.length - 1);
+            this.enemiesList.push(probTypes[index]);
         }
     }
 
     randomSpawnPos(maxX, maxZ) {
-        var pos = new THREE.Vector3(0,0,0);
+        var pos = new THREE.Vector3(0, 0, 0);
         var dif = 5;
 
         var firstRand = MathUtils.randInt(0, 3);
 
-        switch(firstRand) {
+        switch (firstRand) {
             case 0:
                 // 0 - Pegado a la izquierda
                 pos.x = -maxX + dif;
@@ -94,94 +119,115 @@ class EnemyController extends THREE.Object3D {
     }
 
     update(choso, soundsController) {
-        if(this.enemiesList.length > 0) {
-            var tiempoActual = Date.now();
-            var msTranscurridos = tiempoActual - this.tiempoAnterior;
+        var tiempoActual = Date.now();
+        var msTranscurridos = tiempoActual - this.tiempoAnterior;
 
-            this.tiempoUntilNextSpawn -= msTranscurridos;
-
-            if(this.tiempoUntilNextSpawn <= 0) {
-                var enemyType = this.enemiesList.pop();
-                var newPos = this.randomSpawnPos(this.maxX, this.maxZ);
-                var activated = false;
-
-                switch(enemyType) {
-                    case 0:
-                        activated = this.currentEnemyActivated(this.bees, newPos);
-
-                        if(!activated) {
-                            this.bees.push(new Bee(this.maxX, this.maxZ));
-                            this.add(this.bees[this.bees.length - 1]);
-                            this.bees[this.bees.length - 1].activate(newPos);
-                        }
-
-                        break;
-
-                    case 1:
-                        activated = this.currentEnemyActivated(this.wolves, newPos);
-
-                        if(!activated) {
-                            this.wolves.push(new Wolf(this.maxX, this.maxZ));
-                            this.add(this.wolves[this.wolves.length - 1]);
-                            this.wolves[this.wolves.length - 1].activate(newPos);
-                        }
-
-                        break;
-
-                    case 2:
-                        activated = this.currentEnemyActivated(this.bears, newPos);
-
-                        if(!activated) {
-                            this.bears.push(new Bear(this.maxX, this.maxZ));
-                            this.add(this.bears[this.bears.length - 1]);
-                            this.bears[this.bears.length - 1].activate(newPos);
-                        }
-
-
-                        break;
-                }
-
-                this.tiempoUntilNextSpawn = this.timeBetweenSpanws;
+        if(this.wavePause) {
+            console.log("OLA PAUSADA");
+            if(this.timeUntilNextWave <= 0) {
+                this.generateEnemies();
+                this.wavePause = false;
+            } else {
+                this.timeUntilNextWave -= msTranscurridos;
+                this.tiempoAnterior = tiempoActual;
             }
-
-            this.tiempoAnterior = tiempoActual;
         } else {
-            this.tiempoAnterior = Date.now();
-        }
+            console.log("EN OLA #" + this.numWave);
+            var activeEnemies = this.getEnemies();
+
+            if(activeEnemies.length !== 0 || this.enemiesList.length !== 0) {
+                if (this.enemiesList.length > 0) {
+
+                    this.tiempoUntilNextSpawn -= msTranscurridos;
+
+                    if (this.tiempoUntilNextSpawn <= 0) {
+                        var enemyType = this.enemiesList.pop();
+                        var newPos = this.randomSpawnPos(this.maxX, this.maxZ);
+                        var activated = false;
+
+                        switch (enemyType) {
+                            case 0:
+                                activated = this.currentEnemyActivated(this.bees, newPos);
+
+                                if (!activated) {
+                                    this.bees.push(new Bee(this.maxX, this.maxZ));
+                                    this.add(this.bees[this.bees.length - 1]);
+                                    this.bees[this.bees.length - 1].activate(newPos);
+                                }
+
+                                break;
+
+                            case 1:
+                                activated = this.currentEnemyActivated(this.wolves, newPos);
+
+                                if (!activated) {
+                                    this.wolves.push(new Wolf(this.maxX, this.maxZ));
+                                    this.add(this.wolves[this.wolves.length - 1]);
+                                    this.wolves[this.wolves.length - 1].activate(newPos);
+                                }
+
+                                break;
+
+                            case 2:
+                                activated = this.currentEnemyActivated(this.bears, newPos);
+
+                                if (!activated) {
+                                    this.bears.push(new Bear(this.maxX, this.maxZ));
+                                    this.add(this.bears[this.bears.length - 1]);
+                                    this.bears[this.bears.length - 1].activate(newPos);
+                                }
 
 
-        for (var i = 0; i < this.bees.length; i++) {
-            if (!this.bees[i].getHidden()) {
-                if (this.bees[i].isDefeated()) {
-                    soundsController.playBeeDeath();
-                    this.bees[i].hide();
+                                break;
+                        }
+
+                        this.tiempoUntilNextSpawn = this.timeBetweenSpanws;
+                    }
+
+                    this.tiempoAnterior = tiempoActual;
+                } else {
+                    this.tiempoAnterior = Date.now();
                 }
 
-                this.bees[i].update();
+
+                for (var i = 0; i < this.bees.length; i++) {
+                    if (!this.bees[i].getHidden()) {
+                        if (this.bees[i].isDefeated()) {
+                            soundsController.playBeeDeath();
+                            this.bees[i].hide();
+                        }
+
+                        this.bees[i].update();
+                    }
+                }
+
+                for (var i = 0; i < this.wolves.length; i++) {
+                    if (!this.wolves[i].getHidden()) {
+                        if (this.wolves[i].isDefeated()) {
+                            soundsController.playWolfDeath();
+                            this.wolves[i].hide();
+                        }
+
+                        this.wolves[i].update(choso.getPosition());
+                    }
+                }
+
+                for (var i = 0; i < this.bears.length; i++) {
+                    if (!this.bears[i].getHidden()) {
+                        if (this.bears[i].isDefeated()) {
+                            soundsController.playBearDeath();
+                            this.bears[i].hide();
+                        }
+
+                        this.bears[i].update(choso, soundsController);
+                    }
+                }
+            } else {
+                this.wavePause = true;
+                this.timeUntilNextWave = this.timeBetweenWaves;
             }
         }
 
-        for (var i = 0; i < this.wolves.length; i++) {
-            if (!this.wolves[i].getHidden()) {
-                if (this.wolves[i].isDefeated()) {
-                    soundsController.playWolfDeath();
-                    this.wolves[i].hide();
-                }
-
-                this.wolves[i].update(choso.getPosition());
-            }
-        }
-
-        for (var i = 0; i < this.bears.length; i++) {
-            if (!this.bears[i].getHidden()) {
-                if (this.bears[i].isDefeated()) {
-                    //soundsController.playWolfDeath();
-                    this.bears[i].hide();
-                }
-
-                this.bears[i].update(choso, soundsController);
-            }
-        }
     }
 
     getEnemies() {
