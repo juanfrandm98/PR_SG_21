@@ -123,7 +123,6 @@ class EnemyController extends THREE.Object3D {
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
 
         if(this.wavePause) {
-            console.log("OLA PAUSADA");
             if(this.timeUntilNextWave <= 0) {
                 this.generateEnemies();
                 this.wavePause = false;
@@ -132,7 +131,6 @@ class EnemyController extends THREE.Object3D {
                 this.tiempoAnterior = tiempoActual;
             }
         } else {
-            console.log("EN OLA #" + this.numWave);
             var activeEnemies = this.getEnemies();
 
             if(activeEnemies.length !== 0 || this.enemiesList.length !== 0) {

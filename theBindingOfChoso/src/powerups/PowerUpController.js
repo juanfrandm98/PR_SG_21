@@ -122,37 +122,38 @@ class PowerUpController extends Object3D {
     }
 
     applyPowerUp(powerup, choso, soundsController) {
-        if(powerup.getName() !== "trap")
-            soundsController.playPowerUpSound();
-        else
-            soundsController.playTrapSound();
+        if(!choso.isDefeated()) {
+            if(powerup.getName() !== "trap")
+                soundsController.playPowerUpSound();
+            else
+                soundsController.playTrapSound();
 
-        switch(powerup.getName()) {
-            case "redheart":
-                choso.heal(powerup.getEffect());
-                break;
+            switch(powerup.getName()) {
+                case "redheart":
+                    choso.heal(powerup.getEffect());
+                    break;
 
-            case "grass":
-                choso.changeShotDamage(powerup.getEffect());
-                break;
+                case "grass":
+                    choso.changeShotDamage(powerup.getEffect());
+                    break;
 
-            case "milking":
-                choso.changeShotRadius(powerup.getEffect());
-                break;
+                case "milking":
+                    choso.changeShotRadius(powerup.getEffect());
+                    break;
 
-            case "udder":
-                choso.changeShotRange(powerup.getEffect());
-                break;
+                case "udder":
+                    choso.changeShotRange(powerup.getEffect());
+                    break;
 
-            case "horseshoe":
-                choso.changeSpeed(powerup.getEffect());
-                break;
+                case "horseshoe":
+                    choso.changeSpeed(powerup.getEffect());
+                    break;
 
-            case "trap":
-                choso.takeDamage(powerup.getEffect(), soundsController);
-                break;
+                case "trap":
+                    choso.takeDamage(powerup.getEffect(), soundsController);
+                    break;
+            }
         }
-
     }
 
     update(choso, soundsController) {

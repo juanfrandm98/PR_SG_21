@@ -108,7 +108,6 @@ class InterfaceController extends THREE.Object3D {
     }
 
     createCamera() {
-        //var camera = new THREE.OrthographicCamera(-10, 10, 10, 10, 0.1, 1000);
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(3.5, 0, 25);
         camera.lookAt(new THREE.Vector3(3.5,0,0));
@@ -117,7 +116,7 @@ class InterfaceController extends THREE.Object3D {
     }
 
     createLight() {
-        var light = new THREE.SpotLight(new THREE.Color(1,1,1), 0.5, 30, 45);
+        var light = new THREE.SpotLight(0xffffff, 0.8, 100);
         light.position.set(3.5, 0, 10);
         light.target = this.shotRadiusIcon;
 

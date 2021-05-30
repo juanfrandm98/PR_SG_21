@@ -6,8 +6,6 @@
 
 // Clases de la biblioteca
 import * as THREE from '../libs/three.module.js'
-import {GUI} from '../libs/dat.gui.module.js'
-import {TrackballControls} from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
 import {MyGround} from "./MyGround.js"
@@ -17,6 +15,7 @@ import {SoundsController} from "./SoundsController.js";
 import {CollisionController} from "./CollisionController.js";
 import {PowerUpController} from "./powerups/PowerUpController.js";
 import {InterfaceController} from "./interface/InterfaceController.js";
+import {LightsController} from "./LightsController.js";
 
 /// La clase fachada del modelo
 /**
@@ -31,17 +30,6 @@ class MyScene extends THREE.Scene {
         // Lo primero, crear el visualizador, pasándole el lienzo sobre el que
         // realizar los renderizados
         this.renderer = this.createRenderer(myCanvas);
-
-        // Se añaden a la gui los controles para manipular los elementos de la clase
-        this.gui = this.createGUI();
-
-        // Construimos los distintos elementos que tendremos en la escena
-
-        // Todo elemento que se desee sea tenido en cuenta en el renderizado de la
-        // escena debe pertenecer a esta, bien como hijo de la escena (this en esta
-        // clase) o como hijo de un elemento que ya esté en la escena.
-        // Tras crear cada elemento se añadirá a la escena con this.add(variable).
-        this.createLights();
 
         // Variables para el movimiento de Choso
         this.pressedA = false;
@@ -74,6 +62,9 @@ class MyScene extends THREE.Scene {
         this.collisionController = new CollisionController(this.ground.getMaxX(), this.ground.getMaxZ());
         this.add(this.collisionController);
 
+        this.lightsController = new LightsController();
+        this.add(this.lightsController);
+
         this.interfaceController = new InterfaceController(
             this.choso.getMaxHealth(),
             this.choso.getAttack(),
@@ -81,50 +72,9 @@ class MyScene extends THREE.Scene {
             Math.round(this.choso.getRange() / 5),
             this.choso.getSpeed() - 5
         );
-        this.interfaceController.position.y = -50;
+        this.interfaceController.position.y = -1000;
         this.add(this.interfaceController);
 
-    }
-
-    createGUI() {
-        // Se crea la interfaz gráfica de usuario
-        var gui = new GUI();
-
-        // La escena le va a añadir sus propios controles, que se definen mediante
-        // una new function(). En este caso, la intensidad de la luz y si se
-        // muestran o no los ejes
-        this.guiControls = new function () {
-            // En el contexto de una función, this alude a la función
-            this.lightIntensity = 0.5;
-        }
-
-        // Se va a crear una sección para los controles de esta clase
-        var lightFolder = gui.addFolder('Luz');
-
-        // Se le añade un control para la intensidad de la luz
-        lightFolder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1).name('Intensidad de la luz : ');
-
-        return gui;
-    }
-
-    createLights() {
-        // Se crea una luz ambiental, que evita que se vean completamente negras las
-        // zonas donde no incide de manera directa una fuente de luz. La luz
-        // ambiental solo tiene un color y una intensidad. Se declara como var y va
-        // a ser una variable local a este método, puesto que no va a ser accedida
-        // desde otros métodos
-        var ambientLight = new THREE.AmbientLight(0xccddee, 0.35);
-        // La añadimos a la escena
-        this.add(ambientLight);
-
-        // Se crea una luz focal que va a ser la luz principal de la escena. Esta
-        // tiene una posición y un punto de mira. Si no se le da el punto de mira,
-        // apuntará al (0,0,0) en coordenadas del mundo. En este caso, se declara
-        // como this.atributo para que sea un atributo accesible desde otros métodos
-        this.spotLight = new THREE.SpotLight(0xffffff,
-            this.guiControls.lightIntensity);
-        this.spotLight.position.set(60, 60, 40);
-        this.add(this.spotLight);
     }
 
     createRenderer(myCanvas) {
@@ -187,7 +137,6 @@ class MyScene extends THREE.Scene {
     update() {
         // Se actualiza la intensidad de la luz con lo que haya indicado el usuario
         // en la GUI
-        this.spotLight.intensity = this.guiControls.lightIntensity;
         this.ground.update();
 
         // Se actualiza la posición de la cámara según su controlador
@@ -196,8 +145,6 @@ class MyScene extends THREE.Scene {
         // Se actualizan el resto de los modelos
         var dirX = this.getXCoef(this.pressedA, this.pressedD);
         var dirZ = this.getZCoef(this.pressedW, this.pressedS);
-
-        this.soundsController.playChosoShootingSound(this.shooting);
 
         var targets = this.enemyController.getEnemies();
 
@@ -217,9 +164,14 @@ class MyScene extends THREE.Scene {
             this.choso.getSpeed() - 5
         );
 
+        this.lightsController.update();
+
         if (this.choso.isDefeated()) {
             this.choso.setSpeed(0);
             this.soundsController.stopBackground();
+            this.lightsController.activateDeathLights(this.choso);
+        } else {
+            this.soundsController.playChosoShootingSound(this.shooting);
         }
 
         // Le decimos al renderizador 'visualiza la escena que te indico usando la

@@ -251,54 +251,55 @@ class ChosoModel extends THREE.Object3D {
         this.bodyNode.rotation.y = angle;
     }
 
-    update(moving, speed, health) {
+    deathAnimation(seg) {
+        this.choso.rotation.y = 0;
+        this.nodeRightLeg.rotation.x = 0;
+        this.nodeLeftLeg.rotation.x = 0;
+        this.nodeRightArm.rotation.x = 0;
+        this.nodeLeftArm.rotation.x = 0;
+
+        if (this.choso.rotation.x > -(Math.PI / 2)) {
+            this.choso.rotation.x -= seg * 10;
+        } else {
+            this.choso.rotation.x = -Math.PI / 2;
+            this.choso.position.y = 0.25;
+        }
+    }
+
+    update(moving, speed) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
         this.tiempoAnterior = tiempoActual;
 
-        if (health > 0) {
-            if (moving) {
-                var newAngle = 0.0;
+        if (moving) {
+            var newAngle = 0.0;
 
-                if (this.ida) {
-                    newAngle = this.nodeRightLeg.rotation.x + msTranscurridos * speed / 3000;
+            if (this.ida) {
+                newAngle = this.nodeRightLeg.rotation.x + msTranscurridos * speed / 3000;
 
-                    if (newAngle > this.maxAngle) newAngle = this.maxAngle;
-                } else {
-                    newAngle = this.nodeRightLeg.rotation.x - msTranscurridos * speed / 3000;
-
-                    if (newAngle < -this.maxAngle) newAngle = -this.maxAngle;
-                }
-
-                this.nodeRightLeg.rotation.x = newAngle;
-                this.nodeLeftLeg.rotation.x = -newAngle;
-                this.nodeRightArm.rotation.x = -newAngle;
-                this.nodeLeftArm.rotation.x = newAngle;
-
-                if (Math.abs(newAngle) === this.maxAngle) {
-                    if (this.ida) this.ida = false;
-                    else this.ida = true;
-                }
+                if (newAngle > this.maxAngle) newAngle = this.maxAngle;
             } else {
-                this.nodeRightLeg.rotation.x = 0;
-                this.nodeLeftLeg.rotation.x = 0;
-                this.nodeRightArm.rotation.x = 0;
-                this.nodeLeftArm.rotation.x = 0;
+                newAngle = this.nodeRightLeg.rotation.x - msTranscurridos * speed / 3000;
+
+                if (newAngle < -this.maxAngle) newAngle = -this.maxAngle;
+            }
+
+            this.nodeRightLeg.rotation.x = newAngle;
+            this.nodeLeftLeg.rotation.x = -newAngle;
+            this.nodeRightArm.rotation.x = -newAngle;
+            this.nodeLeftArm.rotation.x = newAngle;
+
+            if (Math.abs(newAngle) === this.maxAngle) {
+                if (this.ida) this.ida = false;
+                else this.ida = true;
             }
         } else {
-            this.choso.rotation.y = 0;
             this.nodeRightLeg.rotation.x = 0;
             this.nodeLeftLeg.rotation.x = 0;
             this.nodeRightArm.rotation.x = 0;
             this.nodeLeftArm.rotation.x = 0;
-
-            if (this.choso.rotation.x > -(Math.PI / 2)) {
-                this.choso.rotation.x -= msTranscurridos * 0.01;
-            } else {
-                this.choso.rotation.x = -Math.PI / 2;
-                this.choso.position.y = 0.25;
-            }
         }
+
     }
 
     getUdderHeight() {
