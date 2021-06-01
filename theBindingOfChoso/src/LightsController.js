@@ -30,18 +30,30 @@ class LightsController extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
         this.lightSpeed = 0.0001;
 
-        this.nightTime = 10000;
+        this.minNightTime = 10000;
+        this.maxNightTime = 15000;
+        this.nightTime = this.minNightTime;
+
         this.currentNightTime = 0;
     }
 
-    activateDeathLights(choso) {
+    activateDeathLights() {
         this.deathLight.visible = true;
         this.ambientLight.intensity = this.ambientHighIntensity;
         this.sunLight.visible = false;
     }
 
+    changeDifficulty(numWave) {
+        var newNightTime = this.minNightTime + (numWave - 1) * 1000;
+
+        if (newNightTime > this.maxNightTime) newNightTime = this.maxNightTime;
+        console.log(newNightTime);
+
+        this.nightTime = newNightTime;
+    }
+
     update() {
-        if(!this.deathLight.visible) {
+        if (!this.deathLight.visible) {
             var tiempoActual = Date.now();
             var msTranscurridos = tiempoActual - this.tiempoAnterior;
             this.tiempoAnterior = tiempoActual;

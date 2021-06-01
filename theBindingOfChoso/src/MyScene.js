@@ -166,6 +166,16 @@ class MyScene extends THREE.Scene {
 
         this.lightsController.update();
 
+        if(this.enemyController.getJustPaused()) {
+            var numWave = this.enemyController.getNumWave();
+
+            this.choso.changeDifficulty(numWave);
+            this.lightsController.changeDifficulty(numWave);
+            this.powerupController.changeDifficulty(numWave);
+            this.enemyController.changeDifficulty(numWave);
+            this.soundsController.changeBackgroundSpeed(numWave);
+        }
+
         if (this.choso.isDefeated()) {
             this.choso.setSpeed(0);
             this.soundsController.stopBackground();

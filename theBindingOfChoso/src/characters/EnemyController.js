@@ -38,10 +38,19 @@ class EnemyController extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
         this.tiempoUntilNextSpawn = this.timeBetweenSpanws;
 
-        this.numWave = 0;
+        // Variable para conocer el cambio de oleada desde fuera del controlador
+        this.justPaused = false;
+
+        this.bearShootingTracking = false;
+
+        this.numWave = 1;
         this.wavePause = true;
         this.timeBetweenWaves = 5000;
         this.timeUntilNextWave = 0;
+    }
+
+    changeDifficulty(numWave) {
+        if(numWave >= 2) this.bearShootingTracking = true;
     }
 
     currentEnemyActivated(vector, pos) {
@@ -58,13 +67,12 @@ class EnemyController extends THREE.Object3D {
     }
 
     generateEnemies() {
-        this.numWave++;
         var probTypes;
         var numEnemies;
 
         if (this.numWave === 1) {
-             probTypes = [0, 0, 0, 1];
-             numEnemies = 10;
+            probTypes = [0, 0, 0, 1];
+            numEnemies = 10;
         } else if (this.numWave === 2) {
             probTypes = [0, 0, 1, 1, 2];
             numEnemies = 12;
@@ -122,8 +130,10 @@ class EnemyController extends THREE.Object3D {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
 
-        if(this.wavePause) {
-            if(this.timeUntilNextWave <= 0) {
+        if (this.wavePause) {
+            this.justPaused = false;
+
+            if (this.timeUntilNextWave <= 0) {
                 this.generateEnemies();
                 this.wavePause = false;
             } else {
@@ -133,7 +143,7 @@ class EnemyController extends THREE.Object3D {
         } else {
             var activeEnemies = this.getEnemies();
 
-            if(activeEnemies.length !== 0 || this.enemiesList.length !== 0) {
+            if (activeEnemies.length !== 0 || this.enemiesList.length !== 0) {
                 if (this.enemiesList.length > 0) {
 
                     this.tiempoUntilNextSpawn -= msTranscurridos;
@@ -211,18 +221,18 @@ class EnemyController extends THREE.Object3D {
                 }
 
                 for (var i = 0; i < this.bears.length; i++) {
-                    if (!this.bears[i].getHidden()) {
-                        if (this.bears[i].isDefeated()) {
-                            soundsController.playBearDeath();
-                            this.bears[i].hide();
-                        }
-
-                        this.bears[i].update(choso, soundsController);
+                    if (this.bears[i].isDefeated() && !this.bears[i].getHidden()) {
+                        soundsController.playBearDeath();
+                        this.bears[i].hide();
                     }
+
+                    this.bears[i].update(choso, soundsController, this.bearShootingTracking);
                 }
             } else {
                 this.wavePause = true;
                 this.timeUntilNextWave = this.timeBetweenWaves;
+                this.justPaused = true;
+                this.numWave++;
             }
         }
 
@@ -244,6 +254,14 @@ class EnemyController extends THREE.Object3D {
                 enemies.push(this.bears[i]);
 
         return enemies;
+    }
+
+    getJustPaused() {
+        return this.justPaused;
+    }
+
+    getNumWave() {
+        return this.numWave;
     }
 
 }

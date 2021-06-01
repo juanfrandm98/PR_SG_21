@@ -23,6 +23,8 @@ class Choso extends Character {
         this.shootingController = new ShootingController(10, 1, 3, 15, 0.2, 20, shotMat);
         this.add(this.shootingController);
 
+        this.maxPosCam = 20;
+        this.minPosCam = 10;
         this.camera = this.createCamera();
         this.hitBox.add(this.camera);
 
@@ -86,7 +88,7 @@ class Choso extends Character {
             0.1,
             1000);
 
-        camera.position.set(0, 15, 15);
+        camera.position.set(0, this.maxPosCam, this.maxPosCam);
         camera.lookAt(0, 0, 0);
 
         return camera;
@@ -94,6 +96,15 @@ class Choso extends Character {
 
     getCamera() {
         return this.camera;
+    }
+
+    changeDifficulty(numWave) {
+        var x = 0;
+        var y = this.maxPosCam - (numWave - 1) * 3;
+        if(y < this.minPosCam) y = this.minPosCam;
+        var z = y;
+
+        this.camera.position.set(x, y, z);
     }
 
     update(dirX, dirZ, shooting, dirShot, targets) {
@@ -134,6 +145,8 @@ class Choso extends Character {
             this.model.update(this.enMovimiento, this.speed);
         } else {
             this.model.deathAnimation(segundosTranscurridos);
+            var pos = new THREE.Vector3(this.hitBox.position.x, this.model.getUdderHeight(), this.hitBox.position.z);
+            this.shootingController.update(false, pos, dirShot, targets);
         }
 
     }

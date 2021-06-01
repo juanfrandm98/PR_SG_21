@@ -100,6 +100,13 @@ class SoundsController extends THREE.Object3D {
 
     }
 
+    changeBackgroundSpeed(numWave) {
+        if(numWave <= 1) this.backgroundMusic.playbackRate = 1.0;
+        else if(numWave === 2) this.backgroundMusic.playbackRate = 1.1;
+        else if(numwave === 3) this.backgroundMusic.playbackRate = 1.2;
+        else this.backgroundMusic.playbackRate = 1.3;
+    }
+
     changeBackground() {
         if (this.backgroundMusic.isPlaying) {
             this.backgroundMusic.stop();

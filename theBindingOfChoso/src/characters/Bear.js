@@ -53,50 +53,70 @@ class Bear extends Character {
         return dir;
     }
 
-    update(choso, soundsController) {
+    getChosoDir(choso) {
+        var dir = new THREE.Vector2(0,0);
+
+        var myPos = this.hitBox.position;
+        var objPos = choso.getPosition();
+
+        dir.x = objPos.x - myPos.x;
+        dir.y = objPos.z - myPos.z;
+
+        return dir.normalize();
+    }
+
+    update(choso, soundsController, tracking) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior
         var segundosTranscurridos = msTranscurridos / 1000;
 
         this.tiempoAcumulado += msTranscurridos;
 
-        if (!this.enMovimiento || this.tiempoAcumulado >= this.msCambioDireccion) {
-            var index = MathUtils.randInt(0, 3);
-            this.direction = this.directions[index];
-            this.enMovimiento = true;
-            this.tiempoAcumulado = 0;
-        }
-
-        var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
-
-        switch (this.direction) {
-            case "up":
-                nuevaPos.z -= this.speed * segundosTranscurridos;
-                break;
-
-            case "down":
-                nuevaPos.z += this.speed * segundosTranscurridos;
-                break;
-
-            case "left":
-                nuevaPos.x -= this.speed * segundosTranscurridos;
-                break;
-
-            case "right":
-                nuevaPos.x += this.speed * segundosTranscurridos;
-                break;
-        }
-
-        this.direction = this.checkDirection(nuevaPos, this.maxX, this.maxZ, this.hitRadius, this.direction);
-        nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
-
-        this.hitBox.position.copy(nuevaPos);
-        this.bear.update(this.speed, this.direction);
-
         var pos = new THREE.Vector3(this.hitBox.position.x, 1.5, this.hitBox.position.z);
-        var dir = this.getRandomDir();
         var targets = [choso];
-        this.shootingController.update(true, pos, dir, targets, soundsController);
+        var dir;
+
+        if(tracking) dir = this.getChosoDir(choso);
+        else dir = this.getRandomDir();
+
+        if(this.hitBox.visible) {
+            if (!this.enMovimiento || this.tiempoAcumulado >= this.msCambioDireccion) {
+                var index = MathUtils.randInt(0, 3);
+                this.direction = this.directions[index];
+                this.enMovimiento = true;
+                this.tiempoAcumulado = 0;
+            }
+
+            var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
+
+            switch (this.direction) {
+                case "up":
+                    nuevaPos.z -= this.speed * segundosTranscurridos;
+                    break;
+
+                case "down":
+                    nuevaPos.z += this.speed * segundosTranscurridos;
+                    break;
+
+                case "left":
+                    nuevaPos.x -= this.speed * segundosTranscurridos;
+                    break;
+
+                case "right":
+                    nuevaPos.x += this.speed * segundosTranscurridos;
+                    break;
+            }
+
+            this.direction = this.checkDirection(nuevaPos, this.maxX, this.maxZ, this.hitRadius, this.direction);
+            nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
+
+            this.hitBox.position.copy(nuevaPos);
+            this.bear.update(this.speed, this.direction);
+
+            this.shootingController.update(true, pos, dir, targets, soundsController);
+        } else {
+            this.shootingController.update(false, pos, dir, targets, soundsController);
+        }
 
         this.tiempoAnterior = tiempoActual;
 

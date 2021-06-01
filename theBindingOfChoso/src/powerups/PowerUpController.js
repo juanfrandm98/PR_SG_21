@@ -15,7 +15,7 @@ class PowerUpController extends Object3D {
         this.maxZ = maxZ;
 
         this.powerups = [];
-        this.types = ["redheart", "grass", "milking", "udder", "horseshoe", "trap"];
+        this.types = ["redheart", "milking", "horseshoe"];
 
         for (var i = 0; i < 3; i++) {
             this.powerups.push(new RedHeart());
@@ -35,7 +35,7 @@ class PowerUpController extends Object3D {
         this.powerupsActivos = 0;
         this.maxPowerUpsActivos = 5;
 
-        this.msEntrePowerUps = 5000;
+        this.msEntrePowerUps = 8000;
         this.msRestantes = this.msEntrePowerUps;
         this.tiempoAnterior = Date.now();
     }
@@ -114,7 +114,7 @@ class PowerUpController extends Object3D {
         var distance = this.calculateDistancePoints(obj1.getPosition(), obj2.getPosition());
         var hitDistance = obj1.getHitRadius() + obj2.getHitRadius();
 
-        if(distance < hitDistance) {
+        if (distance < hitDistance) {
             return true;
         } else {
             return false;
@@ -122,13 +122,13 @@ class PowerUpController extends Object3D {
     }
 
     applyPowerUp(powerup, choso, soundsController) {
-        if(!choso.isDefeated()) {
-            if(powerup.getName() !== "trap")
+        if (!choso.isDefeated()) {
+            if (powerup.getName() !== "trap")
                 soundsController.playPowerUpSound();
             else
                 soundsController.playTrapSound();
 
-            switch(powerup.getName()) {
+            switch (powerup.getName()) {
                 case "redheart":
                     choso.heal(powerup.getEffect());
                     break;
@@ -156,6 +156,22 @@ class PowerUpController extends Object3D {
         }
     }
 
+    changeDifficulty(numWave) {
+        if (numWave <= 1) {
+            this.types = ["redheart", "milking", "horseshoe"];
+            this.msEntrePowerUps = 8000;
+        } else if (numWave == 2) {
+            this.types = ["redheart", "milking", "udder", "trap"];
+            this.msEntrePowerUps = 7000;
+        } else if (numWave === 3) {
+            this.types = ["redheart", "grass", "milking", "udder", "horseshoe", "trap"];
+            this.msEntrePowerUps = 6000;
+        } else {
+            this.types = ["grass", "milking", "udder", "horseshoe", "trap", "trap"];
+            this.msEntrePowerUps = 7000;
+        }
+    }
+
     update(choso, soundsController) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
@@ -163,7 +179,7 @@ class PowerUpController extends Object3D {
 
         // Generación de powerups
         if (this.msRestantes <= 0) {
-            if(this.powerupsActivos < this.maxPowerUpsActivos) {
+            if (this.powerupsActivos < this.maxPowerUpsActivos) {
                 var nuevo = this.generateRandomPowerUp(this.powerups, this.types);
                 var pos = this.generateRandomPos(this.maxX, this.maxZ, nuevo.getHitRadius());
                 nuevo.activate(pos);
@@ -176,9 +192,9 @@ class PowerUpController extends Object3D {
         this.tiempoAnterior = tiempoActual;
 
         for (var i = 0; i < this.powerups.length; i++) {
-            if(this.powerups[i].getVisible()) {
+            if (this.powerups[i].getVisible()) {
                 // Comprobación de powerups
-                if(this.collisionDetect(this.powerups[i], choso)) {
+                if (this.collisionDetect(this.powerups[i], choso)) {
                     this.applyPowerUp(this.powerups[i], choso, soundsController);
                     this.powerups[i].desactivate();
                     this.powerupsActivos--;
