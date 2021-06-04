@@ -10,7 +10,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 
 // Clases para el ejercicio
-import {BearModel} from "./BearModel.js";
+import {Wolf} from "./Wolf.js";
 
 /// La clase fachada del modelo
 /**
@@ -42,13 +42,14 @@ class MyScene extends THREE.Scene {
 
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     this.axis = new THREE.AxesHelper(5);
-    this.add( this.axis );
+    //this.add( this.axis );
 
     // A partir de aquí, creamos los modelos necesarios para el ejercicio. Cada
     // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
     // referencia a la gui y el texto bajo el que se agruparán los controles de
     // la interfaz que añada el modelo
-    this.model = new BearModel();
+    this.model = new Wolf(50,50);
+    this.model.activate(new THREE.Vector3(0,-0.5,0));
     this.add(this.model);
   }
 
@@ -61,9 +62,9 @@ class MyScene extends THREE.Scene {
     this.camera = new THREE.PerspectiveCamera( 45,window.innerWidth / window.innerHeight,
                                                0.1, 1000 );
     // También se indica dónde se coloca
-    this.camera.position.set( 20, 10, 20 );
+    this.camera.position.set( 0, 0, 5 );
     // Y hacia dónde mira
-    var look = new THREE.Vector3( 0, 0, 0 );
+    var look = new THREE.Vector3( 0, 0.5, 0 );
     this.camera.lookAt( look );
     this.add( this.camera );
 
@@ -187,7 +188,6 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
 
     // Se actualizan el resto de los modelos
-    this.model.update(4, this.guiControls.dirX, this.guiControls.dirZ);
 
     // Le decimos al renderizador 'visualiza la escena que te indico usando la
     // cámara que te estoy pasando'

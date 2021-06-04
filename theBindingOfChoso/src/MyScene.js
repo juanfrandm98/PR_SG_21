@@ -179,6 +179,7 @@ class MyScene extends THREE.Scene {
         if (this.choso.isDefeated()) {
             this.choso.setSpeed(0);
             this.soundsController.stopBackground();
+            this.soundsController.playChosoShootingSound(false);
             this.lightsController.activateDeathLights(this.choso);
         } else {
             this.soundsController.playChosoShootingSound(this.shooting);

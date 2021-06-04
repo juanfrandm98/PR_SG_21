@@ -50,7 +50,7 @@ class EnemyController extends THREE.Object3D {
     }
 
     changeDifficulty(numWave) {
-        if(numWave >= 2) this.bearShootingTracking = true;
+        if(numWave >= 4) this.bearShootingTracking = true;
     }
 
     currentEnemyActivated(vector, pos) {

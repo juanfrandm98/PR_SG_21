@@ -44,14 +44,19 @@ class BeeModel extends THREE.Object3D {
     }
 
     createBody() {
-        var yellowMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 0)});
+        var loader = new THREE.TextureLoader();
+        var textura = loader.load("../../imgs/bee.png");
+        textura.wrapT = THREE.RepeatWrapping;
+        textura.repeat.set(1, 4);
+
+        var bodyMat = new THREE.MeshPhongMaterial({map: textura});
         var blackMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0, 0, 0)});
 
         var corpsGeom = new THREE.SphereGeometry(0.3, 8, 8);
         var headGeom = new THREE.SphereGeometry(0.2, 8, 8);
         var stingGeom = new THREE.ConeGeometry(0.15, 0.3, 8, 8);
 
-        var corps = new THREE.Mesh(corpsGeom, yellowMat);
+        var corps = new THREE.Mesh(corpsGeom, bodyMat);
 
         var head = new THREE.Mesh(headGeom, blackMat);
         head.position.y = 0.4;

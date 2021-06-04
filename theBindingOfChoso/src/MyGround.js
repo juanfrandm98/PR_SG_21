@@ -5,8 +5,8 @@ class MyGround extends THREE.Object3D {
     constructor() {
         super();
 
-        this.maxX = 24.05;
-        this.maxZ = 24.05;
+        this.maxX = 25;
+        this.maxZ = 25;
 
         var geometryGround = new THREE.BoxGeometry(200, 0.2, 200);
         var geometryFence = new THREE.BoxGeometry(50.05, 1, 0.1);

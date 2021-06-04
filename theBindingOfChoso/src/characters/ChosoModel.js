@@ -4,6 +4,11 @@ class ChosoModel extends THREE.Object3D {
     constructor() {
         super();
 
+        // TEXTURA
+        var loader = new THREE.TextureLoader();
+        var texture = loader.load("../../imgs/cow2.jpg");
+        this.cowMat = new THREE.MeshPhongMaterial({map: texture});
+
         // CABEZA
         this.headNode = this.createHeadNode();
         this.headNode.position.y = 1.625;
@@ -75,7 +80,7 @@ class ChosoModel extends THREE.Object3D {
         var hornGeom = new THREE.CylinderGeometry(0.03, 0.03, 0.1, 8, 8);
         var neckGeom = new THREE.CylinderGeometry(0.1, 0.1, 0.05, 8, 8);
 
-        var baseHead = new THREE.Mesh(baseGeom, whiteMat);
+        var baseHead = new THREE.Mesh(baseGeom, this.cowMat);
         baseHead.position.y = 0.175;
 
         var mouth = new THREE.Mesh(mouthGeom, pinkMat);
@@ -149,7 +154,7 @@ class ChosoModel extends THREE.Object3D {
 
         var bodyGeom = new THREE.BoxGeometry(0.5, 1, 0.5);
 
-        var body = new THREE.Mesh(bodyGeom, whiteMat);
+        var body = new THREE.Mesh(bodyGeom, this.cowMat);
 
         var udder = this.createUdder();
         udder.position.z = 0.3;
@@ -169,7 +174,7 @@ class ChosoModel extends THREE.Object3D {
         var legGeom = new THREE.BoxGeometry(0.2, 0.5, 0.2);
         var hoofGeom = new THREE.BoxGeometry(0.2, 0.1, 0.2);
 
-        var leg = new THREE.Mesh(legGeom, whiteMat);
+        var leg = new THREE.Mesh(legGeom, this.cowMat);
         leg.position.y = -0.25;
 
         var hoof = new THREE.Mesh(hoofGeom, blackMat);

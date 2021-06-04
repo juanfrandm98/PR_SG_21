@@ -26,7 +26,10 @@ class Bear extends Character {
         this.tiempoAcumulado = 0;
         this.msCambioDireccion = 2000;
 
-        var shotMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 0)});
+        var loader = new THREE.TextureLoader();
+        var textura = loader.load("../../imgs/hive.jpg");
+
+        var shotMat = new THREE.MeshPhongMaterial({map: textura});
         this.shootingController = new ShootingController(5, 1, 1, 10, 0.3, 10, shotMat);
         this.add(this.shootingController);
     }
