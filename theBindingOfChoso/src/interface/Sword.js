@@ -5,6 +5,7 @@ class Sword extends THREE.Object3D {
     constructor(mat) {
         super();
 
+        // Creación de la forma de espada
         var shape = new THREE.Shape();
         shape.moveTo(-0.5, -0.45);
         shape.lineTo(-0.5, -0.45);
@@ -29,20 +30,16 @@ class Sword extends THREE.Object3D {
             bevelEnabled: false,
         };
 
-        // Un Mesh se compone de geometría y material. En este caso, como material
-        // se crea uno a partir de un color
-        //var geom = new THREE.BoxGeometry(1, 1, 1);
+        // Geometría
         var geom = new THREE.ExtrudeBufferGeometry(shape, options);
 
-        // Ya podemos construir el Mesh
+        // Composición del icono
         this.obj = new THREE.Mesh(geom, mat);
-
-        // Y añadirlo como hijo del Object3D (el this)
         this.add(this.obj);
-
     }
 
-    update(){};
+    update() {
+    };
 
 }
 

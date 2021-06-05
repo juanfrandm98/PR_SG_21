@@ -5,10 +5,12 @@ class LightsController extends THREE.Object3D {
     constructor() {
         super();
 
+        // Luz ambiental
         this.ambientLight = new THREE.AmbientLight(0xccddee, 0.15);
         this.ambientHighIntensity = 0.25;
         this.add(this.ambientLight);
 
+        // Luz "solar"
         this.sunIntensity = 0.8;
         this.minLightAngle = Math.PI / 2;
         this.maxLightAngle = 3 * Math.PI / 2;
@@ -23,10 +25,12 @@ class LightsController extends THREE.Object3D {
 
         this.sunLightNode.rotation.z = this.minLightAngle + Math.PI / 4;
 
+        // Luz para la derrota
         this.deathLight = new THREE.DirectionalLight(0xff0000, 1);
         this.deathLight.visible = false;
         this.add(this.deathLight);
 
+        // Variables para la animación
         this.tiempoAnterior = Date.now();
         this.lightSpeed = 0.0001;
 
@@ -37,21 +41,25 @@ class LightsController extends THREE.Object3D {
         this.currentNightTime = 0;
     }
 
+    // Configura las luces para la derrota, "apagando" la del sol y "encendiendo"
+    // la roja
     activateDeathLights() {
         this.deathLight.visible = true;
         this.ambientLight.intensity = this.ambientHighIntensity;
         this.sunLight.visible = false;
     }
 
+    // Establece la dificultad, aumentando la duración del periodo de noche
     changeDifficulty(numWave) {
         var newNightTime = this.minNightTime + (numWave - 1) * 1000;
 
         if (newNightTime > this.maxNightTime) newNightTime = this.maxNightTime;
-        console.log(newNightTime);
 
         this.nightTime = newNightTime;
     }
 
+    // Actualiza el controlador, moviendo la luz del sol por el día o
+    // cronometrando la noche, si no está encendida la luz de derrota.
     update() {
         if (!this.deathLight.visible) {
             var tiempoActual = Date.now();

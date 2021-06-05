@@ -40,31 +40,35 @@ class MyScene extends THREE.Scene {
         // Variable para el control de la zona del ratón
         this.shotDir = new THREE.Vector2(0, 0);
 
-        // A partir de aquí, creamos los modelos necesarios para el ejercicio. Cada
-        // uno incluirá su parte de interfaz gráfica, por lo que le pasamos la
-        // referencia a la gui y el texto bajo el que se agruparán los controles de
-        // la interfaz que añada el modelo
+        // Terreno de juego
         this.ground = new MyGround();
         this.add(this.ground);
 
+        // Protagonista
         this.choso = new Choso(this.ground.getMaxX(), this.ground.getMaxZ());
         this.add(this.choso);
 
+        // Controlador de enemigos
         this.enemyController = new EnemyController(this.ground.getMaxX(), this.ground.getMaxZ());
         this.add(this.enemyController);
 
+        // Controlador de powerups
         this.powerupController = new PowerUpController(this.ground.getMaxX(), this.ground.getMaxZ());
         this.add(this.powerupController);
 
+        // Controlador de sonidos
         this.soundsController = new SoundsController(this.choso.getCamera());
         this.add(this.soundsController);
 
+        // Controlador de colisiones
         this.collisionController = new CollisionController(this.ground.getMaxX(), this.ground.getMaxZ());
         this.add(this.collisionController);
 
+        // Controlador de luces
         this.lightsController = new LightsController();
         this.add(this.lightsController);
 
+        // Controlador de la interfaz
         this.interfaceController = new InterfaceController(
             this.choso.getMaxHealth(),
             this.choso.getAttack(),
@@ -78,9 +82,6 @@ class MyScene extends THREE.Scene {
     }
 
     createRenderer(myCanvas) {
-        // Se recibe el lienzo sobre el que se van a hacer los renderizados (div
-        // definido en el html)
-
         // Se instancia un Renderer WebGL
         var renderer = new THREE.WebGLRenderer();
 
@@ -115,6 +116,8 @@ class MyScene extends THREE.Scene {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    // Proporciona la dirección de disparo en el eje X en función de la posición
+    // del ratón.
     getXCoef(left, right) {
         var coef = 0;
 
@@ -124,6 +127,8 @@ class MyScene extends THREE.Scene {
         return coef;
     }
 
+    // Proporciona la dirección de disparo en el eje Z en función de la posición
+    // del ratón.
     getZCoef(up, down) {
         var coef = 0;
 
@@ -135,27 +140,30 @@ class MyScene extends THREE.Scene {
 
     // Se actualizan los elementos de la escena para cada frame
     update() {
-        // Se actualiza la intensidad de la luz con lo que haya indicado el usuario
-        // en la GUI
         this.ground.update();
 
-        // Se actualiza la posición de la cámara según su controlador
-        //this.cameraControl.update();
-
-        // Se actualizan el resto de los modelos
+        // Obtención de la dirección de disparo de Choso
         var dirX = this.getXCoef(this.pressedA, this.pressedD);
         var dirZ = this.getZCoef(this.pressedW, this.pressedS);
 
+        // Obtención de los enemigos activos para los disparos de Choso
         var targets = this.enemyController.getEnemies();
 
+        // Actualización de Choso
         this.choso.update(dirX, dirZ, this.shooting, this.shotDir, targets);
 
+        // Actualización de los powerups y de los enemigos
         this.powerupController.update(this.choso, this.soundsController);
         this.enemyController.update(this.choso, this.soundsController);
 
+        // Obtención de los enemigos activos de nuevo, para no incluir a los que
+        // acaban de ser eliminados por Choso
         targets = this.enemyController.getEnemies();
+
+        // Controlador de colisiones físicas entre los enemigos y Choso
         this.collisionController.collisionEnemiesChoso(targets, this.choso, this.soundsController);
 
+        // Actualización de la interfaz
         this.interfaceController.update(
             this.choso.getHealth(),
             this.choso.getAttack(),
@@ -164,9 +172,12 @@ class MyScene extends THREE.Scene {
             this.choso.getSpeed() - 5
         );
 
+        // Actualización de la luz
         this.lightsController.update();
 
-        if(this.enemyController.getJustPaused()) {
+        // Si el controlador de enemigos se acaba de pausar (se ha pasado de ola
+        // en este ciclo) se modifica la dificultad del juego
+        if (this.enemyController.getJustPaused()) {
             var numWave = this.enemyController.getNumWave();
 
             this.choso.changeDifficulty(numWave);
@@ -176,6 +187,8 @@ class MyScene extends THREE.Scene {
             this.soundsController.changeBackgroundSpeed(numWave);
         }
 
+        // Si Choso acaba de ser derrotado, se pasa a estado de derrota; si no,
+        // se comprueba la reproducción de la música de disparo
         if (this.choso.isDefeated()) {
             this.choso.setSpeed(0);
             this.soundsController.stopBackground();
@@ -185,8 +198,8 @@ class MyScene extends THREE.Scene {
             this.soundsController.playChosoShootingSound(this.shooting);
         }
 
-        // Le decimos al renderizador 'visualiza la escena que te indico usando la
-        // cámara que te estoy pasando'
+        // Le decimos al renderizador 'visualiza la escena que te indico usando
+        // las cámaras que te estoy pasando'
         this.renderViewPort(this, this.choso.getCamera(), 0.2, 0, 0.8, 1);
         this.renderViewPort(this, this.interfaceController.getCamera(), 0, 0, 0.2, 1);
 
@@ -197,6 +210,7 @@ class MyScene extends THREE.Scene {
         requestAnimationFrame(() => this.update());
     }
 
+    // Renderiza un viewport en la posición y con las características indicadas
     renderViewPort(escena, camara, left, top, width, height) {
         var l = left * window.innerWidth;
         var w = width * window.innerWidth;
@@ -246,6 +260,8 @@ class MyScene extends THREE.Scene {
         }
     }
 
+    // Obtención de la posición del ratón. El 0.2 es para la posición teniendo
+    // en cuenta el fragmento de pantalla de la interfaz
     getMousePos(event) {
         var mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -261,6 +277,7 @@ class MyScene extends THREE.Scene {
         }
     }
 
+    // Controlador de la posición del ratón
     mousePosController(event) {
         this.shotDir = this.getMousePos(event);
     }

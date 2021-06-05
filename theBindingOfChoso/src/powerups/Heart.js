@@ -5,12 +5,13 @@ class Heart extends THREE.Object3D {
     constructor(color) {
         super();
 
+        // Creación del modelo del corazón
         var shape = new THREE.Shape();
         shape.moveTo(0, 0);
         shape.lineTo(0, 0);
         shape.quadraticCurveTo(0, -0.5, 0.25, -0.5);
         shape.quadraticCurveTo(0.5, -0.5, 0.5, 0);
-        shape.lineTo(0,0.5);
+        shape.lineTo(0, 0.5);
         shape.lineTo(-0.5, 0);
         shape.quadraticCurveTo(-0.5, -0.5, -0.25, -0.5);
         shape.quadraticCurveTo(0, -0.5, 0, 0);
@@ -24,21 +25,18 @@ class Heart extends THREE.Object3D {
             bevelSegments: 3
         };
 
-        // Un Mesh se compone de geometría y material. En este caso, como material
-        // se crea uno a partir de un color
-        //var geom = new THREE.BoxGeometry(1, 1, 1);
+        // Geometría y material
         var geom = new THREE.ExtrudeBufferGeometry(shape, options);
         this.mat = new THREE.MeshPhongMaterial({color: color});
 
-        // Ya podemos construir el Mesh
+        // Mesh
         this.obj = new THREE.Mesh(geom, this.mat);
-
-        // Y añadirlo como hijo del Object3D (el this)
         this.add(this.obj);
 
     }
 
-    update() {}
+    update() {
+    }
 
 }
 

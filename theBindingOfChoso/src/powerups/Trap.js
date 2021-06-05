@@ -6,10 +6,12 @@ class Trap extends PowerUp {
     constructor() {
         super();
 
+        // Variables para el control del powerup
         this.name = "trap";
         this.effect = 4;
         this.hitRadius = 0.5;
 
+        // Creación del powerup
         var trap = this.createTrap();
         this.nodo.add(trap);
 
@@ -21,6 +23,7 @@ class Trap extends PowerUp {
         this.up = false;
     }
 
+    // Creación del modelo de la trampa
     createTrap() {
         var shape = new THREE.Shape();
         var alturaPua = 0.3;
@@ -68,6 +71,7 @@ class Trap extends PowerUp {
         return node;
     }
 
+    // Activa el powerup, colocándolo en función de su altura
     activate(pos) {
         pos.y = 0.5;
         super.activate(pos);

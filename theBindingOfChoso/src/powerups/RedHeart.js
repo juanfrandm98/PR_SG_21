@@ -7,11 +7,13 @@ class RedHeart extends PowerUp {
     constructor() {
         super();
 
+        // Variables para el control del powerup
         this.name = "redheart";
         this.effect = 1;
         this.hitRadius = 0.5;
 
-        var heart = new Heart(new THREE.Color(1,0,0));
+        // Creación del powerup
+        var heart = new Heart(new THREE.Color(1, 0, 0));
         heart.rotateX(Math.PI);
 
         this.nodo.add(heart);
@@ -24,6 +26,7 @@ class RedHeart extends PowerUp {
         this.up = false;
     }
 
+    // Activa el powerup, colocándolo en función de su altura
     activate(pos) {
         pos.y = 0.75;
         super.activate(pos);

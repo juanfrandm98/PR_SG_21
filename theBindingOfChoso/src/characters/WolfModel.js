@@ -70,9 +70,10 @@ class WolfModel extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
     }
 
+    // Creación de la boca con sus dientes
     createMouth() {
         var brownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
-        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1,1,1)});
+        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
 
         var mouthGeom = new THREE.BoxGeometry(0.3, 0.075, 0.3);
         var toothGeom = new THREE.ConeGeometry(0.01, 0.05);
@@ -123,6 +124,7 @@ class WolfModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de la cabeza
     createHead() {
         var brownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
 
@@ -158,6 +160,7 @@ class WolfModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de la cola
     createTail() {
         var brownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
         var partTailGeom = new THREE.CylinderGeometry(0.05, 0.05, 0.3);
@@ -177,6 +180,7 @@ class WolfModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación del cuerpo
     createBody() {
         var brownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
 
@@ -196,6 +200,7 @@ class WolfModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de una pierna
     createLeg() {
         var brownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
         var legGeom = new THREE.BoxGeometry(0.1, 0.6, 0.1);
@@ -209,6 +214,7 @@ class WolfModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de un brazo
     createArm() {
         var brownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
         var partArmGeom = new THREE.BoxGeometry(0.1, 0.3, 0.1);
@@ -230,47 +236,51 @@ class WolfModel extends THREE.Object3D {
         return node;
     }
 
+    // Cálculo de la rotación del modelo en función de su dirección de
+    // movimiento
     calculateAngle(dirX, dirZ) {
-        if(dirX === 0 && dirZ > 0)
+        if (dirX === 0 && dirZ > 0)
             return 0;
-        else if(dirX > 0 && dirZ > 0)
+        else if (dirX > 0 && dirZ > 0)
             return Math.PI / 4;
-        else if(dirX > 0 && dirZ === 0)
+        else if (dirX > 0 && dirZ === 0)
             return Math.PI / 2;
-        else if(dirX > 0 && dirZ < 0)
+        else if (dirX > 0 && dirZ < 0)
             return 3 * Math.PI / 4;
-        else if(dirX === 0 && dirZ < 0)
+        else if (dirX === 0 && dirZ < 0)
             return Math.PI;
-        else if(dirX < 0 && dirZ < 0)
+        else if (dirX < 0 && dirZ < 0)
             return 5 * Math.PI / 4;
-        else if(dirX < 0 && dirZ === 0)
+        else if (dirX < 0 && dirZ === 0)
             return 3 * Math.PI / 2;
-        else if(dirX < 0 && dirZ > 0)
+        else if (dirX < 0 && dirZ > 0)
             return 7 * Math.PI / 4;
         else return -1;
     }
 
+    // Actualización
     update(speed, dirX, dirZ) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
         this.tiempoAnterior = tiempoActual;
 
+        // Cálculo de los ángulos de las piernas, los brazos y la cola
         var newAngle = 0.0;
         var newArmAngle = 0.0;
 
-        if(this.ida) {
+        if (this.ida) {
             newAngle = this.rightLeg.rotation.x + msTranscurridos * speed / 3000;
 
-            if(newAngle > this.maxAngle)
+            if (newAngle > this.maxAngle)
                 newAngle = this.maxAngle;
         } else {
             newAngle = this.rightLeg.rotation.x - msTranscurridos * speed / 3000;
 
-            if(newAngle < -this.maxAngle)
+            if (newAngle < -this.maxAngle)
                 newAngle = -this.maxAngle;
         }
 
-        newArmAngle = newAngle/2;
+        newArmAngle = newAngle / 2;
 
         this.rightLeg.rotation.x = newAngle;
         this.leftLeg.rotation.x = -newAngle;
@@ -279,10 +289,11 @@ class WolfModel extends THREE.Object3D {
         this.tail.rotation.y = newAngle;
 
         var angle = this.calculateAngle(dirX, dirZ);
-        if(angle >= 0) this.wolf.rotation.y = angle;
+        if (angle >= 0) this.wolf.rotation.y = angle;
 
-        if(Math.abs(newAngle) === this.maxAngle) {
-            if(this.ida) this.ida = false;
+        // Comprobación del cambio de dirección de las rotaciones
+        if (Math.abs(newAngle) === this.maxAngle) {
+            if (this.ida) this.ida = false;
             else this.ida = true;
         }
     }

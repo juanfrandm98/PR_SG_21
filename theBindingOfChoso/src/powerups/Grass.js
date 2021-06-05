@@ -6,10 +6,12 @@ class Grass extends PowerUp {
     constructor() {
         super();
 
+        // Variables para el control del powerup
         this.name = "grass";
         this.effect = 1;
         this.hitRadius = 0.5;
 
+        // Creación del modelo
         var grass = this.createGrass();
         this.nodo.add(grass);
 
@@ -21,6 +23,7 @@ class Grass extends PowerUp {
         this.up = false;
     }
 
+    // Creación del modelo de la hierba
     createGrass() {
         var shape = new THREE.Shape();
 
@@ -51,6 +54,7 @@ class Grass extends PowerUp {
         return new THREE.Mesh(geom, mat);
     }
 
+    // Activa el powerup, colocándolo en función de su altura
     activate(pos) {
         pos.y = 0.75;
         super.activate(pos);

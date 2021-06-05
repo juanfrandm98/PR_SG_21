@@ -11,12 +11,15 @@ class PowerUpController extends Object3D {
     constructor(maxX, maxZ) {
         super();
 
+        // Variables para el control del spawn de los powerups
         this.maxX = maxX;
         this.maxZ = maxZ;
 
+        // Lista de powerups y tipos iniciales
         this.powerups = [];
         this.types = ["redheart", "milking", "horseshoe"];
 
+        // Creación de unos primeros powerups para su reutilización
         for (var i = 0; i < 3; i++) {
             this.powerups.push(new RedHeart());
             this.add(this.powerups[this.powerups.length - 1]);
@@ -32,14 +35,18 @@ class PowerUpController extends Object3D {
             this.add(this.powerups[this.powerups.length - 1]);
         }
 
+        // Control del número de powerups activos
         this.powerupsActivos = 0;
         this.maxPowerUpsActivos = 5;
 
+        // Control del tiempo de powerups
         this.msEntrePowerUps = 8000;
         this.msRestantes = this.msEntrePowerUps;
         this.tiempoAnterior = Date.now();
     }
 
+    // Activa o genera un nuevo powerup de tipo aleatorio (entre los disponibles
+    // en cada momento)
     generateRandomPowerUp(powerups, types) {
         var index = MathUtils.randInt(0, types.length - 1);
         var newType = types[index];
@@ -96,6 +103,7 @@ class PowerUpController extends Object3D {
         return nuevo;
     }
 
+    // Genera aleatoriamente una posición para un nuevo powerup
     generateRandomPos(maxX, maxZ, hitRadius) {
         var x = MathUtils.randInt(-maxX + hitRadius, maxX - hitRadius);
         var y = 0;
@@ -104,12 +112,14 @@ class PowerUpController extends Object3D {
         return (new THREE.Vector3(x, y, z));
     }
 
+    // Calcula la distancia entre dos puntos
     calculateDistancePoints(p1, p2) {
         var distance = Math.pow((p1.x - p2.x), 2);
         distance += Math.pow((p1.z - p2.z), 2);
         return Math.sqrt(distance);
     }
 
+    // Comprueba la colisión entre dos objetos (Choso y un powerup)
     collisionDetect(obj1, obj2) {
         var distance = this.calculateDistancePoints(obj1.getPosition(), obj2.getPosition());
         var hitDistance = obj1.getHitRadius() + obj2.getHitRadius();
@@ -121,6 +131,7 @@ class PowerUpController extends Object3D {
         }
     }
 
+    // Aplica un powerup determinado
     applyPowerUp(powerup, choso, soundsController) {
         if (!choso.isDefeated()) {
             if (powerup.getName() !== "trap")
@@ -156,6 +167,8 @@ class PowerUpController extends Object3D {
         }
     }
 
+    // Ajusta la dificultad en función de la ola (tipos de powerups y tiempo
+    // de generación)
     changeDifficulty(numWave) {
         if (numWave <= 1) {
             this.types = ["redheart", "milking", "horseshoe"];
@@ -172,6 +185,8 @@ class PowerUpController extends Object3D {
         }
     }
 
+    // Actualiza el controlador de powerups, modificando los powerups activos y
+    // aplicando los que sean necesarios.
     update(choso, soundsController) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
@@ -191,6 +206,7 @@ class PowerUpController extends Object3D {
 
         this.tiempoAnterior = tiempoActual;
 
+        // Gestión de powerups activos
         for (var i = 0; i < this.powerups.length; i++) {
             if (this.powerups[i].getVisible()) {
                 // Comprobación de powerups

@@ -6,10 +6,12 @@ class Udder extends PowerUp {
     constructor() {
         super();
 
+        // Variables para el control del powerup
         this.name = "udder";
         this.effect = 5;
         this.hitRadius = 0.5;
 
+        // Creación del powerup
         var udder = this.createUdder();
         this.nodo.add(udder);
 
@@ -21,6 +23,7 @@ class Udder extends PowerUp {
         this.up = false;
     }
 
+    // Crea la forma de la ubre
     createUdder() {
         var shape = new THREE.Shape();
 
@@ -67,6 +70,7 @@ class Udder extends PowerUp {
         return new THREE.Mesh(geom, mat);
     }
 
+    // Activa el powerup, colocándolo en función de su altura
     activate(pos) {
         pos.y = 0.75;
         super.activate(pos);

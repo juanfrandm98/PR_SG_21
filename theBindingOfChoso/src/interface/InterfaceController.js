@@ -107,14 +107,16 @@ class InterfaceController extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
     }
 
+    // Creación de la cámara que apunta a la interfaz
     createCamera() {
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.set(3.5, 0, 25);
-        camera.lookAt(new THREE.Vector3(3.5,0,0));
+        camera.lookAt(new THREE.Vector3(3.5, 0, 0));
 
         return camera;
     }
 
+    // Creación de la luz que ilumina la interfaz
     createLight() {
         var light = new THREE.SpotLight(0xffffff, 0.8, 100);
         light.position.set(3.5, 0, 10);
@@ -123,10 +125,13 @@ class InterfaceController extends THREE.Object3D {
         return light;
     }
 
+    // Getter de la cámara de la interfaz
     getCamera() {
         return this.camera;
     }
 
+    // Actualiza el estado de la interfaz en función de las estadísticas de
+    // Choso
     update(health, attack, shotRadius, range, speed) {
 
         // HEALTH
@@ -146,6 +151,7 @@ class InterfaceController extends THREE.Object3D {
             this.currentHeart = health - 1;
         }
 
+        // Control del latido del último corazón
         if (health === 1 || health === 2) {
             var tiempoActual = Date.now();
             var msTranscurridos = tiempoActual - this.tiempoAnterior;

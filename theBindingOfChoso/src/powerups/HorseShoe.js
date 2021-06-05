@@ -7,12 +7,13 @@ class HorseShoe extends PowerUp {
     constructor() {
         super();
 
+        // Variables para el control del powerup
         this.name = "horseshoe";
         this.effect = 1;
         this.hitRadius = 0.5;
 
+        // Creación del modelo
         var horseshoe = this.createHorseShoe();
-
         this.nodo.add(horseshoe);
 
         // Variables para la animación
@@ -23,6 +24,7 @@ class HorseShoe extends PowerUp {
         this.up = false;
     }
 
+    // Creación del modelo de la herradura
     createHorseShoe() {
         var shape = new THREE.Shape();
 
@@ -62,6 +64,7 @@ class HorseShoe extends PowerUp {
         return new THREE.Mesh(geom, mat);
     }
 
+    // Activa el powerup, colocándolo en función de su altura
     activate(pos) {
         pos.y = 0.75;
         super.activate(pos);

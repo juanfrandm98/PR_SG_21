@@ -6,7 +6,10 @@ class ShootingController extends THREE.Object3D {
     constructor(amount, damage, shotsPerSecond, shotSpeed, radius, range, mat) {
         super();
 
+        // Disparos creados
         this.shots = [];
+
+        // Variables para el control de los disparos
         this.msPerShot = 1000 / shotsPerSecond;
         this.shotSpeed = shotSpeed;
         this.shotRadius = radius;
@@ -18,48 +21,58 @@ class ShootingController extends THREE.Object3D {
         this.maxShotRadius = 0.8;
         this.maxDamage = 8;
 
+        // Se crean un número inicial de disparos para ser reutilizados
         for (var i = 0; i < amount; i++) {
             this.shots.push(new Shot(this.shotSpeed, this.shotRadius, this.range, mat));
             this.add(this.shots[i]);
         }
 
+        // Variables para la temporización
         this.msUntilShot = 0;
         this.tiempoAnterior = Date.now();
     }
 
+    // Getter del daño de los disparos
     getDamage() {
         return this.damage;
     }
 
+    // Getter del alcance de los disparos
     getRange() {
         return this.range;
     }
 
+    // Calcula la distancia entre dos puntos
     calculateDistance(first, second) {
         var distance = Math.pow((first.x - second.x), 2);
         distance += Math.pow((first.z - second.z), 2);
         return Math.sqrt(distance);
     }
 
+    // Aumenta el ataque de los disparos, teniendo en cuenta su máximo
     changeShotDamage(dif) {
         this.damage += dif;
         if (this.damage > this.maxDamage) this.damage = this.maxDamage;
     }
 
+    // Aumenta el radio de los disparos, teniendo en cuenta su máximo
     changeShotRadius(dif) {
         this.shotRadius += dif;
         if (this.shotRadius > this.maxShotRadius) this.shotRadius = this.maxShotRadius;
     }
 
+    // Getter del radio de los disparos
     getShootingRadius() {
         return this.shotRadius;
     }
 
+    // Aumenta el alcance de los disparos, teniendo en cuenta su máximo
     changeShotRange(dif) {
         this.range += dif;
         if (this.range > this.maxRange) this.range = this.maxRange;
     }
 
+    // Acutaliza los disparos
     update(shooting, position, direction, targets, soundsController) {
         // TIME CONTROL
         var tiempoActual = Date.now();
@@ -118,8 +131,9 @@ class ShootingController extends THREE.Object3D {
         }
     }
 
+    // Desactiva todos los disparos manejados por el controlador
     hide() {
-        for(var i = 0; i < this.shots.length; i++)
+        for (var i = 0; i < this.shots.length; i++)
             this.shots[i].hide();
     }
 

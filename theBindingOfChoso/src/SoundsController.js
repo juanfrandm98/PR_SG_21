@@ -5,6 +5,7 @@ class SoundsController extends THREE.Object3D {
     constructor(camera) {
         super();
 
+        // Rutas de las pistas
         var backgroundPath = '../sounds/background.ogg';
         var chosoShootingPath = '../sounds/chosoShooting.mp3';
         var wolfDeathPath = '../sounds/sadWolf.ogg';
@@ -15,10 +16,11 @@ class SoundsController extends THREE.Object3D {
         var powerUpPath = '../sounds/powerup.mp3';
         var trapPath = '../sounds/trap.ogg';
 
+        // Listener
         const listener = new THREE.AudioListener();
         camera.add(listener);
 
-// create a global audio source
+        // Creación de los distintos objetos que controlan cada pista
         this.backgroundMusic = new THREE.Audio(listener);
         this.backgroundMusic.hasPlaybackControl = true;
 
@@ -46,9 +48,10 @@ class SoundsController extends THREE.Object3D {
         this.trapSound = new THREE.Audio(listener);
         this.trapSound.hasPlaybackControl = true;
 
-// load a sound and set it as the Audio object's buffer
+        // Audio Loader
         const audioLoader = new THREE.AudioLoader();
 
+        // Configuración de las pistas
         var that = this;
         audioLoader.load(backgroundPath, function (buffer) {
             that.backgroundMusic.setBuffer(buffer);
@@ -83,32 +86,35 @@ class SoundsController extends THREE.Object3D {
             that.beeDeathSound.setVolume(0.8);
         });
 
-        audioLoader.load(bearDeathPath, function(buffer) {
+        audioLoader.load(bearDeathPath, function (buffer) {
             that.bearDeathSound.setBuffer(buffer);
             that.bearDeathSound.setVolume(0.5);
         });
 
-        audioLoader.load(powerUpPath, function(buffer) {
+        audioLoader.load(powerUpPath, function (buffer) {
             that.powerUpSound.setBuffer(buffer);
             that.powerUpSound.setVolume(0.5);
         });
 
-        audioLoader.load(trapPath, function(buffer) {
+        audioLoader.load(trapPath, function (buffer) {
             that.trapSound.setBuffer(buffer);
             that.trapSound.setVolume(1);
         });
 
     }
 
+    // Cambia la velocidad de reproducción de la música de fondo, para ir
+    // incrementándola conforme avanzan las olas
     changeBackgroundSpeed(numWave) {
-        if(numWave <= 1) this.backgroundMusic.setPlaybackRate(1.0);
-        else if(numWave === 2) this.backgroundMusic.setPlaybackRate(1.1);
-        else if(numWave === 3) this.backgroundMusic.setPlaybackRate(1.2);
+        if (numWave <= 1) this.backgroundMusic.setPlaybackRate(1.0);
+        else if (numWave === 2) this.backgroundMusic.setPlaybackRate(1.1);
+        else if (numWave === 3) this.backgroundMusic.setPlaybackRate(1.2);
         else this.backgroundMusic.setPlaybackRate(1.3);
 
         console.log(numWave + " - " + this.backgroundMusic.playbackRate);
     }
 
+    // (Des)activa la música de fondo
     changeBackground() {
         if (this.backgroundMusic.isPlaying) {
             this.backgroundMusic.stop();
@@ -117,6 +123,7 @@ class SoundsController extends THREE.Object3D {
         }
     }
 
+    // (Des)activa el sonido de disparo
     playChosoShootingSound(boolean) {
         if (boolean) {
             if (!this.chosoShootingSound.isPlaying)
@@ -127,11 +134,13 @@ class SoundsController extends THREE.Object3D {
         }
     }
 
+    // Para la música de fondo
     stopBackground() {
         if (this.backgroundMusic.isPlaying)
             this.backgroundMusic.stop();
     }
 
+    // Reproduce el sonido de muerte de los lobos
     playWolfDeath() {
         if (this.wolfDeathSound.isPlaying)
             this.wolfDeathSound.stop();
@@ -139,6 +148,7 @@ class SoundsController extends THREE.Object3D {
         this.wolfDeathSound.play();
     }
 
+    // Reproduce el sonido de muerte de las abejas
     playBeeDeath() {
         if (this.beeDeathSound.isPlaying)
             this.beeDeathSound.stop();
@@ -146,6 +156,7 @@ class SoundsController extends THREE.Object3D {
         this.beeDeathSound.play();
     }
 
+    // Reproduce el sonido de muerte de los osos
     playBearDeath() {
         if (this.bearDeathSound.isPlaying)
             this.bearDeathSound.stop();
@@ -153,6 +164,7 @@ class SoundsController extends THREE.Object3D {
         this.bearDeathSound.play();
     }
 
+    // Reproduce el sonido de Choso recibiendo daño
     playChosoDamage() {
         if (this.chosoHitSound.isPlaying)
             this.chosoHitSound.stop();
@@ -160,10 +172,12 @@ class SoundsController extends THREE.Object3D {
         this.chosoHitSound.play();
     }
 
+    // Reproduce el sonido de muerte de Choso
     playChosoDeath() {
         this.chosoDeathSound.play();
     }
 
+    // Reproduce el sonido de obtención de powerup positivo
     playPowerUpSound() {
         if (this.powerUpSound.isPlaying)
             this.powerUpSound.stop();
@@ -171,6 +185,7 @@ class SoundsController extends THREE.Object3D {
         this.powerUpSound.play();
     }
 
+    // Reproduce el sonido de activación de trampa
     playTrapSound() {
         if (this.trapSound.isPlaying)
             this.trapSound.stop();

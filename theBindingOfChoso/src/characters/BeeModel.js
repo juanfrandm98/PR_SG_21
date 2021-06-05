@@ -43,6 +43,7 @@ class BeeModel extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
     }
 
+    // Creación del cuerpo completo (cuerpo, aguijón y cabeza)
     createBody() {
         var loader = new THREE.TextureLoader();
         var textura = loader.load("../../imgs/bee.png");
@@ -73,6 +74,7 @@ class BeeModel extends THREE.Object3D {
         return body;
     }
 
+    // Creación del ala
     createWing() {
         var blueMat = new THREE.MeshPhongMaterial({
             color: new THREE.Color(0.454, 0.878, 0.984),
@@ -91,6 +93,7 @@ class BeeModel extends THREE.Object3D {
         return node;
     }
 
+    // Actualización
     update() {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
@@ -98,6 +101,7 @@ class BeeModel extends THREE.Object3D {
 
         var newAngle = this.leftWingRotNode.rotation.y;
 
+        // Control del giro de las alas
         if (this.ida) {
             newAngle += msTranscurridos / 50;
 

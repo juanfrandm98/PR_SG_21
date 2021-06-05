@@ -6,10 +6,12 @@ class MilkingDevice extends PowerUp {
     constructor() {
         super();
 
+        // Variables para el control del powerup
         this.name = "milking";
         this.effect = 0.1;
         this.hitRadius = 0.5;
 
+        // Creación del modelo
         var milkingDevice = this.createDevice();
         this.nodo.add(milkingDevice);
 
@@ -21,6 +23,7 @@ class MilkingDevice extends PowerUp {
         this.up = false;
     }
 
+    // Creación del modelo del sacaleches
     createDevice() {
         var shape = new THREE.Shape();
 
@@ -56,6 +59,7 @@ class MilkingDevice extends PowerUp {
         return new THREE.Mesh(geom, mat);
     }
 
+    // Activa el powerup, colocándolo en función de su altura
     activate(pos) {
         pos.y = 0.75;
         super.activate(pos);

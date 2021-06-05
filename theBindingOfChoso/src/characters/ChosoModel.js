@@ -6,7 +6,7 @@ class ChosoModel extends THREE.Object3D {
 
         // TEXTURA
         var loader = new THREE.TextureLoader();
-        var texture = loader.load("../../imgs/cow2.jpg");
+        var texture = loader.load("../../imgs/cow.jpg");
         this.cowMat = new THREE.MeshPhongMaterial({map: texture});
 
         // CABEZA
@@ -70,6 +70,7 @@ class ChosoModel extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
     }
 
+    // Creación de la cabeza
     createHeadNode() {
         var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
         var blackMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0, 0, 0)});
@@ -107,6 +108,7 @@ class ChosoModel extends THREE.Object3D {
         return head;
     }
 
+    // Creación de la ubre
     createUdder() {
         var pinkMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.964, 0.352, 0.827)});
 
@@ -149,9 +151,8 @@ class ChosoModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación del cuerpo
     createBody() {
-        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
-
         var bodyGeom = new THREE.BoxGeometry(0.5, 1, 0.5);
 
         var body = new THREE.Mesh(bodyGeom, this.cowMat);
@@ -167,8 +168,8 @@ class ChosoModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de una pierna
     createLeg() {
-        var whiteMat = new THREE.MeshPhongMaterial({color: new THREE.Color(1, 1, 1)});
         var blackMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0, 0, 0)});
 
         var legGeom = new THREE.BoxGeometry(0.2, 0.5, 0.2);
@@ -187,6 +188,7 @@ class ChosoModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de un brazo a partir de una pierna
     createArm() {
         var arm = this.createLeg();
 
@@ -197,6 +199,7 @@ class ChosoModel extends THREE.Object3D {
         return node;
     }
 
+    // Calcula la rotación en función de la dirección de disparo
     calculateDirection(dir) {
         var axis = new THREE.Vector2(0, 1);
 
@@ -211,6 +214,7 @@ class ChosoModel extends THREE.Object3D {
         else return -angle;
     }
 
+    // Calcula la rotación en función del movimiento
     calculateAngle(dirX, dirZ) {
         if (dirX === 0 && dirZ > 0)
             return 0;
@@ -231,6 +235,7 @@ class ChosoModel extends THREE.Object3D {
         else return -1;
     }
 
+    // Rota a Choso (completo)
     rotateChoso(dirX, dirZ) {
         var angle = this.calculateAngle(dirX, dirZ);
 
@@ -240,6 +245,7 @@ class ChosoModel extends THREE.Object3D {
         if (angle >= 0) this.choso.rotation.y = angle;
     }
 
+    // Rotación independiente de la cabeza
     rotateHead(dirX, dirZ) {
         var angle = this.calculateAngle(dirX, dirZ);
 
@@ -248,6 +254,7 @@ class ChosoModel extends THREE.Object3D {
         if (angle >= 0) this.headNode.rotation.y = angle;
     }
 
+    // Rotación independiente del cuerpo
     rotateBody(dir) {
         var angle = this.calculateDirection(dir);
 
@@ -256,6 +263,7 @@ class ChosoModel extends THREE.Object3D {
         this.bodyNode.rotation.y = angle;
     }
 
+    // Animación de muerte
     deathAnimation(seg) {
         this.choso.rotation.y = 0;
         this.nodeRightLeg.rotation.x = 0;
@@ -271,14 +279,17 @@ class ChosoModel extends THREE.Object3D {
         }
     }
 
+    // Actualización
     update(moving, speed) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
         this.tiempoAnterior = tiempoActual;
 
+        // Si se está moviendo
         if (moving) {
             var newAngle = 0.0;
 
+            // Cálculo de la rotación de los miembros
             if (this.ida) {
                 newAngle = this.nodeRightLeg.rotation.x + msTranscurridos * speed / 3000;
 
@@ -294,11 +305,13 @@ class ChosoModel extends THREE.Object3D {
             this.nodeRightArm.rotation.x = -newAngle;
             this.nodeLeftArm.rotation.x = newAngle;
 
+            // Control de la rotación hacia una direcicón u otra
             if (Math.abs(newAngle) === this.maxAngle) {
                 if (this.ida) this.ida = false;
                 else this.ida = true;
             }
         } else {
+            // Si no se está moviendo, coloca al modelo rígido
             this.nodeRightLeg.rotation.x = 0;
             this.nodeLeftLeg.rotation.x = 0;
             this.nodeRightArm.rotation.x = 0;
@@ -307,6 +320,7 @@ class ChosoModel extends THREE.Object3D {
 
     }
 
+    // Devuelve la altura de la ubre para la posición del disparo
     getUdderHeight() {
         return 0.85;
     }

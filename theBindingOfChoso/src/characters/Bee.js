@@ -8,24 +8,29 @@ class Bee extends Character {
     constructor(maxX, maxZ) {
         super();
 
+        // Valores para no salirse de la parcela
         this.maxX = maxX;
         this.maxZ = maxZ;
 
+        // Estadísticas de la abeja
         this.speed = 5;
         this.shootSpeed = 0;
         this.maxHealth = 2;
         this.hitRadius = 1.3;
 
+        // Modelo
         this.bee = new BeeModel();
         this.hitBox.add(this.bee);
         this.hitBox.visible = false;
 
+        // Variables para la animación
         this.directions = ["up", "down", "left", "right"];
         this.direction;
         this.tiempoAcumulado = 0;
         this.msCambioDireccion = 2000;
     }
 
+    // Cambia la dirección y la inclinación del modelo
     changeBeeDirection(bee, direction) {
         switch (direction) {
             case "up":
@@ -54,6 +59,7 @@ class Bee extends Character {
         }
     }
 
+    // Actualización
     update() {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior
@@ -61,6 +67,7 @@ class Bee extends Character {
 
         this.tiempoAcumulado += msTranscurridos;
 
+        // Gestión del cambio de dirección
         if (!this.enMovimiento || this.tiempoAcumulado >= this.msCambioDireccion) {
             var index = MathUtils.randInt(0, 3);
             this.direction = this.directions[index];
@@ -68,6 +75,7 @@ class Bee extends Character {
             this.tiempoAcumulado = 0;
         }
 
+        // Cálculo de la nueva posición
         var nuevaPos = new THREE.Vector3(this.hitBox.position.x, this.hitBox.position.y, this.hitBox.position.z);
 
         switch (this.direction) {
@@ -88,11 +96,13 @@ class Bee extends Character {
                 break;
         }
 
+        // Comprobación de la dirección
         this.direction = this.checkDirection(nuevaPos, this.maxX, this.maxZ, this.hitRadius, this.direction);
         this.changeBeeDirection(this.bee, this.direction);
 
         nuevaPos = super.checkPosition(nuevaPos, this.maxX, this.maxZ, this.hitRadius);
 
+        // Actualización de la posición y el modelo
         this.hitBox.position.copy(nuevaPos);
         this.bee.update();
 
@@ -100,6 +110,7 @@ class Bee extends Character {
 
     }
 
+    // Devuelve la dirección opuesta a una dada
     opositeDirection(direction) {
         switch (direction) {
             case "up":
@@ -116,7 +127,8 @@ class Bee extends Character {
         }
     }
 
-    checkDirection(pos, maxX, maxZ, hitRadius, direction, bee) {
+    // Comprueba si se necesita invertir la dirección (si toca la valla)
+    checkDirection(pos, maxX, maxZ, hitRadius, direction) {
         if (
             (pos.x > (maxX - hitRadius)) ||
             (pos.x < (-maxX + hitRadius)) ||
@@ -129,6 +141,7 @@ class Bee extends Character {
         }
     }
 
+    // Activación de la abeja
     activate(pos) {
         pos.y += 1;
         super.activate(pos);

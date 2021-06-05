@@ -9,30 +9,33 @@ class EnemyController extends THREE.Object3D {
     constructor(maxX, maxZ) {
         super();
 
+        // Variables para controlar las posiciones de los enemigos generados
         this.maxX = maxX;
         this.maxZ = maxZ;
 
+        // Vectores de enemigos
         this.bees = [];
         this.wolves = [];
         this.bears = [];
         this.defPos = new THREE.Vector3(20, 0, -20);
         this.timeBetweenSpanws = 2000;
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 5; i++) {
             this.bees.push(new Bee(this.maxX, this.maxZ));
             this.add(this.bees[i]);
         }
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 5; i++) {
             this.wolves.push(new Wolf(this.maxX, this.maxZ));
             this.add(this.wolves[i]);
         }
 
-        for (var i = 0; i < 10; i++) {
+        for (var i = 0; i < 5; i++) {
             this.bears.push(new Bear(this.maxX, this.maxZ));
             this.add(this.bears[i]);
         }
 
+        // Vector de enemigos que faltan por activar en cada ronda
         this.enemiesList = [];
 
         this.tiempoAnterior = Date.now();
@@ -41,18 +44,25 @@ class EnemyController extends THREE.Object3D {
         // Variable para conocer el cambio de oleada desde fuera del controlador
         this.justPaused = false;
 
+        // Variable para distinguir cuando los osos disparan aleatoriamente
+        // (false) y cuando disparan a Choso (true)
         this.bearShootingTracking = false;
 
+        // Variables para el control de olas
         this.numWave = 1;
         this.wavePause = true;
         this.timeBetweenWaves = 5000;
         this.timeUntilNextWave = 0;
     }
 
+    // Cambia la dificultad de los enemigos (a partir de la ola 4, los osos
+    // cambian su tipo de disparo)
     changeDifficulty(numWave) {
-        if(numWave >= 4) this.bearShootingTracking = true;
+        if (numWave >= 4) this.bearShootingTracking = true;
     }
 
+    // Devuelve true si se ha podido activar un determinado enemigo o false si
+    // se necesita crear otro nuevo
     currentEnemyActivated(vector, pos) {
         var encontrado = false;
 
@@ -66,6 +76,8 @@ class EnemyController extends THREE.Object3D {
         return encontrado;
     }
 
+    // Rellena el vector de enemigos restantes de una ola en de forma aleatoria
+    // en función del número de la misma
     generateEnemies() {
         var probTypes;
         var numEnemies;
@@ -92,6 +104,7 @@ class EnemyController extends THREE.Object3D {
         }
     }
 
+    // Genera una posición aleatoria cerca de una de las vallas
     randomSpawnPos(maxX, maxZ) {
         var pos = new THREE.Vector3(0, 0, 0);
         var dif = 5;
@@ -126,11 +139,14 @@ class EnemyController extends THREE.Object3D {
         return pos;
     }
 
+    // Actualización
     update(choso, soundsController) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
 
         if (this.wavePause) {
+            // Si la ola está pausada, contabiliza y espera a que pase el tiepmo
+            // necesario para generar los nuevos enemigos
             this.justPaused = false;
 
             if (this.timeUntilNextWave <= 0) {
@@ -141,11 +157,14 @@ class EnemyController extends THREE.Object3D {
                 this.tiempoAnterior = tiempoActual;
             }
         } else {
+            // Si la ola no está pausada (terminada)
             var activeEnemies = this.getEnemies();
 
             if (activeEnemies.length !== 0 || this.enemiesList.length !== 0) {
+                // Si quedan enemigos de la ola
                 if (this.enemiesList.length > 0) {
-
+                    // Si quedan enemigos por generar y ha pasado el tiempo
+                    // necesario, genera uno del tipo sacado de enemiesList
                     this.tiempoUntilNextSpawn -= msTranscurridos;
 
                     if (this.tiempoUntilNextSpawn <= 0) {
@@ -197,7 +216,8 @@ class EnemyController extends THREE.Object3D {
                     this.tiempoAnterior = Date.now();
                 }
 
-
+                // Actualiza cada uno de los enemigos activos, comprobando antes
+                // si alguno acaba de ser derrotado para desactivarlo
                 for (var i = 0; i < this.bees.length; i++) {
                     if (!this.bees[i].getHidden()) {
                         if (this.bees[i].isDefeated()) {
@@ -229,6 +249,8 @@ class EnemyController extends THREE.Object3D {
                     this.bears[i].update(choso, soundsController, this.bearShootingTracking);
                 }
             } else {
+                // Si no quedan enemigos activos o en la lista de enemigos por
+                // activar, pausa la ola (la termina) e incrementa su número
                 this.wavePause = true;
                 this.timeUntilNextWave = this.timeBetweenWaves;
                 this.justPaused = true;
@@ -238,6 +260,7 @@ class EnemyController extends THREE.Object3D {
 
     }
 
+    // Devuelve una lista con los enemigos activos de TODOS los tipos
     getEnemies() {
         var enemies = [];
 
@@ -256,10 +279,12 @@ class EnemyController extends THREE.Object3D {
         return enemies;
     }
 
+    // Devuelve si la ola acaba de terminar
     getJustPaused() {
         return this.justPaused;
     }
 
+    // Devuelve el número actual de ola
     getNumWave() {
         return this.numWave;
     }

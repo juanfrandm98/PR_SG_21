@@ -54,6 +54,7 @@ class BearModel extends THREE.Object3D {
         this.tiempoAnterior = Date.now();
     }
 
+    // Creación de la cabeza
     createHead() {
         var darkBrownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
         var lightBrownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.929, 0.6, 0.007)});
@@ -94,6 +95,7 @@ class BearModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación del cuerpo
     createBody() {
         var darkBrownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
         var lightBrownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.929, 0.6, 0.007)});
@@ -128,6 +130,7 @@ class BearModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de una pierna
     createLeg() {
         var darkBrownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
         var legGeom = new THREE.BoxGeometry(0.2, 0.5, 0.2);
@@ -141,6 +144,7 @@ class BearModel extends THREE.Object3D {
         return node;
     }
 
+    // Creación de un brazo
     createArm() {
         var darkBrownMat = new THREE.MeshPhongMaterial({color: new THREE.Color(0.623, 0.235, 0.015)});
         var supArmGeom = new THREE.BoxGeometry(0.2, 0.4, 0.2);
@@ -159,8 +163,9 @@ class BearModel extends THREE.Object3D {
         return node;
     }
 
+    // Cálculo de la rotación necesaria en función de una dirección
     calculateAngle(direction) {
-        switch(direction) {
+        switch (direction) {
             case "up":
                 return Math.PI;
             case "down":
@@ -174,6 +179,7 @@ class BearModel extends THREE.Object3D {
         }
     }
 
+    // Actualización del modelo
     update(speed, direction) {
         var tiempoActual = Date.now();
         var msTranscurridos = tiempoActual - this.tiempoAnterior;
@@ -181,15 +187,16 @@ class BearModel extends THREE.Object3D {
 
         var newAngle = 0.0;
 
-        if(this.ida) {
+        // Cálculo del movimiento de las piernas
+        if (this.ida) {
             newAngle = this.rightLeg.rotation.x + msTranscurridos * speed / 3000;
 
-            if(newAngle > this.maxAngle)
+            if (newAngle > this.maxAngle)
                 newAngle = this.maxAngle;
         } else {
             newAngle = this.rightLeg.rotation.x - msTranscurridos * speed / 3000;
 
-            if(newAngle < -this.maxAngle)
+            if (newAngle < -this.maxAngle)
                 newAngle = -this.maxAngle;
         }
 
@@ -197,11 +204,13 @@ class BearModel extends THREE.Object3D {
         this.rightLeg.rotation.x = newAngle;
         this.leftLeg.rotation.x = -newAngle;
 
+        // Cálculo de la rotación del modelo general
         var angle = this.calculateAngle(direction);
-        if(angle >= 0) this.bear.rotation.y = angle;
+        if (angle >= 0) this.bear.rotation.y = angle;
 
-        if(Math.abs(newAngle) === this.maxAngle) {
-            if(this.ida) this.ida = false;
+        // Comprobación del cambio de dirección de las piernas
+        if (Math.abs(newAngle) === this.maxAngle) {
+            if (this.ida) this.ida = false;
             else this.ida = true;
         }
     }

@@ -8,13 +8,16 @@ class Wolf extends Character {
     constructor(maxX, maxZ) {
         super();
 
+        // Variables para mantenerse dentro de la parcela
         this.maxX = maxX;
         this.maxZ = maxZ;
 
+        // Estadísticas
         this.speed = 8;
         this.shootSpeed = 0;
         this.maxHealth = 4;
 
+        // Modelo
         this.wolf = new WolfModel();
 
         this.hitBox.add(this.wolf);
@@ -29,10 +32,11 @@ class Wolf extends Character {
         this.dirZBack = 0;
     }
 
+    // Cálculo de los coeficientes de movimiento localizando a Choso
     calculateCoef(position, target, coefX) {
         var dif;
 
-        if(coefX) dif = position.x - target.x;
+        if (coefX) dif = position.x - target.x;
         else dif = position.z - target.z;
 
         if (dif > 0) return -1;
@@ -40,45 +44,50 @@ class Wolf extends Character {
         else return 0;
     }
 
+    // Actualización
     update(target) {
         var tiempoActual = Date.now();
         var segundosTranscurridos = (tiempoActual - this.tiempoAnterior) / 1000;
 
+        // Coeficiente de dirección en cada eje
         var dirX = 0;
         var dirZ = 0;
 
-
-        if(this.isGoingBack) {
+        // Si está retrocediendo
+        if (this.isGoingBack) {
             dirX = this.dirXBack;
             dirZ = this.dirZBack;
 
             this.segundosGoingBack -= segundosTranscurridos;
 
-            if(this.segundosGoingBack <= 0) this.isGoingBack = false;
+            if (this.segundosGoingBack <= 0) this.isGoingBack = false;
         } else {
+            // Si está persiguiendo a Choso
             dirX = this.calculateCoef(this.hitBox.position, target, true);
             dirZ = this.calculateCoef(this.hitBox.position, target, false);
 
             this.wolf.update(this.speed, dirX, dirZ);
         }
 
-        var newPos = new THREE.Vector3(0,0,0);
+        // Cálculo de la nueva posición
+        var newPos = new THREE.Vector3(0, 0, 0);
         newPos.x = this.hitBox.position.x + dirX * this.speed * segundosTranscurridos;
         newPos.y = this.hitBox.position.y;
         newPos.z = this.hitBox.position.z + dirZ * this.speed * segundosTranscurridos;
 
+        // Comprobar que la animación de la persecución sea fluida
         var sameX = false;
         var sameZ = false;
 
-        if(!this.isGoingBack) {
+        if (!this.isGoingBack) {
             var margin = 0.5;
 
-            if(Math.abs(target.x - newPos.x) < margin) {
+            if (Math.abs(target.x - newPos.x) < margin) {
                 newPos.x = target.x;
                 sameX = true;
             }
 
-            if(Math.abs(target.z - newPos.z) < margin) {
+            if (Math.abs(target.z - newPos.z) < margin) {
                 newPos.z = target.z;
                 sameZ = true;
             }
@@ -86,7 +95,9 @@ class Wolf extends Character {
 
         newPos = super.checkPosition(newPos, this.maxX, this.maxZ, this.hitRadius);
 
-        if(sameX && sameZ) {
+        // Si sameX y sameZ quiere decir que está golpeando a Choso, por lo que
+        // comienza su etapa de retroceso
+        if (sameX && sameZ) {
             this.isGoingBack = true;
             this.segundosGoingBack = this.maxSegundosGoingBack;
             this.dirXBack = -dirX;
